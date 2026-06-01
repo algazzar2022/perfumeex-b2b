@@ -1,16 +1,45 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Eye, MousePointerClick, Package, MapPin, TrendingUp, Bell, Clock, CheckCircle2, Circle } from "lucide-react";
+import { Eye, MousePointerClick, Package, MapPin, TrendingUp, Bell, Clock, CheckCircle2, Circle, PartyPopper } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function DashboardOverview() {
   const t = useTranslations("Dashboard.overview");
   const { data: session } = useSession();
   const companyName = session?.user?.name || "";
-  
+  const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname.split('/')[1] || 'en';
+
+  const [company, setCompany] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/api/company/profile')
+      .then(res => res.json())
+      .then(data => {
+        setCompany(data);
+      })
+      .catch(console.error);
+  }, []);
+
+  const checks = [
+    { key: 'logo', isCompleted: !!company?.logo, label: locale === 'ar' ? 'رفع شعار الشركة' : 'Upload Company Logo' },
+    { key: 'location', isCompleted: !!((company?.cityAr || company?.cityEn) && (company?.governorateAr || company?.governorateEn)), label: locale === 'ar' ? 'إضافة المدينة والمحافظة' : 'Add City and Governorate' },
+    { key: 'cover', isCompleted: !!company?.coverImage, label: locale === 'ar' ? 'رفع غلاف للشركة (Cover)' : 'Upload Company Cover' },
+    { key: 'contact', isCompleted: !!(company?.whatsapp && company?.email), label: locale === 'ar' ? 'إضافة رقم التواصل والإيميل' : 'Add Phone and Email' },
+    { key: 'facebook', isCompleted: !!company?.facebook, label: locale === 'ar' ? 'إضافة رابط صفحة الفيسبوك' : 'Add Facebook Link' },
+    { key: 'description', isCompleted: !!(company?.descriptionAr || company?.descriptionEn), label: locale === 'ar' ? 'إضافة وصف قصير للشركة' : 'Add Short Description' }
+  ];
+
+  const completedCount = checks.filter(c => c.isCompleted).length;
+  const completionPercentage = Math.round((completedCount / checks.length) * 100) || 0;
+  const is100Percent = completionPercentage === 100;
+
   const stats = [
     { title: t("stats.profileViews"), value: "0", change: "0%", isPositive: true, icon: <Eye className="w-5 h-5 text-emerald-500" /> },
     { title: t("stats.contactClicks"), value: "0", change: "0%", isPositive: true, icon: <MousePointerClick className="w-5 h-5 text-blue-500" /> },
@@ -77,47 +106,42 @@ export default function DashboardOverview() {
             <div className="w-full bg-zinc-900 rounded-full h-4 mb-4 overflow-hidden border border-white/5">
               <motion.div 
                 initial={{ width: 0 }}
-                animate={{ width: "0%" }}
+                animate={{ width: `${completionPercentage}%` }}
                 transition={{ duration: 1, delay: 0.5 }}
                 className="bg-gradient-to-r from-emerald-500 to-teal-400 h-4 rounded-full relative"
               >
               </motion.div>
             </div>
             <div className="flex justify-between text-sm font-bold">
-              <span className="text-emerald-400">{t("completion.completed", { percentage: 0 })}</span>
+              <span className="text-emerald-400">{t("completion.completed", { percentage: completionPercentage })}</span>
               <span className="text-zinc-500">100%</span>
             </div>
           </div>
 
           <div className="mt-8 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
-              <span className="text-zinc-500 text-sm">{t("completion.uploadLogo")}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
-              <span className="text-zinc-500 text-sm">{t("completion.addLocation")}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
-              <span className="text-zinc-500 text-sm">{t("completion.uploadCover")}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
-              <span className="text-zinc-500 text-sm">{t("completion.addPhone")}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
-              <span className="text-zinc-500 text-sm">{t("completion.addFacebook")}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
-              <span className="text-zinc-500 text-sm">{t("completion.addDescription")}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
-              <span className="text-zinc-500 text-sm">{t("completion.uploadCatalog")}</span>
-              <button className="ltr:ml-auto rtl:mr-auto text-emerald-500 hover:text-emerald-400 text-sm font-bold">{t("completion.uploadNow")}</button>
+            {checks.map((check, idx) => (
+              <div key={idx} className="flex items-center gap-3">
+                <div className={`w-6 h-6 rounded-full border flex items-center justify-center text-xs font-bold ${check.isCompleted ? 'bg-emerald-500 border-emerald-500 text-black' : 'bg-zinc-800 border-zinc-700 text-zinc-500'}`}>
+                  {check.isCompleted && <CheckCircle2 className="w-4 h-4" />}
+                </div>
+                <span className={`text-sm ${check.isCompleted ? 'text-white line-through opacity-50' : 'text-zinc-300'}`}>{check.label}</span>
+              </div>
+            ))}
+            
+            <div className="pt-4 border-t border-white/5 mt-4">
+              {is100Percent ? (
+                <div className="flex items-center gap-2 text-emerald-500 font-bold bg-emerald-500/10 px-4 py-3 rounded-xl">
+                  <PartyPopper className="w-5 h-5" />
+                  {locale === 'ar' ? 'تهانينا! ملف شركتك مكتمل 100%' : 'Congratulations! Your profile is 100% complete.'}
+                </div>
+              ) : (
+                <button 
+                  onClick={() => router.push(`/${locale}/dashboard/company`)}
+                  className="w-full bg-white text-black hover:bg-emerald-500 transition-colors font-bold py-3 rounded-xl"
+                >
+                  {locale === 'ar' ? 'أكمل الآن' : 'Complete Now'}
+                </button>
+              )}
             </div>
           </div>
         </motion.div>
