@@ -12,6 +12,7 @@ export default function ProductsManagementPage() {
   const locale = useParams().locale as string;
 
   const [products, setProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
@@ -32,7 +33,20 @@ export default function ProductsManagementPage() {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch("/api/categories");
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -209,11 +223,23 @@ export default function ProductsManagementPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{locale === 'ar' ? 'التصنيف' : 'Category'}</label>
+                <select value={formData.categoryId} onChange={(e) => setFormData({...formData, categoryId: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none">
+                  <option value="">{locale === 'ar' ? 'اختر تصنيفاً' : 'Select a category'}</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{locale === 'ar' ? cat.nameAr : cat.nameEn}</option>
+                  ))}
+                </select>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.price")}</label>
                 <input type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.stockStatus")}</label>
                 <select value={formData.stockStatus} onChange={(e) => setFormData({...formData, stockStatus: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none">
@@ -271,6 +297,9 @@ export default function ProductsManagementPage() {
             </div>
             <select className="bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none w-full sm:w-48 appearance-none">
               <option>{t("allCategories")}</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{locale === 'ar' ? cat.nameAr : cat.nameEn}</option>
+              ))}
             </select>
           </div>
 
@@ -313,7 +342,7 @@ export default function ProductsManagementPage() {
                   <h3 className="text-lg font-bold text-white mb-2">{locale === 'ar' ? product.nameAr : product.nameEn}</h3>
                   <div className="flex items-center justify-between mt-4">
                     <div className="text-emerald-400 font-bold text-sm">
-                      {product.price ? `$${product.price}` : getSalesTypeLabel(product.salesType)}
+                      {product.price ? `${product.price} ${locale === 'ar' ? 'ج.م' : 'EGP'}` : getSalesTypeLabel(product.salesType)}
                     </div>
                   </div>
                 </div>
