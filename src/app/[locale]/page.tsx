@@ -145,7 +145,7 @@ export default function Home() {
       <section className="py-16 border-b border-white/5 relative bg-black/50 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10 pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 relative z-0">
-          <p className="text-center text-xs font-semibold text-zinc-600 mb-10 uppercase tracking-[0.3em]">{t('sponsorsTitle')}</p>
+          <p className="text-center text-2xl md:text-3xl font-bold text-zinc-500 mb-12 uppercase tracking-widest">{t('sponsorsTitle')}</p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="text-2xl font-light tracking-widest text-white flex items-center gap-3">
