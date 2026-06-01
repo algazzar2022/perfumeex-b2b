@@ -12,7 +12,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const t = useTranslations("Index"); // Using Index temporarily for generic translation if needed
+  const t = useTranslations("Navbar");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,10 +23,10 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Search", href: "/search" },
-    { name: "Companies", href: "/companies" },
-    { name: "Categories", href: "/categories" },
+    { name: t("home"), href: "/" },
+    { name: t("search"), href: "/search" },
+    { name: t("companies"), href: "/companies" },
+    { name: t("categories"), href: "/categories" },
   ];
 
   // Helper to remove locale from pathname for comparison
@@ -49,7 +49,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-white tracking-tight flex items-center gap-2 group">
+        <Link href={`/${pathname.split('/')[1] || 'en'}`} className="text-2xl font-bold text-white tracking-tight flex items-center gap-2 group">
           <span className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black group-hover:scale-110 transition-transform duration-300">
             P
           </span>
@@ -77,14 +77,14 @@ export default function Navbar() {
           
           <Link href={`/${pathname.split('/')[1] || 'en'}/login`} className="text-sm font-medium text-white hover:text-emerald-400 transition-colors flex items-center gap-2">
             <User className="w-4 h-4" />
-            Login
+            {t("login")}
           </Link>
           
           <Link
             href={`/${pathname.split('/')[1] || 'en'}/register`}
             className="px-5 py-2.5 rounded-full bg-white text-black text-sm font-bold hover:bg-emerald-50 transition-colors hover:scale-105 active:scale-95"
           >
-            Register Company
+            {t("register")}
           </Link>
         </div>
 
@@ -129,14 +129,14 @@ export default function Navbar() {
                 className="text-lg font-medium text-white py-2 flex items-center gap-2"
               >
                 <User className="w-5 h-5" />
-                Login
+                {t("login")}
               </Link>
               <Link
                 href={`/${pathname.split('/')[1] || 'en'}/register`}
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-center w-full py-3 mt-2 rounded-xl bg-white text-black font-bold"
               >
-                Register Company
+                {t("register")}
               </Link>
             </div>
           </motion.div>

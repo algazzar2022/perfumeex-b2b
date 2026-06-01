@@ -72,5 +72,13 @@
       "loginLink": "Sign In",
       "error": "Something went wrong. Please try again."
     }
+  },
+  "Navbar": {
+    "home": "Home",
+    "search": "Search",
+    "companies": "Companies",
+    "categories": "Categories",
+    "login": "Login",
+    "register": "Register Company"
   }
 }
