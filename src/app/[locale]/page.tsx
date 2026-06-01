@@ -5,10 +5,13 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Search, MapPin, Building2, Droplet, Star, TrendingUp, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from 'next-intl';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const t = useTranslations('Index');
+  const router = useRouter();
+  const pathname = usePathname();
   
   // Luxury Parallax
   const { scrollYProgress } = useScroll();
@@ -110,7 +113,16 @@ export default function Home() {
           >
             <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500/30 via-white/10 to-emerald-500/30 rounded-3xl blur opacity-30 group-hover:opacity-100 transition duration-1000" />
             
-            <div className="relative bg-black/60 backdrop-blur-3xl p-2.5 rounded-3xl flex flex-col md:flex-row items-center gap-3 border border-white/10 shadow-2xl">
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  const locale = pathname.split('/')[1] || 'en';
+                  router.push(`/${locale}/search?q=${encodeURIComponent(searchQuery)}`);
+                }
+              }}
+              className="relative bg-black/60 backdrop-blur-3xl p-2.5 rounded-3xl flex flex-col md:flex-row items-center gap-3 border border-white/10 shadow-2xl"
+            >
               <div className="flex-1 w-full flex items-center px-6 py-4">
                 <Search className="w-6 h-6 text-zinc-500 group-focus-within:text-emerald-400 transition-colors mr-4 rtl:ml-4 rtl:mr-0" />
                 <input
@@ -121,10 +133,10 @@ export default function Home() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <button className="w-full md:w-auto px-10 py-5 bg-white hover:bg-emerald-50 text-black font-bold text-lg rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3">
+              <button type="submit" className="w-full md:w-auto px-10 py-5 bg-white hover:bg-emerald-50 text-black font-bold text-lg rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3">
                 {t('searchButton')} <ArrowRight className="w-5 h-5 rtl:rotate-180" />
               </button>
-            </div>
+            </form>
             
             {/* Quick Filters */}
             <div className="flex flex-wrap justify-center gap-4 mt-8">
