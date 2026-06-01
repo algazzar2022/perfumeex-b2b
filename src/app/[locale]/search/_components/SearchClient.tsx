@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Search as SearchIcon, Filter, SlidersHorizontal, MapPin, Building2, Star, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 export default function SearchClient({ 
@@ -17,15 +17,33 @@ export default function SearchClient({
   initialResults: any[]; 
   locale: string;
 }) {
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const t = useTranslations("Dashboard.companyProfile.general.categoryOptions");
   
   const isAr = locale === 'ar';
 
+  const [searchQuery, setSearchQuery] = useState(initialQuery || searchParams.get("q") || "");
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(`/${locale}/search?q=${encodeURIComponent(searchQuery)}`);
+    const params = new URLSearchParams(searchParams.toString());
+    if (searchQuery.trim()) {
+      params.set("q", searchQuery);
+    } else {
+      params.delete("q");
+    }
+    router.push(`/${locale}/search?${params.toString()}`);
+  };
+
+  const applyFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (params.get(key) === value) {
+      params.delete(key); // Toggle off if already selected
+    } else {
+      params.set(key, value);
+    }
+    router.push(`/${locale}/search?${params.toString()}`);
   };
 
   return (
@@ -64,12 +82,17 @@ export default function SearchClient({
               <div className="mb-8">
                 <h3 className="text-zinc-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "التصنيف" : "Category"}</h3>
                 <div className="space-y-3">
-                  {["عطور محاكاة", "عطور جاهزة", "بخور", "زجاجات عطر", "تعبئة وتغليف"].map((cat) => (
-                    <label key={cat} className="flex items-center gap-3 group cursor-pointer">
-                      <div className="w-5 h-5 rounded border border-zinc-700 group-hover:border-emerald-500 flex items-center justify-center bg-black transition-colors" />
-                      <span className="text-zinc-300 group-hover:text-white transition-colors text-sm">{cat}</span>
-                    </label>
-                  ))}
+                  {["عطور محاكاة", "عطور جاهزة", "بخور", "زجاجات عطر", "تعبئة وتغليف"].map((cat) => {
+                    const isActive = searchParams.get("category") === cat;
+                    return (
+                      <label key={cat} onClick={() => applyFilter("category", cat)} className="flex items-center gap-3 group cursor-pointer">
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
+                          {isActive && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
+                        </div>
+                        <span className={`text-sm transition-colors ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>{cat}</span>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -80,12 +103,17 @@ export default function SearchClient({
                   {(isAr 
                     ? ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الشرقية", "المنوفية", "القليوبية", "البحيرة", "الغربية", "بور سعيد", "دمياط", "الإسماعيلية", "السويس", "كفر الشيخ", "الفيوم", "بني سويف", "مطروح", "شمال سيناء", "جنوب سيناء", "المنيا", "أسيوط", "سوهاج", "قنا", "البحر الأحمر", "الأقصر", "أسوان", "الوادي الجديد"]
                     : ["Cairo", "Giza", "Alexandria", "Dakahlia", "Red Sea", "Beheira", "Fayoum", "Gharbia", "Ismailia", "Monufia", "Minya", "Qalyubia", "New Valley", "Suez", "Aswan", "Assiut", "Beni Suef", "Port Said", "Damietta", "Sharqia", "South Sinai", "Kafr El Sheikh", "Matrouh", "Luxor", "Qena", "North Sinai", "Sohag"]
-                  ).map((loc) => (
-                    <label key={loc} className="flex items-center gap-3 group cursor-pointer">
-                      <div className="w-5 h-5 rounded border border-zinc-700 group-hover:border-emerald-500 flex items-center justify-center bg-black transition-colors shrink-0" />
-                      <span className="text-zinc-300 group-hover:text-white transition-colors text-sm">{loc}</span>
-                    </label>
-                  ))}
+                  ).map((loc) => {
+                    const isActive = searchParams.get("location") === loc;
+                    return (
+                      <label key={loc} onClick={() => applyFilter("location", loc)} className="flex items-center gap-3 group cursor-pointer">
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
+                          {isActive && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
+                        </div>
+                        <span className={`text-sm transition-colors ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>{loc}</span>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
 

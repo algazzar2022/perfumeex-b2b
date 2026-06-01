@@ -6,17 +6,21 @@ export default async function SearchPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; category?: string; location?: string }>;
 }) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const query = resolvedSearchParams.q || "";
+  const category = resolvedSearchParams.category || "";
+  const location = resolvedSearchParams.location || "";
 
   let companies: any[] = [];
 
-  if (query.trim() !== "") {
-    companies = await prisma.company.findMany({
-      where: {
+  if (query.trim() !== "" || category.trim() !== "" || location.trim() !== "") {
+    const andConditions: any[] = [];
+
+    if (query.trim() !== "") {
+      andConditions.push({
         OR: [
           { nameEn: { contains: query } },
           { nameAr: { contains: query } },
@@ -26,6 +30,29 @@ export default async function SearchPage({
           { governorateEn: { contains: query } },
           { governorateAr: { contains: query } },
         ],
+      });
+    }
+
+    if (category.trim() !== "") {
+      andConditions.push({
+        category: { contains: category },
+      });
+    }
+
+    if (location.trim() !== "") {
+      andConditions.push({
+        OR: [
+          { governorateEn: { contains: location } },
+          { governorateAr: { contains: location } },
+          { cityEn: { contains: location } },
+          { cityAr: { contains: location } },
+        ],
+      });
+    }
+
+    companies = await prisma.company.findMany({
+      where: {
+        AND: andConditions,
       },
       include: {
         products: {
@@ -35,7 +62,7 @@ export default async function SearchPage({
       take: 20, // Limit results
     });
   } else {
-    // If no query, return empty results
+    // If no query or filters, return empty results
     companies = [];
   }
 
