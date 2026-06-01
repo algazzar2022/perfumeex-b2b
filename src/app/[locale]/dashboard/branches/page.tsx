@@ -10,9 +10,12 @@ type Branch = {
   id: string;
   nameEn: string;
   nameAr: string;
-  country: string;
-  governorate: string;
-  city: string;
+  countryAr: string;
+  countryEn: string;
+  governorateAr: string;
+  governorateEn: string;
+  cityAr: string;
+  cityEn: string;
   addressEn: string;
   addressAr: string;
   phone: string;
@@ -33,9 +36,12 @@ export default function BranchesPage() {
   const [formData, setFormData] = useState({
     nameEn: "",
     nameAr: "",
-    country: "",
-    governorate: "",
-    city: "",
+    countryAr: "",
+    countryEn: "",
+    governorateAr: "",
+    governorateEn: "",
+    cityAr: "",
+    cityEn: "",
     addressEn: "",
     addressAr: "",
     phone: ""
@@ -65,9 +71,12 @@ export default function BranchesPage() {
       setFormData({
         nameEn: branch.nameEn || "",
         nameAr: branch.nameAr || "",
-        country: branch.country || "",
-        governorate: branch.governorate || "",
-        city: branch.city || "",
+        countryAr: branch.countryAr || "",
+        countryEn: branch.countryEn || "",
+        governorateAr: branch.governorateAr || "",
+        governorateEn: branch.governorateEn || "",
+        cityAr: branch.cityAr || "",
+        cityEn: branch.cityEn || "",
         addressEn: branch.addressEn || "",
         addressAr: branch.addressAr || "",
         phone: branch.phone || ""
@@ -75,7 +84,7 @@ export default function BranchesPage() {
     } else {
       setEditingBranch(null);
       setFormData({
-        nameEn: "", nameAr: "", country: "", governorate: "", city: "", addressEn: "", addressAr: "", phone: ""
+        nameEn: "", nameAr: "", countryAr: "", countryEn: "", governorateAr: "", governorateEn: "", cityAr: "", cityEn: "", addressEn: "", addressAr: "", phone: ""
       });
     }
     setIsFormOpen(true);
@@ -175,18 +184,36 @@ export default function BranchesPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.country")}</label>
-                <input type="text" value={formData.country} onChange={(e) => setFormData({...formData, country: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.country")} (English)</label>
+                <input type="text" value={formData.countryEn} onChange={(e) => setFormData({...formData, countryEn: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.governorate")}</label>
-                <input type="text" value={formData.governorate} onChange={(e) => setFormData({...formData, governorate: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.country")} (Arabic)</label>
+                <input type="text" value={formData.countryAr} onChange={(e) => setFormData({...formData, countryAr: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" dir="rtl" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.governorate")} (English)</label>
+                <input type="text" value={formData.governorateEn} onChange={(e) => setFormData({...formData, governorateEn: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.city")}</label>
-                <input type="text" value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.governorate")} (Arabic)</label>
+                <input type="text" value={formData.governorateAr} onChange={(e) => setFormData({...formData, governorateAr: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" dir="rtl" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.city")} (English)</label>
+                <input type="text" value={formData.cityEn} onChange={(e) => setFormData({...formData, cityEn: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.city")} (Arabic)</label>
+                <input type="text" value={formData.cityAr} onChange={(e) => setFormData({...formData, cityAr: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" dir="rtl" />
               </div>
             </div>
 
@@ -244,7 +271,14 @@ export default function BranchesPage() {
                 <div className="space-y-2 mt-4 pt-4 border-t border-white/5">
                   <div className="flex items-start gap-2 text-sm text-zinc-400">
                     <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-emerald-500" />
-                    <span>{[branch.addressAr || branch.addressEn, branch.city, branch.governorate, branch.country].filter(Boolean).join("، ")}</span>
+                    <span>
+                      {[
+                        locale === 'ar' ? (branch.addressAr || branch.addressEn) : (branch.addressEn || branch.addressAr),
+                        locale === 'ar' ? (branch.cityAr || branch.cityEn) : (branch.cityEn || branch.cityAr),
+                        locale === 'ar' ? (branch.governorateAr || branch.governorateEn) : (branch.governorateEn || branch.governorateAr),
+                        locale === 'ar' ? (branch.countryAr || branch.countryEn) : (branch.countryEn || branch.countryAr)
+                      ].filter(Boolean).join("، ")}
+                    </span>
                   </div>
                   {branch.phone && (
                     <div className="flex items-center gap-2 text-sm text-zinc-400">

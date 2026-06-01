@@ -30,9 +30,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       data: {
         nameEn: body.nameEn,
         nameAr: body.nameAr,
-        country: body.country,
-        governorate: body.governorate,
-        city: body.city,
+        countryAr: body.countryAr,
+        countryEn: body.countryEn,
+        governorateAr: body.governorateAr,
+        governorateEn: body.governorateEn,
+        cityAr: body.cityAr,
+        cityEn: body.cityEn,
         addressEn: body.addressEn,
         addressAr: body.addressAr,
         phone: body.phone

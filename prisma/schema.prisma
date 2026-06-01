@@ -98,9 +98,12 @@ model Branch {
   addressAr   String?
   addressEn   String?
   
-  country     String?
-  governorate String?
-  city        String?
+  countryAr     String?
+  countryEn     String?
+  governorateAr String?
+  governorateEn String?
+  cityAr        String?
+  cityEn        String?
   phone       String?
   latitude    Float?
   longitude   Float?
