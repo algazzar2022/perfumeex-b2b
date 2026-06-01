@@ -14,7 +14,8 @@ import {
   LogOut,
   Menu,
   X,
-  ExternalLink
+  ExternalLink,
+  Loader2
 } from "lucide-react";
 import LanguageSwitcher from "../../../components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
@@ -27,6 +28,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [slug, setSlug] = useState<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -156,9 +158,16 @@ export default function DashboardLayout({
               </div>
             </div>
             
-            <button onClick={() => signOut({ callbackUrl: '/' })} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors">
-              <LogOut className="w-5 h-5" />
-              <span className="font-bold">{t("sidebar.logout")}</span>
+            <button 
+              onClick={async () => {
+                setIsLoggingOut(true);
+                await signOut({ callbackUrl: '/' });
+              }} 
+              disabled={isLoggingOut}
+              className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors disabled:opacity-50"
+            >
+              {isLoggingOut ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogOut className="w-5 h-5" />}
+              <span className="font-bold">{isLoggingOut ? (locale === 'ar' ? 'جاري تسجيل الخروج...' : 'Logging out...') : t("sidebar.logout")}</span>
             </button>
           </div>
         </div>
