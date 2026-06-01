@@ -43,7 +43,9 @@ model Company {
   
   category    String?
   country     String?
+  governorate String?
   city        String?
+  address     String?
   
   whatsapp    String?
   email       String?

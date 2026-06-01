@@ -159,7 +159,9 @@
           "glassBottles": "Glass Bottles"
         },
         "country": "Country",
-        "city": "City/Governorate"
+        "governorate": "Governorate",
+        "city": "City",
+        "address": "Detailed Address"
       },
       "media": {
         "title": "Brand Media",

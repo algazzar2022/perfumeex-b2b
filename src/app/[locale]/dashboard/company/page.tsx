@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Save, UploadCloud, Building2, MapPin, Globe, Phone, Mail, FileText, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Save, UploadCloud, Building2, MapPin, Globe, Phone, Mail, FileText, Loader2, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
@@ -11,13 +11,16 @@ export default function CompanySettingsPage() {
   const [activeSection, setActiveSection] = useState("general");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const [formData, setFormData] = useState({
     nameEn: "",
     nameAr: "",
     category: "readyPerfumes",
     country: "",
+    governorate: "",
     city: "",
+    address: "",
     whatsapp: "",
     email: "",
     facebook: "",
@@ -41,8 +44,10 @@ export default function CompanySettingsPage() {
           nameEn: data.nameEn || "",
           nameAr: data.nameAr || "",
           category: data.category || "readyPerfumes",
-          country: data.country || "United Arab Emirates", // Hardcoded for now
-          city: "Dubai", // Hardcoded for now
+          country: data.country || "",
+          governorate: data.governorate || "",
+          city: data.city || "",
+          address: data.address || "",
           whatsapp: data.whatsapp || "",
           email: data.email || "",
           facebook: data.facebook || "",
@@ -86,7 +91,8 @@ export default function CompanySettingsPage() {
         body: JSON.stringify(formData)
       });
       if (res.ok) {
-        alert(t("title") ? "تم حفظ التغييرات بنجاح / Changes saved successfully!" : "Saved");
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
       } else {
         alert("Failed to save changes. Please try again.");
       }
@@ -103,8 +109,23 @@ export default function CompanySettingsPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto pb-20">
+    <div className="max-w-5xl mx-auto pb-20 relative">
       
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-black px-6 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center gap-2"
+          >
+            <CheckCircle2 className="w-5 h-5" />
+            {t("title") ? "تم حفظ التغييرات بنجاح" : "Changes saved successfully"}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10">
         <div>
@@ -207,11 +228,31 @@ export default function CompanySettingsPage() {
                       />
                     </div>
                     <div>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.governorate")}</label>
+                      <input 
+                        type="text" 
+                        value={formData.governorate}
+                        onChange={(e) => setFormData({...formData, governorate: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
                       <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.city")}</label>
                       <input 
                         type="text" 
                         value={formData.city}
                         onChange={(e) => setFormData({...formData, city: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.address")}</label>
+                      <input 
+                        type="text" 
+                        value={formData.address}
+                        onChange={(e) => setFormData({...formData, address: e.target.value})}
                         className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
                       />
                     </div>
