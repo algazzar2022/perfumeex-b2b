@@ -12,29 +12,14 @@ export default function DashboardGallery() {
   const locale = useParams().locale as string;
 
   const [media, setMedia] = useState<any[]>([]);
-  const [catalogPdf, setCatalogPdf] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
-  const [isUploadingPdf, setIsUploadingPdf] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     fetchGallery();
-    fetchProfile();
   }, []);
-
-  const fetchProfile = async () => {
-    try {
-      const res = await fetch("/api/company/profile");
-      if (res.ok) {
-        const data = await res.json();
-        setCatalogPdf(data.catalogPdf);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const fetchGallery = async () => {
     try {
@@ -87,50 +72,6 @@ export default function DashboardGallery() {
     reader.readAsDataURL(file);
   };
 
-  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 200 * 1024 * 1024) {
-      alert(locale === 'ar' ? "حجم الملف يجب أن لا يتجاوز 200 ميجابايت" : "File must be smaller than 200MB");
-      return;
-    }
-
-    if (file.type !== "application/pdf") {
-      alert(locale === 'ar' ? "يجب أن يكون الملف بصيغة PDF" : "File must be a PDF");
-      return;
-    }
-
-    setIsUploadingPdf(true);
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64Str = event.target?.result as string;
-      
-      try {
-        const res = await fetch("/api/company/profile", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ catalogPdf: base64Str })
-        });
-        
-        if (res.ok) {
-          await fetchProfile();
-          setToastMessage(locale === 'ar' ? 'تم رفع الكتالوج بنجاح' : 'Catalog uploaded successfully');
-          setShowToast(true);
-          setTimeout(() => setShowToast(false), 3000);
-        } else {
-          alert(locale === 'ar' ? 'حدث خطأ. قد يكون حجم الملف كبيراً جداً على الخادم.' : 'Error. The file might be too large for the server.');
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsUploadingPdf(false);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
   const handleDelete = async (id: string) => {
     if (!confirm(t("deleteConfirm"))) return;
     try {
@@ -165,61 +106,6 @@ export default function DashboardGallery() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Catalog PDF Section */}
-      <div className="bg-zinc-950/50 border border-white/10 rounded-3xl p-8 mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-2">
-              {locale === 'ar' ? 'كتالوج / قائمة الأسعار (PDF)' : 'Catalog / Price List (PDF)'}
-            </h2>
-            <p className="text-zinc-400">
-              {locale === 'ar' 
-                ? 'ارفع ملف PDF يحتوي على كتالوج منتجاتك أو قائمة الأسعار الخاصة بالشركة. (الحد الأقصى 200 ميجابايت)'
-                : 'Upload a PDF file containing your product catalog or price list. (Max 200MB)'}
-            </p>
-          </div>
-          <div className="flex items-center gap-4 shrink-0">
-            {catalogPdf ? (
-              <>
-                <a 
-                  href={catalogPdf} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="px-6 py-2.5 bg-zinc-800 text-white font-bold rounded-xl hover:bg-zinc-700 transition-colors"
-                >
-                  {locale === 'ar' ? 'عرض الكتالوج' : 'View Catalog'}
-                </a>
-                <button 
-                  onClick={async () => {
-                    if (!confirm(locale === 'ar' ? 'هل أنت متأكد من حذف الكتالوج؟' : 'Are you sure you want to delete the catalog?')) return;
-                    try {
-                      await fetch("/api/company/profile", {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ catalogPdf: null })
-                      });
-                      setCatalogPdf(null);
-                      setToastMessage(locale === 'ar' ? 'تم حذف الكتالوج' : 'Catalog deleted');
-                      setShowToast(true);
-                      setTimeout(() => setShowToast(false), 3000);
-                    } catch(e) {}
-                  }}
-                  className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-colors"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </>
-            ) : (
-              <label className={`px-6 py-2.5 ${isUploadingPdf ? 'bg-zinc-800 text-zinc-400' : 'bg-emerald-500 text-black hover:bg-emerald-400'} font-bold rounded-xl transition-colors flex items-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.2)]`}>
-                {isUploadingPdf ? <Loader2 className="w-5 h-5 animate-spin" /> : <UploadCloud className="w-5 h-5" />} 
-                {isUploadingPdf ? (locale === 'ar' ? 'جاري الرفع...' : 'Uploading...') : (locale === 'ar' ? 'رفع الكتالوج' : 'Upload Catalog')}
-                <input type="file" accept="application/pdf" className="hidden" disabled={isUploadingPdf} onChange={handlePdfUpload} />
-              </label>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10">
