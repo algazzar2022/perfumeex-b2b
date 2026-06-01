@@ -189,33 +189,33 @@ export default function ProductsManagementPage() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Product Name (English)</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.nameEn")}</label>
                 <input type="text" value={formData.nameEn} onChange={(e) => setFormData({...formData, nameEn: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Product Name (Arabic)</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.nameAr")}</label>
                 <input type="text" value={formData.nameAr} onChange={(e) => setFormData({...formData, nameAr: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" dir="rtl" />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Description (English)</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.descriptionEn")}</label>
                 <textarea value={formData.descriptionEn} onChange={(e) => setFormData({...formData, descriptionEn: e.target.value})} rows={3} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors resize-none" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Description (Arabic)</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.descriptionAr")}</label>
                 <textarea value={formData.descriptionAr} onChange={(e) => setFormData({...formData, descriptionAr: e.target.value})} rows={3} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors resize-none" dir="rtl" />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Price (Optional)</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.price")}</label>
                 <input type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Stock Status</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.stockStatus")}</label>
                 <select value={formData.stockStatus} onChange={(e) => setFormData({...formData, stockStatus: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none">
                   <option value="IN_STOCK">{t("status.inStock")}</option>
                   <option value="LOW_STOCK">{t("status.lowStock")}</option>
@@ -223,7 +223,7 @@ export default function ProductsManagementPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Sales Type</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.salesType")}</label>
                 <select value={formData.salesType} onChange={(e) => setFormData({...formData, salesType: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none">
                   <option value="WHOLESALE">{t("type.wholesale")}</option>
                   <option value="RETAIL">{t("type.retail")}</option>
@@ -232,7 +232,7 @@ export default function ProductsManagementPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Product Image</label>
+              <label className="block text-sm font-medium text-zinc-400 mb-2">{t("form.image")}</label>
               <div className="flex items-center gap-6">
                 {formData.image && (
                   <div className="w-24 h-24 rounded-2xl bg-zinc-900 border border-white/10 overflow-hidden relative shadow-xl">
@@ -242,17 +242,17 @@ export default function ProductsManagementPage() {
                 <label className="flex-1 border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-zinc-900/50 hover:bg-zinc-900 transition-colors cursor-pointer group">
                   <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                   <UploadCloud className="w-6 h-6 text-zinc-500 group-hover:text-emerald-400 transition-colors mb-2" />
-                  <p className="text-sm text-zinc-300 font-medium">Click to upload image</p>
+                  <p className="text-sm text-zinc-300 font-medium">{t("form.uploadHint")}</p>
                 </label>
               </div>
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
               <button onClick={() => setIsFormOpen(false)} className="px-6 py-2.5 bg-zinc-800 text-white font-bold rounded-xl hover:bg-zinc-700 transition-colors">
-                Cancel
+                {t("form.cancel")}
               </button>
               <button onClick={handleSave} disabled={isSaving} className="px-6 py-2.5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400 transition-colors flex items-center gap-2">
-                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : null} Save Product
+                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : null} {t("form.save")}
               </button>
             </div>
           </div>

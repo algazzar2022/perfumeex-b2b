@@ -222,6 +222,19 @@
       "type": {
         "wholesale": "Wholesale Only",
         "retail": "Retail & Wholesale"
+      },
+      "form": {
+        "nameEn": "Product Name (English)",
+        "nameAr": "Product Name (Arabic)",
+        "descriptionEn": "Description (English)",
+        "descriptionAr": "Description (Arabic)",
+        "price": "Price (Optional)",
+        "stockStatus": "Stock Status",
+        "salesType": "Sales Type",
+        "image": "Product Image",
+        "uploadHint": "Click to upload image",
+        "cancel": "Cancel",
+        "save": "Save Product"
       }
     }
   }
