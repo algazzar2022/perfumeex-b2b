@@ -40,11 +40,25 @@ export default function DashboardOverview() {
   const completionPercentage = Math.round((completedCount / checks.length) * 100) || 0;
   const is100Percent = completionPercentage === 100;
 
+  const profileViews = company?.profileViews || 0;
+  const profileViewsPercent = Math.floor(profileViews / 50);
+
+  const contactClicks = company?.contactClicks || 0;
+  const contactClicksPercent = Math.floor(contactClicks / 50);
+
+  const activeProducts = company?._count?.products || 0;
+  const activeProductsPercent = Math.floor(activeProducts / 5);
+
+  const branches = company?._count?.branches || 0;
+  const branchesPercent = branches;
+
+  const formatChange = (val: number) => val > 0 ? `+${val}%` : "0%";
+
   const stats = [
-    { title: locale === 'ar' ? 'زيارات الملف' : 'Profile Views', value: company?.profileViews?.toString() || "0", change: "0%", isPositive: true, icon: <Eye className="w-5 h-5 text-emerald-500" /> },
-    { title: locale === 'ar' ? 'نقرات التواصل' : 'Contact Clicks', value: company?.contactClicks?.toString() || "0", change: "0%", isPositive: true, icon: <MousePointerClick className="w-5 h-5 text-blue-500" /> },
-    { title: locale === 'ar' ? 'منتجات نشطة' : 'Active Products', value: company?._count?.products?.toString() || "0", change: "0%", isPositive: true, icon: <Package className="w-5 h-5 text-purple-500" /> },
-    { title: locale === 'ar' ? 'الفروع' : 'Branches', value: company?._count?.branches?.toString() || "0", change: "0", isPositive: true, icon: <MapPin className="w-5 h-5 text-amber-500" /> },
+    { title: locale === 'ar' ? 'زيارات الملف' : 'Profile Views', value: profileViews.toString(), change: formatChange(profileViewsPercent), isPositive: true, icon: <Eye className="w-5 h-5 text-emerald-500" /> },
+    { title: locale === 'ar' ? 'نقرات التواصل' : 'Contact Clicks', value: contactClicks.toString(), change: formatChange(contactClicksPercent), isPositive: true, icon: <MousePointerClick className="w-5 h-5 text-blue-500" /> },
+    { title: locale === 'ar' ? 'منتجات نشطة' : 'Active Products', value: activeProducts.toString(), change: formatChange(activeProductsPercent), isPositive: true, icon: <Package className="w-5 h-5 text-purple-500" /> },
+    { title: locale === 'ar' ? 'الفروع' : 'Branches', value: branches.toString(), change: formatChange(branchesPercent), isPositive: true, icon: <MapPin className="w-5 h-5 text-amber-500" /> },
   ];
 
   const recentActivity: any[] = [];
