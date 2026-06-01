@@ -1,14 +1,84 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Save, UploadCloud, Building2, MapPin, Globe, Phone, Mail, FileText, CheckCircle2 } from "lucide-react";
+import { Save, UploadCloud, Building2, MapPin, Globe, Phone, Mail, FileText, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export default function CompanySettingsPage() {
+  const t = useTranslations("CompanyProfile");
   const [activeSection, setActiveSection] = useState("general");
-  const [logoPreview, setLogoPreview] = useState("https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=200&h=200");
-  const [coverPreview, setCoverPreview] = useState("https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1920&h=600");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [formData, setFormData] = useState({
+    nameEn: "",
+    nameAr: "",
+    country: "",
+    city: "",
+    whatsapp: "",
+    email: "",
+    facebook: "",
+    descriptionEn: "",
+    descriptionAr: "",
+    logo: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=200&h=200",
+    coverImage: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1920&h=600",
+    catalogPdf: ""
+  });
+
+  useEffect(() => {
+    fetchCompanyData();
+  }, []);
+
+  const fetchCompanyData = async () => {
+    try {
+      const res = await fetch("/api/company/profile");
+      if (res.ok) {
+        const data = await res.json();
+        setFormData({
+          nameEn: data.nameEn || "",
+          nameAr: data.nameAr || "",
+          country: "United Arab Emirates", // Hardcoded for now
+          city: "Dubai", // Hardcoded for now
+          whatsapp: data.whatsapp || "",
+          email: data.email || "",
+          facebook: data.facebook || "",
+          descriptionEn: data.descriptionEn || "",
+          descriptionAr: data.descriptionAr || "",
+          logo: data.logo || "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=200&h=200",
+          coverImage: data.coverImage || "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1920&h=600",
+          catalogPdf: data.catalogPdf || ""
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/company/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      if (res.ok) {
+        // Show success message
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-64"><Loader2 className="w-8 h-8 animate-spin text-emerald-500" /></div>;
+  }
 
   return (
     <div className="max-w-5xl mx-auto pb-20">
@@ -16,15 +86,19 @@ export default function CompanySettingsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Company Profile</h1>
-          <p className="text-zinc-400">Manage your brand's public presence on PerfumeEx.</p>
+          <h1 className="text-3xl font-bold text-white mb-2">{t("title")}</h1>
+          <p className="text-zinc-400">{t("subtitle")}</p>
         </div>
         <div className="flex gap-3">
           <button className="px-6 py-2.5 bg-zinc-800 text-white font-bold rounded-xl hover:bg-zinc-700 transition-colors border border-white/5">
-            Save Draft
+            {t("saveDraft")}
           </button>
-          <button className="px-6 py-2.5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-            <Save className="w-4 h-4" /> Publish Changes
+          <button 
+            onClick={handleSave}
+            disabled={isSaving}
+            className="px-6 py-2.5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.2)] disabled:opacity-70"
+          >
+            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} {t("publish")}
           </button>
         </div>
       </div>
@@ -35,10 +109,10 @@ export default function CompanySettingsPage() {
         <div className="w-full md:w-64 shrink-0">
           <div className="bg-zinc-950 border border-white/5 rounded-2xl p-4 sticky top-28 space-y-2">
             {[
-              { id: 'general', name: 'General Info', icon: <Building2 className="w-4 h-4" /> },
-              { id: 'media', name: 'Brand Media', icon: <UploadCloud className="w-4 h-4" /> },
-              { id: 'contact', name: 'Contact & Links', icon: <Phone className="w-4 h-4" /> },
-              { id: 'about', name: 'About Company', icon: <FileText className="w-4 h-4" /> },
+              { id: 'general', name: t("tabs.general"), icon: <Building2 className="w-4 h-4" /> },
+              { id: 'media', name: t("tabs.media"), icon: <UploadCloud className="w-4 h-4" /> },
+              { id: 'contact', name: t("tabs.contact"), icon: <Phone className="w-4 h-4" /> },
+              { id: 'about', name: t("tabs.about"), icon: <FileText className="w-4 h-4" /> },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -62,20 +136,31 @@ export default function CompanySettingsPage() {
           {activeSection === "general" && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               <div className="bg-zinc-950 border border-white/5 p-8 rounded-3xl">
-                <h2 className="text-xl font-bold text-white mb-6">General Information</h2>
+                <h2 className="text-xl font-bold text-white mb-6">{t("general.title")}</h2>
                 <div className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-2">Company Name (English)</label>
-                      <input type="text" defaultValue="Luxe Fragrance Co." className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.nameEn")}</label>
+                      <input 
+                        type="text" 
+                        value={formData.nameEn}
+                        onChange={(e) => setFormData({...formData, nameEn: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-2">Company Name (Arabic)</label>
-                      <input type="text" defaultValue="شركة لوكس للعطور" dir="rtl" className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors font-cairo" />
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.nameAr")}</label>
+                      <input 
+                        type="text" 
+                        value={formData.nameAr}
+                        onChange={(e) => setFormData({...formData, nameAr: e.target.value})}
+                        dir="rtl" 
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors font-cairo" 
+                      />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-zinc-400 mb-2">Main Category</label>
+                    <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.category")}</label>
                     <select className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none">
                       <option>Ready Perfumes</option>
                       <option>Clone Perfumes</option>
@@ -87,12 +172,22 @@ export default function CompanySettingsPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-2">Country</label>
-                      <input type="text" defaultValue="United Arab Emirates" className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.country")}</label>
+                      <input 
+                        type="text" 
+                        value={formData.country}
+                        onChange={(e) => setFormData({...formData, country: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-2">City</label>
-                      <input type="text" defaultValue="Dubai" className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.city")}</label>
+                      <input 
+                        type="text" 
+                        value={formData.city}
+                        onChange={(e) => setFormData({...formData, city: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                      />
                     </div>
                   </div>
                 </div>
@@ -104,33 +199,33 @@ export default function CompanySettingsPage() {
           {activeSection === "media" && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               <div className="bg-zinc-950 border border-white/5 p-8 rounded-3xl">
-                <h2 className="text-xl font-bold text-white mb-6">Brand Media</h2>
+                <h2 className="text-xl font-bold text-white mb-6">{t("media.title")}</h2>
                 
                 {/* Logo Upload */}
                 <div className="mb-8">
-                  <label className="block text-sm font-medium text-zinc-400 mb-4">Company Logo</label>
+                  <label className="block text-sm font-medium text-zinc-400 mb-4">{t("media.logo")}</label>
                   <div className="flex items-center gap-6">
                     <div className="w-24 h-24 rounded-2xl bg-zinc-900 border border-white/10 overflow-hidden relative shadow-xl">
-                      <Image src={logoPreview} alt="Logo Preview" fill className="object-cover" />
+                      <Image src={formData.logo} alt="Logo Preview" fill className="object-cover" />
                     </div>
                     <div className="flex-1 border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-zinc-900/50 hover:bg-zinc-900 transition-colors cursor-pointer group">
                       <UploadCloud className="w-6 h-6 text-zinc-500 group-hover:text-emerald-400 transition-colors mb-2" />
-                      <p className="text-sm text-zinc-300 font-medium">Click to upload logo</p>
-                      <p className="text-xs text-zinc-500 mt-1">SVG, PNG, JPG (max 2MB)</p>
+                      <p className="text-sm text-zinc-300 font-medium">{t("media.uploadLogoText")}</p>
+                      <p className="text-xs text-zinc-500 mt-1">{t("media.uploadLogoHint")}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Cover Upload */}
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-4">Cover Banner</label>
+                  <label className="block text-sm font-medium text-zinc-400 mb-4">{t("media.cover")}</label>
                   <div className="border-2 border-dashed border-white/10 rounded-2xl p-2 relative group cursor-pointer hover:border-emerald-500/50 transition-colors bg-zinc-900/50">
                     <div className="relative h-48 w-full rounded-xl overflow-hidden opacity-50 group-hover:opacity-100 transition-opacity">
-                      <Image src={coverPreview} alt="Cover Preview" fill className="object-cover" />
+                      <Image src={formData.coverImage} alt="Cover Preview" fill className="object-cover" />
                     </div>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <div className="bg-black/60 backdrop-blur-md px-6 py-3 rounded-full flex items-center gap-2 text-white font-bold text-sm border border-white/10">
-                        <UploadCloud className="w-5 h-5" /> Replace Cover
+                        <UploadCloud className="w-5 h-5" /> {t("media.replaceCover")}
                       </div>
                     </div>
                   </div>
@@ -144,27 +239,42 @@ export default function CompanySettingsPage() {
           {activeSection === "contact" && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               <div className="bg-zinc-950 border border-white/5 p-8 rounded-3xl">
-                <h2 className="text-xl font-bold text-white mb-6">Contact & Social Links</h2>
+                <h2 className="text-xl font-bold text-white mb-6">{t("contact.title")}</h2>
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-zinc-400 mb-2">WhatsApp Number</label>
+                    <label className="block text-sm font-medium text-zinc-400 mb-2">{t("contact.whatsapp")}</label>
                     <div className="relative">
                       <Phone className="w-5 h-5 text-emerald-500 absolute top-3.5 ltr:left-4 rtl:right-4" />
-                      <input type="text" defaultValue="+971 50 123 4567" className="w-full bg-zinc-900 border border-white/10 rounded-xl ltr:pl-12 rtl:pr-12 ltr:pr-4 rtl:pl-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors dir-ltr text-left" />
+                      <input 
+                        type="text" 
+                        value={formData.whatsapp}
+                        onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl ltr:pl-12 rtl:pr-12 ltr:pr-4 rtl:pl-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors dir-ltr text-left" 
+                      />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-zinc-400 mb-2">Email Address</label>
+                    <label className="block text-sm font-medium text-zinc-400 mb-2">{t("contact.email")}</label>
                     <div className="relative">
                       <Mail className="w-5 h-5 text-emerald-500 absolute top-3.5 ltr:left-4 rtl:right-4" />
-                      <input type="email" defaultValue="contact@luxefragrance.com" className="w-full bg-zinc-900 border border-white/10 rounded-xl ltr:pl-12 rtl:pr-12 ltr:pr-4 rtl:pl-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                      <input 
+                        type="email" 
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl ltr:pl-12 rtl:pr-12 ltr:pr-4 rtl:pl-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                      />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-zinc-400 mb-2">Website</label>
+                    <label className="block text-sm font-medium text-zinc-400 mb-2">{t("contact.facebook")}</label>
                     <div className="relative">
                       <Globe className="w-5 h-5 text-emerald-500 absolute top-3.5 ltr:left-4 rtl:right-4" />
-                      <input type="url" defaultValue="https://luxefragrance.com" className="w-full bg-zinc-900 border border-white/10 rounded-xl ltr:pl-12 rtl:pr-12 ltr:pr-4 rtl:pl-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors dir-ltr text-left" />
+                      <input 
+                        type="url" 
+                        value={formData.facebook}
+                        onChange={(e) => setFormData({...formData, facebook: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl ltr:pl-12 rtl:pr-12 ltr:pr-4 rtl:pl-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors dir-ltr text-left" 
+                      />
                     </div>
                   </div>
                 </div>
@@ -176,9 +286,9 @@ export default function CompanySettingsPage() {
           {activeSection === "about" && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               <div className="bg-zinc-950 border border-white/5 p-8 rounded-3xl">
-                <h2 className="text-xl font-bold text-white mb-6">About Company</h2>
+                <h2 className="text-xl font-bold text-white mb-6">{t("about.title")}</h2>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-2">Company Story / Description</label>
+                  <label className="block text-sm font-medium text-zinc-400 mb-2">{t("about.description")}</label>
                   <div className="bg-zinc-900 border border-white/10 rounded-xl overflow-hidden focus-within:border-emerald-500 transition-colors">
                     {/* Fake rich text toolbar */}
                     <div className="border-b border-white/5 px-4 py-2 flex items-center gap-3 bg-zinc-950/50">
@@ -191,7 +301,8 @@ export default function CompanySettingsPage() {
                     </div>
                     <textarea 
                       rows={8}
-                      defaultValue="Luxe Fragrance Co. is a premier perfume manufacturer based in Dubai, specializing in the creation of authentic oriental and modern French perfumes. With over 20 years of experience, we provide end-to-end fragrance development, from scent creation to final packaging."
+                      value={formData.descriptionAr}
+                      onChange={(e) => setFormData({...formData, descriptionAr: e.target.value})}
                       className="w-full bg-transparent p-4 text-white outline-none resize-y leading-relaxed font-light"
                     />
                   </div>

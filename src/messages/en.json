@@ -132,6 +132,49 @@
         "time2": "5 hours ago",
         "time3": "1 day ago"
       }
+    },
+    "companyProfile": {
+      "title": "Company Profile",
+      "subtitle": "Manage your brand's public presence on PerfumeEx.",
+      "saveDraft": "Save Draft",
+      "publish": "Publish Changes",
+      "tabs": {
+        "general": "General Info",
+        "media": "Brand Media",
+        "contact": "Contact & Links",
+        "about": "About Company",
+        "catalog": "Catalog"
+      },
+      "general": {
+        "title": "General Information",
+        "nameEn": "Company Name (English)",
+        "nameAr": "Company Name (Arabic)",
+        "category": "Main Category",
+        "country": "Country",
+        "city": "City/Governorate"
+      },
+      "media": {
+        "title": "Brand Media",
+        "logo": "Company Logo",
+        "uploadLogoText": "Click to upload logo",
+        "uploadLogoHint": "SVG, PNG, JPG (max 2MB)",
+        "cover": "Cover Banner",
+        "replaceCover": "Replace Cover"
+      },
+      "contact": {
+        "title": "Contact & Social Links",
+        "whatsapp": "WhatsApp Number",
+        "email": "Email Address",
+        "facebook": "Facebook Page"
+      },
+      "about": {
+        "title": "About Company",
+        "description": "Company Story / Description"
+      },
+      "catalog": {
+        "title": "PDF Catalog",
+        "upload": "Upload Catalog"
+      }
     }
   }
 }
