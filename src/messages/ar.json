@@ -150,6 +150,14 @@
         "nameEn": "اسم الشركة (بالانجليزية)",
         "nameAr": "اسم الشركة (بالعربية)",
         "category": "التصنيف الرئيسي",
+        "categoryOptions": {
+          "readyPerfumes": "عطور جاهزة",
+          "clonePerfumes": "عطور تركيب",
+          "bakhoor": "بخور ومعطرات",
+          "airFresheners": "معطرات جو",
+          "packaging": "تعبئة وتغليف",
+          "glassBottles": "زجاجات فارغة"
+        },
         "country": "الدولة",
         "city": "المدينة / المحافظة"
       },

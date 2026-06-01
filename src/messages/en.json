@@ -150,6 +150,14 @@
         "nameEn": "Company Name (English)",
         "nameAr": "Company Name (Arabic)",
         "category": "Main Category",
+        "categoryOptions": {
+          "readyPerfumes": "Ready Perfumes",
+          "clonePerfumes": "Clone Perfumes",
+          "bakhoor": "Bakhoor",
+          "airFresheners": "Air Fresheners",
+          "packaging": "Packaging",
+          "glassBottles": "Glass Bottles"
+        },
         "country": "Country",
         "city": "City/Governorate"
       },

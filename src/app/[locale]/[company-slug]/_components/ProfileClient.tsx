@@ -9,10 +9,14 @@ import { useTranslations } from "next-intl";
 
 export default function ProfileClient({ company, locale }: { company: any, locale: string }) {
   const [activeTab, setActiveTab] = useState("overview");
+  const t = useTranslations("Dashboard.companyProfile.general.categoryOptions");
 
   const displayName = locale === 'ar' ? (company.nameAr || company.nameEn) : company.nameEn;
   const description = locale === 'ar' ? (company.descriptionAr || company.descriptionEn) : company.descriptionEn;
   const location = locale === 'ar' ? "الإمارات العربية المتحدة" : "United Arab Emirates";
+  
+  // Try to get translated category, fallback to default if not found
+  const translatedCategory = company.category ? t(company.category as any) : (locale === 'ar' ? "عطور جاهزة" : "Ready Perfumes");
   
   const coverImage = company.coverImage || "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1920&h=600";
   const logoImage = company.logo || "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=200&h=200";
@@ -110,7 +114,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 </div>
                 <div>
                   <div className="text-zinc-500 text-sm">{locale === 'ar' ? "التصنيف" : "Category"}</div>
-                  <div className="text-white font-bold text-lg">{locale === 'ar' ? "عطور جاهزة" : "Ready Perfumes"}</div>
+                  <div className="text-white font-bold text-lg">{translatedCategory}</div>
                 </div>
               </div>
               <div className="flex-1 min-w-[150px] bg-zinc-950 border border-white/5 p-5 rounded-2xl flex items-center gap-4">

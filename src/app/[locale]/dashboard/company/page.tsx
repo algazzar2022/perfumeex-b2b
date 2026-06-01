@@ -15,6 +15,7 @@ export default function CompanySettingsPage() {
   const [formData, setFormData] = useState({
     nameEn: "",
     nameAr: "",
+    category: "readyPerfumes",
     country: "",
     city: "",
     whatsapp: "",
@@ -39,7 +40,8 @@ export default function CompanySettingsPage() {
         setFormData({
           nameEn: data.nameEn || "",
           nameAr: data.nameAr || "",
-          country: "United Arab Emirates", // Hardcoded for now
+          category: data.category || "readyPerfumes",
+          country: data.country || "United Arab Emirates", // Hardcoded for now
           city: "Dubai", // Hardcoded for now
           whatsapp: data.whatsapp || "",
           email: data.email || "",
@@ -161,13 +163,17 @@ export default function CompanySettingsPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.category")}</label>
-                    <select className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none">
-                      <option>Ready Perfumes</option>
-                      <option>Clone Perfumes</option>
-                      <option>Bakhoor</option>
-                      <option>Air Fresheners</option>
-                      <option>Packaging</option>
-                      <option>Glass Bottles</option>
+                    <select 
+                      value={formData.category}
+                      onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none"
+                    >
+                      <option value="readyPerfumes">{t("general.categoryOptions.readyPerfumes")}</option>
+                      <option value="clonePerfumes">{t("general.categoryOptions.clonePerfumes")}</option>
+                      <option value="bakhoor">{t("general.categoryOptions.bakhoor")}</option>
+                      <option value="airFresheners">{t("general.categoryOptions.airFresheners")}</option>
+                      <option value="packaging">{t("general.categoryOptions.packaging")}</option>
+                      <option value="glassBottles">{t("general.categoryOptions.glassBottles")}</option>
                     </select>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
