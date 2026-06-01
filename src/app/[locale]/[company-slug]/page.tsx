@@ -5,11 +5,13 @@ import ProfileClient from "./_components/ProfileClient";
 export default async function CompanyProfilePage({
   params,
 }: {
-  params: { locale: string; "company-slug": string };
+  params: Promise<{ locale: string; "company-slug": string }>;
 }) {
+  const resolvedParams = await params;
+  
   const company = await prisma.company.findUnique({
     where: {
-      slug: params["company-slug"],
+      slug: resolvedParams["company-slug"],
     },
     include: {
       products: true,
@@ -30,5 +32,5 @@ export default async function CompanyProfilePage({
     }
   }).catch(() => {});
 
-  return <ProfileClient company={company} locale={params.locale} />;
+  return <ProfileClient company={company} locale={resolvedParams.locale} />;
 }
