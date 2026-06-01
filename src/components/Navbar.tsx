@@ -4,15 +4,20 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search as SearchIcon, User } from "lucide-react";
+import { Menu, X, User, LayoutDashboard, LogOut } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslations } from "next-intl";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations("Navbar");
+  const { data: session, status } = useSession();
+
+  const locale = pathname.split('/')[1] || 'en';
+  const isAr = locale === 'ar';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,7 +34,6 @@ export default function Navbar() {
     { name: t("categories"), href: "/categories" },
   ];
 
-  // Helper to remove locale from pathname for comparison
   const isActive = (href: string) => {
     if (href === "/") return pathname.endsWith("/en") || pathname.endsWith("/ar");
     return pathname.includes(href);
@@ -49,7 +53,7 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href={`/${pathname.split('/')[1] || 'en'}`} className="text-2xl font-bold text-white tracking-tight flex items-center gap-2 group">
+        <Link href={`/${locale}`} className="text-2xl font-bold text-white tracking-tight flex items-center gap-2 group">
           <span className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black group-hover:scale-110 transition-transform duration-300">
             P
           </span>
@@ -61,7 +65,7 @@ export default function Navbar() {
           {navLinks.map((link) => (
             <Link
               key={link.name}
-              href={`/${pathname.split('/')[1] || 'en'}${link.href === '/' ? '' : link.href}`}
+              href={`/${locale}${link.href === '/' ? '' : link.href}`}
               className={`text-sm font-medium transition-colors hover:text-emerald-400 ${
                 isActive(link.href) ? "text-emerald-500" : "text-zinc-400"
               }`}
@@ -73,24 +77,45 @@ export default function Navbar() {
 
         {/* Right Actions */}
         <div className="hidden md:flex items-center gap-4">
-          <LanguageSwitcher currentLocale={pathname.split('/')[1] || 'en'} />
+          <LanguageSwitcher currentLocale={locale} />
           
-          <Link href={`/${pathname.split('/')[1] || 'en'}/login`} className="text-sm font-medium text-white hover:text-emerald-400 transition-colors flex items-center gap-2">
-            <User className="w-4 h-4" />
-            {t("login")}
-          </Link>
-          
-          <Link
-            href={`/${pathname.split('/')[1] || 'en'}/register`}
-            className="px-5 py-2.5 rounded-full bg-white text-black text-sm font-bold hover:bg-emerald-50 transition-colors hover:scale-105 active:scale-95"
-          >
-            {t("register")}
-          </Link>
+          {status === 'authenticated' ? (
+            <div className="flex items-center gap-3 ml-2">
+              <Link
+                href={`/${locale}/dashboard`}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold hover:bg-emerald-500 hover:text-black transition-colors"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                {isAr ? "لوحة التحكم" : "Dashboard"}
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-red-400 hover:bg-red-500/10 transition-colors border border-transparent hover:border-red-500/20 group"
+                title={isAr ? "تسجيل الخروج" : "Logout"}
+              >
+                <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link href={`/${locale}/login`} className="text-sm font-medium text-white hover:text-emerald-400 transition-colors flex items-center gap-2">
+                <User className="w-4 h-4" />
+                {t("login")}
+              </Link>
+              
+              <Link
+                href={`/${locale}/register`}
+                className="px-5 py-2.5 rounded-full bg-white text-black text-sm font-bold hover:bg-emerald-50 transition-colors hover:scale-105 active:scale-95"
+              >
+                {t("register")}
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
         <div className="md:hidden flex items-center gap-4">
-          <LanguageSwitcher currentLocale={pathname.split('/')[1] || 'en'} />
+          <LanguageSwitcher currentLocale={locale} />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-white p-2 focus:outline-none"
@@ -113,7 +138,7 @@ export default function Navbar() {
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
-                  href={`/${pathname.split('/')[1] || 'en'}${link.href === '/' ? '' : link.href}`}
+                  href={`/${locale}${link.href === '/' ? '' : link.href}`}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`text-lg font-medium py-2 transition-colors ${
                     isActive(link.href) ? "text-emerald-500" : "text-zinc-400"
@@ -123,21 +148,47 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="h-px bg-white/10 my-2" />
-              <Link
-                href={`/${pathname.split('/')[1] || 'en'}/login`}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-medium text-white py-2 flex items-center gap-2"
-              >
-                <User className="w-5 h-5" />
-                {t("login")}
-              </Link>
-              <Link
-                href={`/${pathname.split('/')[1] || 'en'}/register`}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-center w-full py-3 mt-2 rounded-xl bg-white text-black font-bold"
-              >
-                {t("register")}
-              </Link>
+              
+              {status === 'authenticated' ? (
+                <>
+                  <Link
+                    href={`/${locale}/dashboard`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 text-lg font-bold text-emerald-400 py-2"
+                  >
+                    <LayoutDashboard className="w-5 h-5" />
+                    {isAr ? "لوحة التحكم" : "Dashboard"}
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      signOut({ callbackUrl: '/' });
+                    }}
+                    className="flex items-center gap-3 text-lg font-bold text-red-400 py-2 text-left"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    {isAr ? "تسجيل الخروج" : "Logout"}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href={`/${locale}/login`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-medium text-white py-2 flex items-center gap-2"
+                  >
+                    <User className="w-5 h-5" />
+                    {t("login")}
+                  </Link>
+                  <Link
+                    href={`/${locale}/register`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-center w-full py-3 mt-2 rounded-xl bg-white text-black font-bold"
+                  >
+                    {t("register")}
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}
