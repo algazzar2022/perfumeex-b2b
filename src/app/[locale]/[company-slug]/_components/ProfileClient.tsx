@@ -44,6 +44,14 @@ export default function ProfileClient({ company, locale }: { company: any, local
     { id: "gallery", label: isAr ? "معرض الصور" : "Gallery", icon: ImageIcon }
   ];
 
+  const handleContactClick = () => {
+    fetch('/api/company/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ companyId: company.id, type: 'contact' })
+    }).catch(() => {});
+  };
+
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white font-cairo selection:bg-emerald-500/30">
       
@@ -127,10 +135,10 @@ export default function ProfileClient({ company, locale }: { company: any, local
             transition={{ delay: 0.4 }}
             className="w-full md:w-auto pb-4"
           >
-            <button className="w-full md:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center gap-3 group active:scale-95">
-              <Mail className="w-5 h-5 group-hover:-rotate-12 transition-transform" />
+            <a href={`tel:${company.whatsapp || company.email}`} onClick={handleContactClick} className="w-full md:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center gap-3 group active:scale-95">
+              <Phone className="w-5 h-5 group-hover:-rotate-12 transition-transform" />
               {isAr ? "مراسلة الشركة" : "Message Supplier"}
-            </button>
+            </a>
           </motion.div>
         </div>
 
@@ -182,7 +190,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
               </h3>
               <div className="space-y-3">
                 {company.email && (
-                  <a href={`mailto:${company.email}`} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                  <a href={`mailto:${company.email}`} onClick={handleContactClick} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
                     <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
                       <Mail className="w-4 h-4" />
                     </div>
@@ -193,7 +201,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                   </a>
                 )}
                 {company.whatsapp && (
-                  <a href={`tel:${company.whatsapp}`} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                  <a href={`tel:${company.whatsapp}`} onClick={handleContactClick} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
                     <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
                       <Phone className="w-4 h-4" />
                     </div>
@@ -204,7 +212,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                   </a>
                 )}
                 {company.website && (
-                  <a href={company.website} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                  <a href={company.website} onClick={handleContactClick} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
                     <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
                       <Globe className="w-4 h-4" />
                     </div>

@@ -16,6 +16,11 @@ export async function GET(request: Request) {
         user: {
           email: session.user.email
         }
+      },
+      include: {
+        _count: {
+          select: { products: true, branches: true }
+        }
       }
     });
 

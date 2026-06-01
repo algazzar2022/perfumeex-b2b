@@ -24,13 +24,10 @@ export default async function CompanyProfilePage({
     return notFound();
   }
 
-  // Record a page view (optional)
-  await prisma.analytics.create({
-    data: {
-      companyId: company.id,
-      pageView: 1,
-      whatsappClick: 0,
-    }
+  // Record a page view
+  await prisma.company.update({
+    where: { id: company.id },
+    data: { profileViews: { increment: 1 } }
   }).catch(() => {});
 
   return <ProfileClient company={company} locale={resolvedParams.locale} />;

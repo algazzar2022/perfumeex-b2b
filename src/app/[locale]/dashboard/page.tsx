@@ -41,10 +41,10 @@ export default function DashboardOverview() {
   const is100Percent = completionPercentage === 100;
 
   const stats = [
-    { title: t("stats.profileViews"), value: "0", change: "0%", isPositive: true, icon: <Eye className="w-5 h-5 text-emerald-500" /> },
-    { title: t("stats.contactClicks"), value: "0", change: "0%", isPositive: true, icon: <MousePointerClick className="w-5 h-5 text-blue-500" /> },
-    { title: t("stats.activeProducts"), value: "0", change: "0%", isPositive: true, icon: <Package className="w-5 h-5 text-purple-500" /> },
-    { title: t("stats.branches"), value: "0", change: "0", isPositive: true, icon: <MapPin className="w-5 h-5 text-amber-500" /> },
+    { title: locale === 'ar' ? 'زيارات الملف' : 'Profile Views', value: company?.profileViews?.toString() || "0", change: "0%", isPositive: true, icon: <Eye className="w-5 h-5 text-emerald-500" /> },
+    { title: locale === 'ar' ? 'نقرات التواصل' : 'Contact Clicks', value: company?.contactClicks?.toString() || "0", change: "0%", isPositive: true, icon: <MousePointerClick className="w-5 h-5 text-blue-500" /> },
+    { title: locale === 'ar' ? 'منتجات نشطة' : 'Active Products', value: company?._count?.products?.toString() || "0", change: "0%", isPositive: true, icon: <Package className="w-5 h-5 text-purple-500" /> },
+    { title: locale === 'ar' ? 'الفروع' : 'Branches', value: company?._count?.branches?.toString() || "0", change: "0", isPositive: true, icon: <MapPin className="w-5 h-5 text-amber-500" /> },
   ];
 
   const recentActivity: any[] = [];
