@@ -18,7 +18,11 @@ export default function ProfileClient({ company, locale }: { company: any, local
   const location = locationParts.length > 0 ? locationParts.join(', ') : (locale === 'ar' ? "الإمارات العربية المتحدة" : "United Arab Emirates");
   
   // Try to get translated category, fallback to default if not found
-  const translatedCategory = company.category ? t(company.category as any) : (locale === 'ar' ? "عطور جاهزة" : "Ready Perfumes");
+  const translatedCategory = company.category 
+    ? company.category.split(',').filter(Boolean).map((c: string) => {
+        try { return t(c as any) } catch(e) { return c }
+      }).join(' • ') 
+    : (locale === 'ar' ? "عطور جاهزة" : "Ready Perfumes");
   
   const coverImage = company.coverImage || "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1920&h=600";
   const logoImage = company.logo || "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=200&h=200";

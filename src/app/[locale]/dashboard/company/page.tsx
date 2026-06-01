@@ -204,18 +204,45 @@ export default function CompanySettingsPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.category")}</label>
-                    <select 
-                      value={formData.category}
-                      onChange={(e) => setFormData({...formData, category: e.target.value})}
-                      className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none"
-                    >
-                      <option value="readyPerfumes">{t("general.categoryOptions.readyPerfumes")}</option>
-                      <option value="clonePerfumes">{t("general.categoryOptions.clonePerfumes")}</option>
-                      <option value="bakhoor">{t("general.categoryOptions.bakhoor")}</option>
-                      <option value="airFresheners">{t("general.categoryOptions.airFresheners")}</option>
-                      <option value="packaging">{t("general.categoryOptions.packaging")}</option>
-                      <option value="glassBottles">{t("general.categoryOptions.glassBottles")}</option>
-                    </select>
+                    <div className="flex flex-wrap gap-3">
+                      {[
+                        { id: "readyPerfumes", label: t("general.categoryOptions.readyPerfumes") },
+                        { id: "clonePerfumes", label: t("general.categoryOptions.clonePerfumes") },
+                        { id: "bakhoor", label: t("general.categoryOptions.bakhoor") },
+                        { id: "airFresheners", label: t("general.categoryOptions.airFresheners") },
+                        { id: "packaging", label: t("general.categoryOptions.packaging") },
+                        { id: "glassBottles", label: t("general.categoryOptions.glassBottles") }
+                      ].map(cat => {
+                        const selectedCategories = formData.category ? formData.category.split(',') : [];
+                        const isSelected = selectedCategories.includes(cat.id);
+                        return (
+                          <label 
+                            key={cat.id} 
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-full border cursor-pointer transition-all ${
+                              isSelected 
+                              ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.1)]' 
+                              : 'bg-zinc-900 border-white/5 text-zinc-400 hover:border-white/20 hover:text-zinc-300'
+                            }`}
+                          >
+                            <input 
+                              type="checkbox" 
+                              className="hidden" 
+                              checked={isSelected} 
+                              onChange={() => {
+                                let newCats = [...selectedCategories];
+                                if (isSelected) {
+                                  newCats = newCats.filter(c => c !== cat.id);
+                                } else {
+                                  newCats.push(cat.id);
+                                }
+                                setFormData({...formData, category: newCats.join(',')});
+                              }} 
+                            />
+                            {cat.label}
+                          </label>
+                        );
+                      })}
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
