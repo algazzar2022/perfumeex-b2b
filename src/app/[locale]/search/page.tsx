@@ -35,11 +35,8 @@ export default async function SearchPage({
       take: 20, // Limit results
     });
   } else {
-    // If no query, return some companies (or trending ones)
-    companies = await prisma.company.findMany({
-      take: 20,
-      orderBy: { createdAt: "desc" },
-    });
+    // If no query, return empty results
+    companies = [];
   }
 
   return (

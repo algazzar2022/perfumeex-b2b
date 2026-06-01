@@ -75,11 +75,14 @@ export default function SearchClient({
 
               {/* Location Filter */}
               <div className="mb-8">
-                <h3 className="text-zinc-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "الموقع" : "Location"}</h3>
-                <div className="space-y-3">
-                  {["مصر", "الإمارات", "السعودية"].map((loc) => (
+                <h3 className="text-zinc-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "المحافظة" : "Governorate"}</h3>
+                <div className="space-y-3 h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-800">
+                  {(isAr 
+                    ? ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الشرقية", "المنوفية", "القليوبية", "البحيرة", "الغربية", "بور سعيد", "دمياط", "الإسماعيلية", "السويس", "كفر الشيخ", "الفيوم", "بني سويف", "مطروح", "شمال سيناء", "جنوب سيناء", "المنيا", "أسيوط", "سوهاج", "قنا", "البحر الأحمر", "الأقصر", "أسوان", "الوادي الجديد"]
+                    : ["Cairo", "Giza", "Alexandria", "Dakahlia", "Red Sea", "Beheira", "Fayoum", "Gharbia", "Ismailia", "Monufia", "Minya", "Qalyubia", "New Valley", "Suez", "Aswan", "Assiut", "Beni Suef", "Port Said", "Damietta", "Sharqia", "South Sinai", "Kafr El Sheikh", "Matrouh", "Luxor", "Qena", "North Sinai", "Sohag"]
+                  ).map((loc) => (
                     <label key={loc} className="flex items-center gap-3 group cursor-pointer">
-                      <div className="w-5 h-5 rounded border border-zinc-700 group-hover:border-emerald-500 flex items-center justify-center bg-black transition-colors" />
+                      <div className="w-5 h-5 rounded border border-zinc-700 group-hover:border-emerald-500 flex items-center justify-center bg-black transition-colors shrink-0" />
                       <span className="text-zinc-300 group-hover:text-white transition-colors text-sm">{loc}</span>
                     </label>
                   ))}
