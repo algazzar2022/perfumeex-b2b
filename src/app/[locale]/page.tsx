@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Search, MapPin, Building2, Droplet, Star, TrendingUp, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
 
@@ -261,8 +262,14 @@ export default function Home() {
       <footer className="bg-black pt-12 pb-12 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-            <span className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black">P</span>
-            Perfume<span className="text-emerald-500 font-light">Ex</span>
+            <Image 
+              src="/logo.png" 
+              alt="PerfumeEx Logo" 
+              width={32} 
+              height={32} 
+              className="object-contain" 
+            />
+            <span className="tracking-widest">PERFUME<span className="text-emerald-500">EX</span></span>
           </div>
           <div className="text-zinc-600 font-light text-sm">
             {t('footer.rights')}

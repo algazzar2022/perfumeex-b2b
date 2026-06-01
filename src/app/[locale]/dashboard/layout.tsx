@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, 
@@ -98,8 +99,14 @@ export default function DashboardLayout({
           {/* Logo */}
           <div className="h-20 flex items-center justify-between px-6 border-b border-white/5">
             <Link href="/" className="text-xl font-bold tracking-tight flex items-center gap-2">
-              <span className="w-8 h-8 rounded bg-white flex items-center justify-center text-black text-sm">P</span>
-              Perfume<span className="text-emerald-500 font-light">Ex</span>
+              <Image 
+              src="/logo.png" 
+              alt="PerfumeEx Logo" 
+              width={32} 
+              height={32} 
+              className="object-contain" 
+            />
+            <span className="tracking-widest text-white text-xl">PERFUME<span className="text-emerald-500">EX</span></span>
             </Link>
             <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-zinc-400 hover:text-white">
               <X className="w-6 h-6" />

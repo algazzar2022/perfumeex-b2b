@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, LayoutDashboard, LogOut } from "lucide-react";
@@ -54,10 +55,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
         <Link href={`/${locale}`} className="text-2xl font-bold text-white tracking-tight flex items-center gap-2 group">
-          <span className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black group-hover:scale-110 transition-transform duration-300">
-            P
-          </span>
-          Perfume<span className="text-emerald-500 font-light group-hover:text-emerald-400 transition-colors">Ex</span>
+          <Image 
+            src="/logo.png" 
+            alt="PerfumeEx Logo" 
+            width={32} 
+            height={32} 
+            className="group-hover:scale-110 transition-transform duration-300 object-contain" 
+          />
+          <span className="tracking-widest">PERFUME<span className="text-emerald-500">EX</span></span>
         </Link>
 
         {/* Desktop Navigation */}
