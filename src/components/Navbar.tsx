@@ -61,7 +61,7 @@ export default function Navbar() {
           {navLinks.map((link) => (
             <Link
               key={link.name}
-              href={link.href}
+              href={`/${pathname.split('/')[1] || 'en'}${link.href === '/' ? '' : link.href}`}
               className={`text-sm font-medium transition-colors hover:text-emerald-400 ${
                 isActive(link.href) ? "text-emerald-500" : "text-zinc-400"
               }`}
@@ -75,13 +75,13 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           <LanguageSwitcher currentLocale={pathname.split('/')[1] || 'en'} />
           
-          <Link href="/login" className="text-sm font-medium text-white hover:text-emerald-400 transition-colors flex items-center gap-2">
+          <Link href={`/${pathname.split('/')[1] || 'en'}/login`} className="text-sm font-medium text-white hover:text-emerald-400 transition-colors flex items-center gap-2">
             <User className="w-4 h-4" />
             Login
           </Link>
           
           <Link
-            href="/register"
+            href={`/${pathname.split('/')[1] || 'en'}/register`}
             className="px-5 py-2.5 rounded-full bg-white text-black text-sm font-bold hover:bg-emerald-50 transition-colors hover:scale-105 active:scale-95"
           >
             Register Company
@@ -113,7 +113,7 @@ export default function Navbar() {
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
-                  href={link.href}
+                  href={`/${pathname.split('/')[1] || 'en'}${link.href === '/' ? '' : link.href}`}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`text-lg font-medium py-2 transition-colors ${
                     isActive(link.href) ? "text-emerald-500" : "text-zinc-400"
@@ -124,7 +124,7 @@ export default function Navbar() {
               ))}
               <div className="h-px bg-white/10 my-2" />
               <Link
-                href="/login"
+                href={`/${pathname.split('/')[1] || 'en'}/login`}
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-lg font-medium text-white py-2 flex items-center gap-2"
               >
@@ -132,7 +132,7 @@ export default function Navbar() {
                 Login
               </Link>
               <Link
-                href="/register"
+                href={`/${pathname.split('/')[1] || 'en'}/register`}
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-center w-full py-3 mt-2 rounded-xl bg-white text-black font-bold"
               >

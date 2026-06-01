@@ -25,10 +25,10 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
-  
+
   // Fetch messages
   const messages = await getMessages();
-  
+
   // Set direction based on locale
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
