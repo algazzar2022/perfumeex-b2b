@@ -1,229 +1,403 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { MapPin, Star, ShieldCheck, Globe, Mail, Phone, ExternalLink, Download, FileText, Package } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  MapPin, Star, ShieldCheck, Globe, Mail, Phone, 
+  ExternalLink, Download, FileText, Package, 
+  Store, Building, Calendar, Image as ImageIcon,
+  CheckCircle2, Box, ChevronRight
+} from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 export default function ProfileClient({ company, locale }: { company: any, locale: string }) {
   const [activeTab, setActiveTab] = useState("overview");
   const t = useTranslations("Dashboard.companyProfile.general.categoryOptions");
 
-  const displayName = locale === 'ar' ? (company.nameAr || company.nameEn) : company.nameEn;
-  const description = locale === 'ar' ? (company.descriptionAr || company.descriptionEn) : company.descriptionEn;
+  const isAr = locale === 'ar';
+
+  const displayName = isAr ? (company.nameAr || company.nameEn) : company.nameEn;
+  const description = isAr ? (company.descriptionAr || company.descriptionEn) : company.descriptionEn;
   
-  const address = locale === 'ar' ? (company.addressAr || company.addressEn) : (company.addressEn || company.addressAr);
-  const city = locale === 'ar' ? (company.cityAr || company.cityEn) : (company.cityEn || company.cityAr);
-  const governorate = locale === 'ar' ? (company.governorateAr || company.governorateEn) : (company.governorateEn || company.governorateAr);
-  const country = locale === 'ar' ? (company.countryAr || company.countryEn) : (company.countryEn || company.countryAr);
+  const address = isAr ? (company.addressAr || company.addressEn) : (company.addressEn || company.addressAr);
+  const city = isAr ? (company.cityAr || company.cityEn) : (company.cityEn || company.cityAr);
+  const governorate = isAr ? (company.governorateAr || company.governorateEn) : (company.governorateEn || company.governorateAr);
+  const country = isAr ? (company.countryAr || company.countryEn) : (company.countryEn || company.countryAr);
 
   const locationParts = [address, city, governorate, country].filter(Boolean);
-  const location = locationParts.length > 0 ? locationParts.join(', ') : (locale === 'ar' ? "الإمارات العربية المتحدة" : "United Arab Emirates");
+  const location = locationParts.length > 0 ? locationParts.join(', ') : (isAr ? "الإمارات العربية المتحدة" : "United Arab Emirates");
   
-  // Try to get translated category, fallback to default if not found
   const translatedCategory = company.category 
     ? company.category.split(',').filter(Boolean).map((c: string) => {
         try { return t(c as any) } catch(e) { return c }
       }).join(' • ') 
-    : (locale === 'ar' ? "عطور جاهزة" : "Ready Perfumes");
+    : (isAr ? "عطور جاهزة" : "Ready Perfumes");
   
   const coverImage = company.coverImage || "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1920&h=600";
   const logoImage = company.logo || "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=200&h=200";
 
+  const tabs = [
+    { id: "overview", label: isAr ? "عن الشركة" : "Overview", icon: Building },
+    { id: "products", label: isAr ? "المنتجات" : "Products", icon: Package },
+    { id: "branches", label: isAr ? "الفروع" : "Branches", icon: Store },
+    { id: "gallery", label: isAr ? "معرض الصور" : "Gallery", icon: ImageIcon }
+  ];
+
   return (
-    <main className="min-h-screen bg-black text-white font-cairo">
-      {/* 🖼️ Cover Image Hero */}
-      <div className="relative h-[40vh] md:h-[50vh] w-full">
-        <Image
-          src={coverImage}
-          alt={`${displayName} cover`}
-          fill
-          className="object-cover opacity-60"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+    <main className="min-h-screen bg-[#0a0a0a] text-white font-cairo selection:bg-emerald-500/30">
+      
+      {/* 🌟 Dynamic Hero Section */}
+      <div className="relative h-[45vh] md:h-[60vh] w-full overflow-hidden">
+        <motion.div 
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="absolute inset-0"
+        >
+          <Image
+            src={coverImage}
+            alt={`${displayName} cover`}
+            fill
+            className="object-cover opacity-50"
+            priority
+          />
+        </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent" />
+        
+        {/* Floating Badges */}
+        <div className="absolute top-8 left-8 right-8 flex justify-between items-start z-20">
+          {company.isVerified && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="inline-flex items-center gap-2 px-5 py-2 bg-emerald-500/10 backdrop-blur-md border border-emerald-500/30 text-emerald-400 rounded-full text-sm font-bold shadow-[0_0_20px_rgba(16,185,129,0.2)]"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              {isAr ? "شركة موثقة" : "Verified Supplier"}
+            </motion.div>
+          )}
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 relative z-10 -mt-32 md:-mt-40 mb-20">
-        <div className="flex flex-col md:flex-row gap-8 items-start">
-          
-          {/* 🏢 Company Identity Card (Left) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-20 -mt-40 md:-mt-56 mb-20">
+        
+        {/* 🏢 Profile Header */}
+        <div className="flex flex-col md:flex-row gap-8 items-end mb-12">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full md:w-1/3 lg:w-1/4"
+            transition={{ delay: 0.2 }}
+            className="w-40 h-40 md:w-56 md:h-56 shrink-0 rounded-3xl overflow-hidden border-4 border-[#0a0a0a] bg-zinc-900 shadow-2xl relative group"
           >
-            <div className="bg-zinc-950 border border-white/10 rounded-3xl p-6 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-teal-500" />
-              
-              <div className="w-32 h-32 mx-auto rounded-2xl overflow-hidden border-4 border-black shadow-2xl relative z-10 mb-6 bg-zinc-900">
-                <Image src={logoImage} alt="Logo" fill className="object-cover" />
-              </div>
+            <Image 
+              src={logoImage} 
+              alt="Logo" 
+              fill 
+              className="object-cover group-hover:scale-110 transition-transform duration-700" 
+            />
+          </motion.div>
 
-              <div className="text-center mb-6">
-                <h1 className="text-2xl font-bold text-white mb-2">{displayName}</h1>
-                <div className="flex items-center justify-center gap-1.5 text-zinc-400 text-sm mb-4">
-                  <MapPin className="w-4 h-4 text-emerald-500" />
-                  {location}
-                </div>
-                
-                {company.isVerified && (
-                  <div className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-sm font-bold shadow-[0_0_15px_rgba(16,185,129,0.1)]">
-                    <ShieldCheck className="w-4 h-4" />
-                    Verified Supplier
-                  </div>
-                )}
+          <motion.div 
+            initial={{ opacity: 0, x: isAr ? 30 : -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex-1 pb-4"
+          >
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
+              {displayName}
+            </h1>
+            <div className="flex flex-wrap items-center gap-4 text-zinc-300">
+              <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
+                <MapPin className="w-4 h-4 text-emerald-400" />
+                <span className="text-sm font-medium">{location}</span>
               </div>
-
-              <div className="space-y-3 mb-8">
-                {company.website && (
-                  <a href={company.website} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5">
-                    <Globe className="w-4 h-4 text-emerald-500" /> {locale === 'ar' ? "الموقع الإلكتروني" : "Website"}
-                  </a>
-                )}
-                {company.facebook && (
-                  <a href={company.facebook} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5">
-                    <Globe className="w-4 h-4 text-emerald-500" /> {locale === 'ar' ? "صفحة الفيسبوك" : "Facebook Page"}
-                  </a>
-                )}
-                {company.email && (
-                  <a href={`mailto:${company.email}`} className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5">
-                    <Mail className="w-4 h-4 text-emerald-500" /> {locale === 'ar' ? "البريد الإلكتروني" : "Contact Email"}
-                  </a>
-                )}
-                {company.whatsapp && (
-                  <a href={`tel:${company.whatsapp}`} className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5">
-                    <Phone className="w-4 h-4 text-emerald-500" /> {locale === 'ar' ? "رقم الهاتف" : "Phone Number"}
-                  </a>
-                )}
+              <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
+                <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <span className="text-sm font-bold text-white">5.0</span>
+                <span className="text-sm text-zinc-400">({isAr ? "تقييم ممتاز" : "Excellent"})</span>
               </div>
-
-              <button className="w-full py-4 rounded-xl bg-white text-black font-bold hover:bg-emerald-50 transition-colors shadow-lg active:scale-95 flex items-center justify-center gap-2">
-                <Mail className="w-5 h-5" /> Message Supplier
-              </button>
             </div>
           </motion.div>
 
-          {/* 📄 Company Content (Right) */}
-          <div className="w-full md:w-2/3 lg:w-3/4 md:pt-32">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="w-full md:w-auto pb-4"
+          >
+            <button className="w-full md:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center gap-3 group active:scale-95">
+              <Mail className="w-5 h-5 group-hover:-rotate-12 transition-transform" />
+              {isAr ? "مراسلة الشركة" : "Message Supplier"}
+            </button>
+          </motion.div>
+        </div>
+
+        {/* 📋 Bento Grid & Navigation */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Sidebar Info (Bento Style) */}
+          <div className="lg:col-span-4 space-y-6">
             
-            {/* Quick Stats */}
-            <div className="flex flex-wrap gap-4 mb-10">
-              <div className="flex-1 min-w-[150px] bg-zinc-950 border border-white/5 p-5 rounded-2xl flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
-                  <Star className="w-5 h-5 text-emerald-400 fill-emerald-400" />
-                </div>
-                <div>
-                  <div className="text-zinc-500 text-sm">{locale === 'ar' ? "التقييم" : "Rating"}</div>
-                  <div className="text-white font-bold text-xl">5.0 / 5.0</div>
-                </div>
-              </div>
-              <div className="flex-1 min-w-[150px] bg-zinc-950 border border-white/5 p-5 rounded-2xl flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <Package className="w-5 h-5 text-blue-400" />
-                </div>
-                <div>
-                  <div className="text-zinc-500 text-sm">{locale === 'ar' ? "التصنيف" : "Category"}</div>
-                  <div className="text-white font-bold text-lg">{translatedCategory}</div>
-                </div>
-              </div>
-              <div className="flex-1 min-w-[150px] bg-zinc-950 border border-white/5 p-5 rounded-2xl flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-purple-400" />
-                </div>
-                <div>
-                  <div className="text-zinc-500 text-sm">{locale === 'ar' ? "ملف الشركة" : "Company Profile"}</div>
-                  {company.catalogPdf ? (
-                    <a href={company.catalogPdf} target="_blank" rel="noreferrer" className="text-purple-400 font-bold text-sm flex items-center gap-1 hover:text-purple-300 mt-1">
-                      <Download className="w-4 h-4" /> {locale === 'ar' ? "تحميل الكاتالوج" : "PDF Catalog"}
-                    </a>
-                  ) : (
-                    <div className="text-zinc-400 text-sm mt-1">{locale === 'ar' ? "غير متوفر" : "Not Available"}</div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation Tabs */}
-            <div className="flex overflow-x-auto gap-2 mb-8 border-b border-white/10 pb-4">
-              {['overview', 'products', 'branches'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-2.5 rounded-full text-sm font-bold capitalize whitespace-nowrap transition-all ${
-                    activeTab === tab 
-                    ? "bg-white text-black shadow-lg" 
-                    : "text-zinc-400 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            {/* Tab Content */}
-            <div className="min-h-[400px]">
+            {/* Quick Stats Card */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+              className="bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-3xl p-6"
+            >
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-emerald-500" /> {isAr ? "معلومات سريعة" : "Quick Info"}
+              </h3>
               
-              {/* OVERVIEW TAB */}
-              {activeTab === 'overview' && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <h3 className="text-2xl font-bold text-white mb-6">{locale === 'ar' ? "عن الشركة" : "About the Company"}</h3>
-                  <div className="prose prose-invert prose-emerald max-w-none">
-                    <p className="text-zinc-400 text-lg leading-relaxed font-light whitespace-pre-wrap">
-                      {description || (locale === 'ar' ? "لا يوجد وصف حالياً." : "No description available yet.")}
-                    </p>
+              <div className="space-y-5">
+                <div>
+                  <div className="text-sm text-zinc-500 mb-1">{isAr ? "التصنيف الرئيسي" : "Main Category"}</div>
+                  <div className="text-white font-bold">{translatedCategory}</div>
+                </div>
+                {company.yearEstablished && (
+                  <div>
+                    <div className="text-sm text-zinc-500 mb-1">{isAr ? "سنة التأسيس" : "Year Established"}</div>
+                    <div className="text-white font-bold">{company.yearEstablished}</div>
                   </div>
-                </motion.div>
-              )}
-
-              {/* PRODUCTS TAB */}
-              {activeTab === 'products' && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-2xl font-bold text-white">{locale === 'ar' ? "المنتجات" : "Product Catalog"}</h3>
-                  </div>
-                  
-                  {company.products && company.products.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {company.products.map((product: any) => (
-                        <div key={product.id} className="group bg-zinc-950 border border-white/5 rounded-2xl overflow-hidden hover:border-white/20 transition-all">
-                          <div className="relative h-48 w-full bg-zinc-900">
-                            <Image src={product.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=400&h=400"} alt={product.nameEn} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                          </div>
-                          <div className="p-5">
-                            <h4 className="text-lg font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">{locale === 'ar' ? product.nameAr : product.nameEn}</h4>
-                            <div className="text-emerald-500 text-sm font-bold">{locale === 'ar' ? "تواصل لمعرفة السعر" : "Contact for price"}</div>
-                          </div>
-                        </div>
-                      ))}
+                )}
+                {company.catalogPdf && (
+                  <a href={company.catalogPdf} target="_blank" rel="noreferrer" className="flex items-center justify-between p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 hover:bg-purple-500/20 transition-colors group">
+                    <div className="flex items-center gap-3">
+                      <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
+                      <span className="font-bold">{isAr ? "تحميل الكاتالوج" : "Download Catalog"}</span>
                     </div>
-                  ) : (
-                    <div className="text-zinc-500 border border-white/5 rounded-2xl p-8 text-center bg-white/5">
-                      {locale === 'ar' ? "لا توجد منتجات مضافة بعد." : "No products added yet."}
-                    </div>
-                  )}
-                </motion.div>
-              )}
+                    <ChevronRight className="w-4 h-4 rtl:rotate-180" />
+                  </a>
+                )}
+              </div>
+            </motion.div>
 
-              {/* BRANCHES TAB */}
-              {activeTab === 'branches' && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <h3 className="text-2xl font-bold text-white mb-6">Our Branches</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="bg-zinc-950 border border-white/5 p-6 rounded-2xl">
-                      <div className="text-emerald-500 text-sm font-bold mb-2 uppercase">Headquarters</div>
-                      <h4 className="text-xl font-bold text-white mb-3">Dubai Branch</h4>
-                      <p className="text-zinc-400 text-sm flex items-start gap-2 mb-2">
-                        <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
-                        Business Bay, Churchill Executive Tower, Office 404, Dubai, UAE
+            {/* Contact Info Card */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
+              className="bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-3xl p-6"
+            >
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <Phone className="w-5 h-5 text-emerald-500" /> {isAr ? "معلومات التواصل" : "Contact Info"}
+              </h3>
+              <div className="space-y-3">
+                {company.email && (
+                  <a href={`mailto:${company.email}`} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 truncate">
+                      <div className="text-xs text-zinc-500">{isAr ? "البريد الإلكتروني" : "Email"}</div>
+                      <div className="text-sm text-zinc-300 font-medium truncate">{company.email}</div>
+                    </div>
+                  </a>
+                )}
+                {company.whatsapp && (
+                  <a href={`tel:${company.whatsapp}`} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
+                      <Phone className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 truncate">
+                      <div className="text-xs text-zinc-500">{isAr ? "رقم الهاتف" : "Phone"}</div>
+                      <div className="text-sm text-zinc-300 font-medium dir-ltr text-left">{company.whatsapp}</div>
+                    </div>
+                  </a>
+                )}
+                {company.website && (
+                  <a href={company.website} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
+                      <Globe className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 truncate">
+                      <div className="text-xs text-zinc-500">{isAr ? "الموقع الإلكتروني" : "Website"}</div>
+                      <div className="text-sm text-zinc-300 font-medium truncate">{company.website.replace(/^https?:\/\//, '')}</div>
+                    </div>
+                  </a>
+                )}
+              </div>
+            </motion.div>
+
+          </div>
+
+          {/* Main Content Area */}
+          <div className="lg:col-span-8">
+            
+            {/* Interactive Tabs */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+              className="flex overflow-x-auto gap-2 mb-8 bg-zinc-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-xl"
+            >
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold capitalize whitespace-nowrap transition-all duration-300 ${
+                      isActive 
+                      ? "bg-emerald-500 text-black shadow-lg" 
+                      : "text-zinc-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {tab.label}
+                  </button>
+                )
+              })}
+            </motion.div>
+
+            {/* Tab Panels */}
+            <div className="min-h-[500px]">
+              <AnimatePresence mode="wait">
+                
+                {/* OVERVIEW */}
+                {activeTab === 'overview' && (
+                  <motion.div 
+                    key="overview"
+                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}
+                    className="bg-zinc-900/30 border border-white/5 rounded-3xl p-8 backdrop-blur-md"
+                  >
+                    <h3 className="text-2xl font-extrabold text-white mb-6 flex items-center gap-3">
+                      <Building className="w-6 h-6 text-emerald-500" />
+                      {isAr ? "عن الشركة" : "About Us"}
+                    </h3>
+                    <div className="prose prose-invert prose-emerald max-w-none">
+                      <p className="text-zinc-300 text-lg leading-relaxed font-medium whitespace-pre-wrap">
+                        {description || (isAr ? "لا يوجد وصف حالياً." : "No description available yet.")}
                       </p>
                     </div>
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                )}
 
+                {/* PRODUCTS */}
+                {activeTab === 'products' && (
+                  <motion.div key="products" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                    {company.products && company.products.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {company.products.map((product: any, idx: number) => (
+                          <motion.div 
+                            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}
+                            key={product.id} 
+                            className="group bg-zinc-900/50 border border-white/5 rounded-3xl overflow-hidden hover:border-emerald-500/30 transition-all shadow-xl hover:shadow-emerald-500/10"
+                          >
+                            <div className="relative h-56 w-full bg-zinc-950 overflow-hidden">
+                              <Image 
+                                src={product.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=400&h=400"} 
+                                alt={isAr ? product.nameAr : product.nameEn} 
+                                fill 
+                                className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                              />
+                              <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-xs font-bold text-white flex items-center gap-1">
+                                <Box className="w-3 h-3" /> {product.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
+                              </div>
+                            </div>
+                            <div className="p-6">
+                              <h4 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                                {isAr ? product.nameAr : product.nameEn}
+                              </h4>
+                              <p className="text-sm text-zinc-400 line-clamp-2 mb-4">
+                                {isAr ? product.descriptionAr : product.descriptionEn}
+                              </p>
+                              <div className="flex items-center justify-between mt-auto">
+                                <div className="text-emerald-500 font-extrabold text-lg">
+                                  {product.price ? `${product.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل للسعر" : "Contact for Price")}
+                                </div>
+                                <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-emerald-500 hover:text-black transition-colors">
+                                  <ChevronRight className="w-5 h-5 rtl:rotate-180" />
+                                </button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center p-16 bg-zinc-900/30 border border-white/5 rounded-3xl backdrop-blur-md">
+                        <Package className="w-16 h-16 text-zinc-600 mb-4" />
+                        <h3 className="text-xl font-bold text-white mb-2">{isAr ? "لا توجد منتجات" : "No Products Found"}</h3>
+                        <p className="text-zinc-500">{isAr ? "لم تقم الشركة بإضافة منتجات حتى الآن." : "The company hasn't added any products yet."}</p>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* BRANCHES */}
+                {activeTab === 'branches' && (
+                  <motion.div key="branches" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                    {company.branches && company.branches.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {company.branches.map((branch: any, idx: number) => (
+                          <motion.div 
+                            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.1 }}
+                            key={branch.id} 
+                            className="bg-zinc-900/50 border border-white/5 p-6 rounded-3xl hover:border-emerald-500/20 transition-colors flex gap-4"
+                          >
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20">
+                              <Store className="w-6 h-6 text-emerald-500" />
+                            </div>
+                            <div>
+                              <h4 className="text-xl font-bold text-white mb-3">{isAr ? branch.nameAr : branch.nameEn}</h4>
+                              <p className="text-zinc-400 text-sm flex items-start gap-2 mb-2">
+                                <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-emerald-500" />
+                                {isAr ? branch.addressAr : branch.addressEn}, {isAr ? branch.cityAr : branch.cityEn}, {isAr ? branch.governorateAr : branch.governorateEn}, {isAr ? branch.countryAr : branch.countryEn}
+                              </p>
+                              <p className="text-zinc-400 text-sm flex items-center gap-2">
+                                <Phone className="w-4 h-4 shrink-0 text-emerald-500" />
+                                <span className="dir-ltr">{branch.phone}</span>
+                              </p>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center p-16 bg-zinc-900/30 border border-white/5 rounded-3xl backdrop-blur-md">
+                        <Store className="w-16 h-16 text-zinc-600 mb-4" />
+                        <h3 className="text-xl font-bold text-white mb-2">{isAr ? "لا توجد فروع" : "No Branches"}</h3>
+                        <p className="text-zinc-500">{isAr ? "لم تقم الشركة بإضافة فروع أخرى." : "The company hasn't added any branches."}</p>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* GALLERY */}
+                {activeTab === 'gallery' && (
+                  <motion.div key="gallery" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                    {company.galleries && company.galleries.length > 0 ? (
+                      <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6">
+                        {company.galleries.map((item: any, idx: number) => (
+                          <motion.div
+                            key={item.id}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: idx * 0.05 }}
+                            className="relative group rounded-3xl overflow-hidden break-inside-avoid shadow-xl bg-zinc-900 border border-white/5"
+                          >
+                            <Image 
+                              src={item.url} 
+                              alt="Gallery Image" 
+                              width={600} 
+                              height={600} 
+                              className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110" 
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                              <ImageIcon className="w-6 h-6 text-white" />
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center p-16 bg-zinc-900/30 border border-white/5 rounded-3xl backdrop-blur-md">
+                        <ImageIcon className="w-16 h-16 text-zinc-600 mb-4" />
+                        <h3 className="text-xl font-bold text-white mb-2">{isAr ? "لا توجد وسائط" : "No Media Found"}</h3>
+                        <p className="text-zinc-500">{isAr ? "لم تقم الشركة بإضافة صور لمعرضها." : "The company hasn't added any media to the gallery."}</p>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+              </AnimatePresence>
             </div>
+
           </div>
         </div>
       </div>

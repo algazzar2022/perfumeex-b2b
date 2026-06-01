@@ -16,6 +16,7 @@ export default async function CompanyProfilePage({
     include: {
       products: true,
       branches: true,
+      galleries: true,
     },
   });
 
