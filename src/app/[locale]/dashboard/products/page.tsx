@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 
 export default function ProductsManagementPage() {
   const t = useTranslations("Dashboard.products");
-  const tCompany = useTranslations("Dashboard.company");
+  const tCompany = useTranslations("Dashboard.companyProfile");
   const locale = useParams().locale as string;
 
   const [products, setProducts] = useState<any[]>([]);
