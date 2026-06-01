@@ -102,8 +102,9 @@ export default function DashboardLayout({
               <Image 
               src="/logo.png" 
               alt="PerfumeEx Logo" 
-              width={32} 
-              height={32} 
+              width={40} 
+              height={40} 
+              unoptimized
               className="object-contain" 
             />
             <span className="tracking-widest text-white text-xl">PERFUME<span className="text-emerald-500">EX</span></span>

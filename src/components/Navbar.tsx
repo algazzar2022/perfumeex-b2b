@@ -58,8 +58,9 @@ export default function Navbar() {
           <Image 
             src="/logo.png" 
             alt="PerfumeEx Logo" 
-            width={32} 
-            height={32} 
+            width={40} 
+            height={40} 
+            unoptimized
             className="group-hover:scale-110 transition-transform duration-300 object-contain" 
           />
           <span className="tracking-widest">PERFUME<span className="text-emerald-500">EX</span></span>
