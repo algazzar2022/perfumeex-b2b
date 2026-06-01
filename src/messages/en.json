@@ -47,5 +47,30 @@
     "footer": {
       "rights": "© 2026 PerfumeEx. All rights reserved."
     }
+  },
+  "Auth": {
+    "login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to manage your company profile.",
+      "emailLabel": "Email Address",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Register Company",
+      "error": "Invalid credentials. Please try again."
+    },
+    "register": {
+      "title": "Join PerfumeEx",
+      "subtitle": "Create your company profile and reach global buyers.",
+      "nameEnLabel": "Company Name (English)",
+      "nameArLabel": "Company Name (Arabic)",
+      "emailLabel": "Work Email Address",
+      "passwordLabel": "Password",
+      "submit": "Create Account",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Sign In",
+      "error": "Something went wrong. Please try again."
+    }
   }
 }
