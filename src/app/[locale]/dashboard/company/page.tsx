@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 export default function CompanySettingsPage() {
-  const t = useTranslations("CompanyProfile");
+  const t = useTranslations("companyProfile");
   const [activeSection, setActiveSection] = useState("general");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
