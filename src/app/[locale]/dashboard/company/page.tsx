@@ -86,10 +86,13 @@ export default function CompanySettingsPage() {
         body: JSON.stringify(formData)
       });
       if (res.ok) {
-        // Show success message
+        alert(t("title") ? "تم حفظ التغييرات بنجاح / Changes saved successfully!" : "Saved");
+      } else {
+        alert("Failed to save changes. Please try again.");
       }
     } catch (error) {
       console.error(error);
+      alert("Error occurred while saving.");
     } finally {
       setIsSaving(false);
     }

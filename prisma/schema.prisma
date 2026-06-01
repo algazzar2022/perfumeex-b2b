@@ -41,6 +41,10 @@ model Company {
   coverImage  String? @db.LongText
   catalogPdf  String? @db.LongText
   
+  category    String?
+  country     String?
+  city        String?
+  
   whatsapp    String?
   email       String?
   website     String?

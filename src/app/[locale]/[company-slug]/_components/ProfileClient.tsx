@@ -13,7 +13,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
 
   const displayName = locale === 'ar' ? (company.nameAr || company.nameEn) : company.nameEn;
   const description = locale === 'ar' ? (company.descriptionAr || company.descriptionEn) : company.descriptionEn;
-  const location = locale === 'ar' ? "الإمارات العربية المتحدة" : "United Arab Emirates";
+  const location = company.city && company.country ? `${company.city}, ${company.country}` : (locale === 'ar' ? "الإمارات العربية المتحدة" : "United Arab Emirates");
   
   // Try to get translated category, fallback to default if not found
   const translatedCategory = company.category ? t(company.category as any) : (locale === 'ar' ? "عطور جاهزة" : "Ready Perfumes");
