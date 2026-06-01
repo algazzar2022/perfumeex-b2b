@@ -94,9 +94,9 @@ model Branch {
   addressAr   String?
   addressEn   String?
   
-  cityId      String
-  city        City     @relation(fields: [cityId], references: [id])
-  
+  country     String?
+  governorate String?
+  city        String?
   phone       String?
   latitude    Float?
   longitude   Float?
@@ -110,7 +110,6 @@ model City {
   nameAr      String
   nameEn      String
   slug        String   @unique
-  branches    Branch[]
 }
 
 model Product {

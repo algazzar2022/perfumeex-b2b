@@ -185,6 +185,28 @@
         "title": "PDF Catalog",
         "upload": "Upload Catalog"
       }
+    },
+    "branches": {
+      "title": "Branches",
+      "subtitle": "Manage your company branches and locations.",
+      "addBranch": "Add New Branch",
+      "editBranch": "Edit Branch",
+      "noBranches": "No branches found. Click add to create one.",
+      "form": {
+        "nameEn": "Branch Name (English)",
+        "nameAr": "Branch Name (Arabic)",
+        "country": "Country",
+        "governorate": "Governorate",
+        "city": "City",
+        "addressEn": "Address (English)",
+        "addressAr": "Address (Arabic)",
+        "phone": "Branch Phone",
+        "save": "Save Branch",
+        "cancel": "Cancel"
+      },
+      "deleteConfirm": "Are you sure you want to delete this branch?",
+      "deleteSuccess": "Branch deleted successfully.",
+      "saveSuccess": "Branch saved successfully."
     }
   }
 }

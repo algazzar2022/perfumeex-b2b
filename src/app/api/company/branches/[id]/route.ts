@@ -1,0 +1,83 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../../auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
+
+export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const company = await prisma.company.findFirst({
+      where: { user: { email: session.user.email } }
+    });
+
+    if (!company) {
+      return new NextResponse("Company not found", { status: 404 });
+    }
+
+    const body = await request.json();
+
+    // ensure the branch belongs to the company before updating
+    const branch = await prisma.branch.updateMany({
+      where: {
+        id: params.id,
+        companyId: company.id
+      },
+      data: {
+        nameEn: body.nameEn,
+        nameAr: body.nameAr,
+        country: body.country,
+        governorate: body.governorate,
+        city: body.city,
+        addressEn: body.addressEn,
+        addressAr: body.addressAr,
+        phone: body.phone
+      }
+    });
+
+    if (branch.count === 0) {
+      return new NextResponse("Branch not found", { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("[BRANCH_PATCH]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const company = await prisma.company.findFirst({
+      where: { user: { email: session.user.email } }
+    });
+
+    if (!company) {
+      return new NextResponse("Company not found", { status: 404 });
+    }
+
+    const branch = await prisma.branch.deleteMany({
+      where: {
+        id: params.id,
+        companyId: company.id
+      }
+    });
+
+    if (branch.count === 0) {
+      return new NextResponse("Branch not found", { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("[BRANCH_DELETE]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
