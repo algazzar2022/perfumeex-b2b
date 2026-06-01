@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          Role      @default(COMPANY_OWNER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  company       Company?
+  reviews       Review[]
+}
+
+enum Role {
+  SUPER_ADMIN
+  COMPANY_OWNER
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  nameAr      String
+  nameEn      String
+  slug        String   @unique
+  descriptionAr String?
+  descriptionEn String?
+  
+  logo        String?
+  coverImage  String?
+  catalogPdf  String?
+  
+  whatsapp    String?
+  email       String?
+  website     String?
+  instagram   String?
+  facebook    String?
+  twitter     String?
+  
+  isVerified  Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  status      CompanyStatus @default(PENDING)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  branches    Branch[]
+  products    Product[]
+  galleries   Gallery[]
+  categories  Category[] @relation("CompanyCategories")
+  reviews     Review[]
+}
+
+enum CompanyStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  nameAr      String
+  nameEn      String
+  image       String?
+  companies   Company[] @relation("CompanyCategories")
+  products    Product[]
+}
+
+model Branch {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  nameAr      String
+  nameEn      String
+  addressAr   String?
+  addressEn   String?
+  
+  cityId      String
+  city        City     @relation(fields: [cityId], references: [id])
+  
+  phone       String?
+  latitude    Float?
+  longitude   Float?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model City {
+  id          String   @id @default(cuid())
+  nameAr      String
+  nameEn      String
+  slug        String   @unique
+  branches    Branch[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  
+  nameAr      String
+  nameEn      String
+  descriptionAr String?
+  descriptionEn String?
+  
+  price       Float?
+  image       String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Gallery {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  url         String
+  type        GalleryType @default(IMAGE)
+  createdAt   DateTime @default(now())
+}
+
+enum GalleryType {
+  IMAGE
+  VIDEO
+}
+
+model Sponsor {
+  id          String   @id @default(cuid())
+  nameAr      String
+  nameEn      String
+  logo        String
+  url         String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+}
+
+model Ad {
+  id          String   @id @default(cuid())
+  titleAr     String
+  titleEn     String
+  image       String
+  url         String?
+  isActive    Boolean  @default(true)
+  position    AdPosition @default(HOMEPAGE)
+}
+
+enum AdPosition {
+  HOMEPAGE
+  CATEGORY_PAGE
+  SIDEBAR
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  rating      Int
+  comment     String?
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  
+  @@unique([userId, companyId])
+}
+
+model Analytics {
+  id          String   @id @default(cuid())
+  companyId   String?
+  pageView    Int      @default(0)
+  whatsappClick Int    @default(0)
+  date        DateTime @default(now())
+}

@@ -1,0 +1,51 @@
+{
+  "Index": {
+    "title": "<gradient>دليل بورصة العطور</gradient>",
+    "badge": "الشبكة الأولى لشركات العطور",
+    "subtitle": "تواصل مع روّاد العطور والتغليف والبخور في مصر.",
+    "searchPlaceholder": "ابحث عن الشركات، الأقسام، أو المدن...",
+    "searchButton": "ابحث الآن",
+    "tags": {
+      "dubai": "المنصورة",
+      "perfumeClones": "عطور محاكاه",
+      "glassBottles": "عبوات زجاجية",
+      "riyadh": "القاهرة"
+    },
+    "stats": {
+      "companiesNum": "+10,000",
+      "companiesText": "شركة موثقة",
+      "countriesNum": "+50 دولة",
+      "countriesText": "انتشار عالمي"
+    },
+    "sponsorsTitle": "الرعاه الرسميون لدليل بورصة العطور",
+    "categories": {
+      "title": "تصفح حسب <gradient>القسم</gradient>",
+      "subtitle": "اعثر على المورّد المثالي لكل مرحلة من مراحل إنتاج عطورك.",
+      "items": {
+        "perfumeClones": "عطور محاكاه",
+        "readyPerfumes": "عطور جاهزة",
+        "bakhoor": "البخور",
+        "airFresheners": "المعطرات",
+        "packaging": "التغليف و التعبئة",
+        "glassBottles": "الزجاج"
+      },
+      "verifiedSuppliers": "مورّد موثّق"
+    },
+    "featured": {
+      "title": "شركات <gradient>مميزة</gradient>",
+      "subtitle": "أفضل الموردين وأعلاهم تقييماً من قبل المجتمع.",
+      "viewAll": "عرض الكل",
+      "viewAllMobile": "عرض جميع الشركات",
+      "viewProfile": "عرض الملف الشخصي"
+    },
+    "cta": {
+      "title": "مستعد لتنمية أعمالك في قطاع العطور؟",
+      "subtitle": "انضم لآلاف المورّدين والمشترين لعقد صفقات ناجحة عبر منصتنا.",
+      "register": "سجل شركتك",
+      "contact": "تواصل مع المبيعات"
+    },
+    "footer": {
+      "rights": "© 2026 دليل بورصة العطور. جميع الحقوق محفوظة."
+    }
+  }
+}

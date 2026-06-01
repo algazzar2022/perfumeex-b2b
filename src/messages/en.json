@@ -1,0 +1,51 @@
+{
+  "Index": {
+    "title": "<gradient>PERFUMEEX</gradient>",
+    "badge": "The #1 B2B Perfume Network",
+    "subtitle": "Connect with the leaders of perfumes, packaging, and bakhoor in Egypt.",
+    "searchPlaceholder": "Search for companies, categories, or cities...",
+    "searchButton": "Search Now",
+    "tags": {
+      "dubai": "Mansoura",
+      "perfumeClones": "Clone Perfumes",
+      "glassBottles": "Glass Bottles",
+      "riyadh": "Cairo"
+    },
+    "stats": {
+      "companiesNum": "10,000+",
+      "companiesText": "Verified Companies",
+      "countriesNum": "50+ Countries",
+      "countriesText": "Global Reach"
+    },
+    "sponsorsTitle": "Official Sponsors of PerfumeEx",
+    "categories": {
+      "title": "Explore by <gradient>Category</gradient>",
+      "subtitle": "Find the perfect supplier for every stage of your perfume production pipeline.",
+      "items": {
+        "perfumeClones": "Clone Perfumes",
+        "readyPerfumes": "Ready Perfumes",
+        "bakhoor": "Bakhoor",
+        "airFresheners": "Air Fresheners",
+        "packaging": "Packaging & Filling",
+        "glassBottles": "Glass"
+      },
+      "verifiedSuppliers": "Verified Suppliers"
+    },
+    "featured": {
+      "title": "Featured <gradient>Companies</gradient>",
+      "subtitle": "Premium suppliers highly rated by the community.",
+      "viewAll": "View All",
+      "viewAllMobile": "View All Companies",
+      "viewProfile": "View Profile"
+    },
+    "cta": {
+      "title": "Ready to grow your B2B perfume business?",
+      "subtitle": "Join thousands of suppliers and buyers to close successful deals through our platform.",
+      "register": "Register Company",
+      "contact": "Contact Sales"
+    },
+    "footer": {
+      "rights": "© 2026 PerfumeEx. All rights reserved."
+    }
+  }
+}
