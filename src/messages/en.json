@@ -80,5 +80,53 @@
     "categories": "Categories",
     "login": "Login",
     "register": "Register Company"
+  },
+  "Dashboard": {
+    "sidebar": {
+      "menu": "Menu",
+      "overview": "Overview",
+      "companyProfile": "Company Profile",
+      "branches": "Branches",
+      "products": "Products",
+      "mediaGallery": "Media Gallery",
+      "messages": "Messages",
+      "settings": "Settings",
+      "premiumAccount": "Premium Account",
+      "logout": "Logout"
+    },
+    "header": {
+      "title": "Dashboard",
+      "viewProfile": "View Public Profile"
+    },
+    "overview": {
+      "welcome": "Welcome back, {companyName}",
+      "subtitle": "Here's what's happening with your company profile today.",
+      "upgradePlan": "Upgrade Plan",
+      "stats": {
+        "profileViews": "Profile Views",
+        "contactClicks": "Contact Clicks",
+        "activeProducts": "Active Products",
+        "branches": "Branches"
+      },
+      "completion": {
+        "title": "Profile Completion",
+        "subtitle": "Complete your profile to rank higher in search results.",
+        "completed": "{percentage}% Completed",
+        "uploadLogo": "Upload Company Logo",
+        "addPhone": "Add Phone Number",
+        "uploadCatalog": "Upload PDF Catalog (Pending)",
+        "uploadNow": "Upload Now"
+      },
+      "activity": {
+        "title": "Notifications",
+        "viewAll": "View all",
+        "item1": "Your profile appeared in 45 searches today.",
+        "item2": "A user from Saudi Arabia clicked your phone number.",
+        "item3": "Product 'Oud Royale' was approved by admin.",
+        "time1": "2 hours ago",
+        "time2": "5 hours ago",
+        "time3": "1 day ago"
+      }
+    }
   }
 }

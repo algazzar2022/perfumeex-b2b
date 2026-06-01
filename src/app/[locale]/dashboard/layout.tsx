@@ -16,6 +16,7 @@ import {
   X
 } from "lucide-react";
 import LanguageSwitcher from "../../../components/LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 export default function DashboardLayout({
   children,
@@ -24,15 +25,16 @@ export default function DashboardLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations("Dashboard");
 
   const navItems = [
-    { name: "Overview", href: "/dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
-    { name: "Company Profile", href: "/dashboard/company", icon: <Building2 className="w-5 h-5" /> },
-    { name: "Branches", href: "/dashboard/branches", icon: <MapPin className="w-5 h-5" /> },
-    { name: "Products", href: "/dashboard/products", icon: <Package className="w-5 h-5" /> },
-    { name: "Media Gallery", href: "/dashboard/gallery", icon: <ImageIcon className="w-5 h-5" /> },
-    { name: "Messages", href: "/dashboard/messages", icon: <MessageSquare className="w-5 h-5" /> },
-    { name: "Settings", href: "/dashboard/settings", icon: <Settings className="w-5 h-5" /> },
+    { name: t("sidebar.overview"), href: "/dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
+    { name: t("sidebar.companyProfile"), href: "/dashboard/company", icon: <Building2 className="w-5 h-5" /> },
+    { name: t("sidebar.branches"), href: "/dashboard/branches", icon: <MapPin className="w-5 h-5" /> },
+    { name: t("sidebar.products"), href: "/dashboard/products", icon: <Package className="w-5 h-5" /> },
+    { name: t("sidebar.mediaGallery"), href: "/dashboard/gallery", icon: <ImageIcon className="w-5 h-5" /> },
+    { name: t("sidebar.messages"), href: "/dashboard/messages", icon: <MessageSquare className="w-5 h-5" /> },
+    { name: t("sidebar.settings"), href: "/dashboard/settings", icon: <Settings className="w-5 h-5" /> },
   ];
 
   // Helper to check if a route is active (ignoring locale prefix)
@@ -74,14 +76,14 @@ export default function DashboardLayout({
 
           {/* Nav Links */}
           <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-            <div className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-4 px-2">Menu</div>
+            <div className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-4 px-2">{t("sidebar.menu")}</div>
             
             {navItems.map((item) => {
               const active = isActive(item.href);
               return (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={`/${pathname.split('/')[1] || 'en'}${item.href}`}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                     active 
                     ? "bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20" 
@@ -103,13 +105,13 @@ export default function DashboardLayout({
               </div>
               <div className="flex-1 overflow-hidden">
                 <div className="text-sm font-bold text-white truncate">Luxe Fragrance</div>
-                <div className="text-xs text-zinc-400 truncate">Premium Account</div>
+                <div className="text-xs text-zinc-400 truncate">{t("sidebar.premiumAccount")}</div>
               </div>
             </div>
             
             <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors">
               <LogOut className="w-5 h-5" />
-              <span className="font-bold">Logout</span>
+              <span className="font-bold">{t("sidebar.logout")}</span>
             </button>
           </div>
         </div>
@@ -127,15 +129,15 @@ export default function DashboardLayout({
             >
               <Menu className="w-6 h-6" />
             </button>
-            <h1 className="text-xl font-bold text-white hidden sm:block">Dashboard</h1>
+            <h1 className="text-xl font-bold text-white hidden sm:block">{t("header.title")}</h1>
           </div>
 
           <div className="flex items-center gap-4">
             {/* Locale comes from pathname or you can get it from context, here we extract it */}
             <LanguageSwitcher currentLocale={pathname.split('/')[1] || 'en'} />
             
-            <Link href="/" className="hidden sm:flex text-sm font-bold text-zinc-400 hover:text-white px-4 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition-all">
-              View Public Profile
+            <Link href={`/${pathname.split('/')[1] || 'en'}`} className="hidden sm:flex text-sm font-bold text-zinc-400 hover:text-white px-4 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition-all">
+              {t("header.viewProfile")}
             </Link>
           </div>
         </header>

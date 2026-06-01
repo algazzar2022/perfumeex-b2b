@@ -80,5 +80,53 @@
     "categories": "التصنيفات",
     "login": "تسجيل الدخول",
     "register": "سجل شركتك"
+  },
+  "Dashboard": {
+    "sidebar": {
+      "menu": "القائمة",
+      "overview": "نظرة عامة",
+      "companyProfile": "ملف الشركة",
+      "branches": "الفروع",
+      "products": "المنتجات",
+      "mediaGallery": "الوسائط",
+      "messages": "الرسائل",
+      "settings": "الإعدادات",
+      "premiumAccount": "حساب مميز",
+      "logout": "تسجيل الخروج"
+    },
+    "header": {
+      "title": "لوحة التحكم",
+      "viewProfile": "عرض الملف العام"
+    },
+    "overview": {
+      "welcome": "مرحباً بك، {companyName}",
+      "subtitle": "إليك إحصائيات ونشاط ملف شركتك اليوم.",
+      "upgradePlan": "ترقية الباقة",
+      "stats": {
+        "profileViews": "زيارات الملف",
+        "contactClicks": "نقرات التواصل",
+        "activeProducts": "منتجات نشطة",
+        "branches": "الفروع"
+      },
+      "completion": {
+        "title": "اكتمال الملف الشخصي",
+        "subtitle": "أكمل ملف شركتك لتظهر في المراتب الأولى في البحث.",
+        "completed": "مكتمل بنسبة {percentage}%",
+        "uploadLogo": "رفع شعار الشركة",
+        "addPhone": "إضافة رقم التواصل",
+        "uploadCatalog": "رفع كاتالوج PDF (قيد الانتظار)",
+        "uploadNow": "ارفع الآن"
+      },
+      "activity": {
+        "title": "الإشعارات",
+        "viewAll": "عرض الكل",
+        "item1": "ظهر ملفك في 45 عملية بحث اليوم.",
+        "item2": "قام مستخدم من السعودية بالضغط على رقمك.",
+        "item3": "تمت الموافقة على منتج 'عود رويال' من قبل الإدارة.",
+        "time1": "منذ ساعتين",
+        "time2": "منذ 5 ساعات",
+        "time3": "منذ يوم"
+      }
+    }
   }
 }
