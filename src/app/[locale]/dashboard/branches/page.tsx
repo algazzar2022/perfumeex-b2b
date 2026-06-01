@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
+import { useParams } from "next/navigation";
 import { Plus, Edit2, Trash2, MapPin, Phone, Loader2, CheckCircle2, Save } from "lucide-react";
 
 type Branch = {
@@ -19,6 +20,8 @@ type Branch = {
 
 export default function BranchesPage() {
   const t = useTranslations("Dashboard.branches");
+  const params = useParams();
+  const locale = params?.locale as string || "ar";
   const [branches, setBranches] = useState<Branch[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -231,8 +234,12 @@ export default function BranchesPage() {
                   </button>
                 </div>
                 
-                <h3 className="text-xl font-bold text-white mb-1">{branch.nameAr || branch.nameEn}</h3>
-                {branch.nameEn && branch.nameAr && <p className="text-sm text-zinc-500 mb-4">{branch.nameEn}</p>}
+                <h3 className="text-xl font-bold text-white mb-1">
+                  {locale === 'ar' ? (branch.nameAr || branch.nameEn) : (branch.nameEn || branch.nameAr)}
+                </h3>
+                <p className="text-sm text-zinc-500 mb-4">
+                  {locale === 'ar' ? branch.nameEn : branch.nameAr}
+                </p>
                 
                 <div className="space-y-2 mt-4 pt-4 border-t border-white/5">
                   <div className="flex items-start gap-2 text-sm text-zinc-400">
