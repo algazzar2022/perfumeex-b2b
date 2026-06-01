@@ -54,14 +54,14 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href={`/${locale}`} className="text-2xl font-bold text-white tracking-tight flex items-center gap-2 group">
+        <Link href={`/${locale}`} className="text-xl md:text-2xl font-bold text-white tracking-tight flex items-center gap-2 group shrink-0">
           <Image 
             src="/logo.png" 
             alt="PerfumeEx Logo" 
             width={40} 
             height={40} 
             unoptimized
-            className="group-hover:scale-110 transition-transform duration-300 object-contain" 
+            className="group-hover:scale-110 transition-transform duration-300 object-contain w-8 h-8 md:w-10 md:h-10" 
           />
           <span className="tracking-widest">PERFUME<span className="text-emerald-500">EX</span></span>
         </Link>
@@ -120,13 +120,12 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu Toggle */}
-        <div className="md:hidden flex items-center gap-4">
-          <LanguageSwitcher currentLocale={locale} />
+        <div className="md:hidden flex items-center gap-2">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-white p-2 focus:outline-none"
+            className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white focus:outline-none"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
@@ -135,32 +134,42 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-black/95 backdrop-blur-xl border-b border-white/10 overflow-hidden"
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+            className="md:hidden fixed inset-x-0 top-[72px] bottom-0 bg-black/95 backdrop-blur-3xl z-40 border-t border-white/10 overflow-y-auto"
           >
-            <div className="px-4 py-6 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={`/${locale}${link.href === '/' ? '' : link.href}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`text-lg font-medium py-2 transition-colors ${
-                    isActive(link.href) ? "text-emerald-500" : "text-zinc-400"
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
+            <div className="p-6 flex flex-col gap-6">
+              <div className="flex justify-between items-center bg-white/5 rounded-2xl p-4 border border-white/10">
+                <span className="text-zinc-400 font-bold">{isAr ? 'لغة الموقع' : 'Language'}</span>
+                <LanguageSwitcher currentLocale={locale} />
+              </div>
+
+              <nav className="flex flex-col gap-2">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={`/${locale}${link.href === '/' ? '' : link.href}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`text-xl font-bold p-4 rounded-2xl transition-colors flex items-center justify-between ${
+                      isActive(link.href) ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "text-white hover:bg-white/5 border border-transparent"
+                    }`}
+                  >
+                    {link.name}
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 opacity-0 data-[active=true]:opacity-100 transition-opacity" data-active={isActive(link.href)} />
+                  </Link>
+                ))}
+              </nav>
+
               <div className="h-px bg-white/10 my-2" />
               
               {status === 'authenticated' ? (
-                <>
+                <div className="grid grid-cols-1 gap-3">
                   <Link
                     href={`/${locale}/dashboard`}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 text-lg font-bold text-emerald-400 py-2"
+                    className="flex items-center justify-center gap-3 text-lg font-bold text-black bg-emerald-500 rounded-2xl py-4 hover:bg-emerald-400 transition-colors shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                   >
                     <LayoutDashboard className="w-5 h-5" />
                     {isAr ? "لوحة التحكم" : "Dashboard"}
@@ -170,18 +179,18 @@ export default function Navbar() {
                       setMobileMenuOpen(false);
                       signOut({ callbackUrl: '/' });
                     }}
-                    className="flex items-center gap-3 text-lg font-bold text-red-400 py-2 text-left"
+                    className="flex items-center justify-center gap-3 text-lg font-bold text-red-400 border border-red-500/20 rounded-2xl py-4 hover:bg-red-500/10 transition-colors"
                   >
                     <LogOut className="w-5 h-5" />
                     {isAr ? "تسجيل الخروج" : "Logout"}
                   </button>
-                </>
+                </div>
               ) : (
-                <>
+                <div className="grid grid-cols-2 gap-4 mt-2">
                   <Link
                     href={`/${locale}/login`}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-lg font-medium text-white py-2 flex items-center gap-2"
+                    className="flex items-center justify-center gap-2 text-base font-bold text-white border border-white/20 rounded-2xl py-4 hover:bg-white/5 transition-colors"
                   >
                     <User className="w-5 h-5" />
                     {t("login")}
@@ -189,11 +198,11 @@ export default function Navbar() {
                   <Link
                     href={`/${locale}/register`}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-center w-full py-3 mt-2 rounded-xl bg-white text-black font-bold"
+                    className="flex items-center justify-center gap-2 text-base font-bold text-black bg-white rounded-2xl py-4 hover:bg-emerald-50 transition-colors"
                   >
                     {t("register")}
                   </Link>
-                </>
+                </div>
               )}
             </div>
           </motion.div>
