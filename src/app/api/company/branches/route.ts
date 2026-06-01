@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       return new NextResponse("Company not found", { status: 404 });
     }
 
-    if (company.branches.length === 0 && (company.cityAr || company.cityEn || company.countryAr || company.addressAr)) {
+    if (company.branches.length === 0 && (company.cityAr || company.cityEn || company.countryAr || company.countryEn || company.addressAr || company.addressEn)) {
       const initialBranch = await prisma.branch.create({
         data: {
           companyId: company.id,
