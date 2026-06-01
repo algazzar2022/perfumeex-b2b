@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Search as SearchIcon, Filter, SlidersHorizontal, MapPin, Building2, Star, ShieldCheck } from "lucide-react";
+import { useState, useTransition } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search as SearchIcon, Filter, SlidersHorizontal, MapPin, Building2, Star, ShieldCheck, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -20,6 +20,7 @@ export default function SearchClient({
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("Dashboard.companyProfile.general.categoryOptions");
+  const [isPending, startTransition] = useTransition();
   
   const isAr = locale === 'ar';
 
@@ -33,7 +34,9 @@ export default function SearchClient({
     } else {
       params.delete("q");
     }
-    router.push(`/${locale}/search?${params.toString()}`);
+    startTransition(() => {
+      router.push(`/${locale}/search?${params.toString()}`);
+    });
   };
 
   const applyFilter = (key: string, value: string) => {
@@ -43,7 +46,9 @@ export default function SearchClient({
     } else {
       params.set(key, value);
     }
-    router.push(`/${locale}/search?${params.toString()}`);
+    startTransition(() => {
+      router.push(`/${locale}/search?${params.toString()}`);
+    });
   };
 
   return (
@@ -121,14 +126,15 @@ export default function SearchClient({
           </div>
 
           {/* Results Area */}
-          <div className="w-full lg:w-3/4">
+          <div className="w-full lg:w-3/4 relative">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl md:text-2xl font-bold text-white">
+              <h2 className="text-xl md:text-2xl font-bold text-white flex items-center gap-3">
                 <span className="text-emerald-500">{initialResults.length}</span> {isAr ? "نتيجة بحث" : "Results Found"}
+                {isPending && <Loader2 className="w-5 h-5 text-emerald-500 animate-spin" />}
               </h2>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className={`flex flex-col gap-4 transition-opacity duration-300 ${isPending ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
               {initialResults.length > 0 ? (
                 initialResults.map((company, idx) => {
                   const displayName = isAr ? (company.nameAr || company.nameEn) : company.nameEn;
