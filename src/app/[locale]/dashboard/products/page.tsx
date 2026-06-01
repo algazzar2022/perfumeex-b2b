@@ -9,10 +9,10 @@ import { useParams } from "next/navigation";
 
 export default function ProductsManagementPage() {
   const t = useTranslations("Dashboard.products");
+  const tCompany = useTranslations("Dashboard.company");
   const locale = useParams().locale as string;
 
   const [products, setProducts] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
@@ -33,20 +33,7 @@ export default function ProductsManagementPage() {
 
   useEffect(() => {
     fetchProducts();
-    fetchCategories();
   }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const res = await fetch("/api/categories");
-      if (res.ok) {
-        const data = await res.json();
-        setCategories(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const fetchProducts = async () => {
     try {
@@ -228,8 +215,15 @@ export default function ProductsManagementPage() {
                 <label className="block text-sm font-medium text-zinc-400 mb-2">{locale === 'ar' ? 'التصنيف' : 'Category'}</label>
                 <select value={formData.categoryId} onChange={(e) => setFormData({...formData, categoryId: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none">
                   <option value="">{locale === 'ar' ? 'اختر تصنيفاً' : 'Select a category'}</option>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>{locale === 'ar' ? cat.nameAr : cat.nameEn}</option>
+                  {[
+                    { id: "readyPerfumes", label: tCompany("general.categoryOptions.readyPerfumes") },
+                    { id: "clonePerfumes", label: tCompany("general.categoryOptions.clonePerfumes") },
+                    { id: "bakhoor", label: tCompany("general.categoryOptions.bakhoor") },
+                    { id: "airFresheners", label: tCompany("general.categoryOptions.airFresheners") },
+                    { id: "packaging", label: tCompany("general.categoryOptions.packaging") },
+                    { id: "glassBottles", label: tCompany("general.categoryOptions.glassBottles") }
+                  ].map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.label}</option>
                   ))}
                 </select>
               </div>
@@ -297,8 +291,15 @@ export default function ProductsManagementPage() {
             </div>
             <select className="bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none w-full sm:w-48 appearance-none">
               <option>{t("allCategories")}</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{locale === 'ar' ? cat.nameAr : cat.nameEn}</option>
+              {[
+                { id: "readyPerfumes", label: tCompany("general.categoryOptions.readyPerfumes") },
+                { id: "clonePerfumes", label: tCompany("general.categoryOptions.clonePerfumes") },
+                { id: "bakhoor", label: tCompany("general.categoryOptions.bakhoor") },
+                { id: "airFresheners", label: tCompany("general.categoryOptions.airFresheners") },
+                { id: "packaging", label: tCompany("general.categoryOptions.packaging") },
+                { id: "glassBottles", label: tCompany("general.categoryOptions.glassBottles") }
+              ].map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.label}</option>
               ))}
             </select>
           </div>
@@ -339,6 +340,9 @@ export default function ProductsManagementPage() {
                 </div>
                 
                 <div className="p-5">
+                  <div className="text-zinc-500 text-xs font-bold uppercase tracking-wider mb-1">
+                    {product.categoryId ? tCompany(`general.categoryOptions.${product.categoryId}`) : ''}
+                  </div>
                   <h3 className="text-lg font-bold text-white mb-2">{locale === 'ar' ? product.nameAr : product.nameEn}</h3>
                   <div className="flex items-center justify-between mt-4">
                     <div className="text-emerald-400 font-bold text-sm">
