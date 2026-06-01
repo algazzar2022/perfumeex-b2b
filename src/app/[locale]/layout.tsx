@@ -33,13 +33,21 @@ export default async function RootLayout({
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
+    <html lang={locale} dir={dir} suppressHydrationWarning className="dark">
       <body
-        className={`${cairo.variable} font-cairo antialiased bg-slate-50 text-slate-900 dark:bg-zinc-950 dark:text-slate-50`}
+        className={`${cairo.variable} font-cairo antialiased bg-zinc-950 text-white min-h-screen relative overflow-x-hidden`}
       >
+        {/* Global Grid Background */}
+        <div className="fixed inset-0 z-[-1] pointer-events-none" style={{
+          backgroundSize: '40px 40px',
+          backgroundImage: 'linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)'
+        }} />
+        <div className="fixed top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[120px] z-[-1] pointer-events-none" />
+        <div className="fixed bottom-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-[120px] z-[-1] pointer-events-none" />
+
         <NextIntlClientProvider messages={messages}>
           <Navbar />
-          <div className="pt-0">
+          <div className="pt-0 relative z-10">
             {children}
           </div>
         </NextIntlClientProvider>
