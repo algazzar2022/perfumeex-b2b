@@ -37,9 +37,9 @@ model Company {
   descriptionAr String?
   descriptionEn String?
   
-  logo        String?
-  coverImage  String?
-  catalogPdf  String?
+  logo        String? @db.LongText
+  coverImage  String? @db.LongText
+  catalogPdf  String? @db.LongText
   
   whatsapp    String?
   email       String?
@@ -120,7 +120,7 @@ model Product {
   descriptionEn String?
   
   price       Float?
-  image       String?
+  image       String? @db.LongText
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -130,7 +130,7 @@ model Gallery {
   id          String   @id @default(cuid())
   companyId   String
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  url         String
+  url         String   @db.LongText
   type        GalleryType @default(IMAGE)
   createdAt   DateTime @default(now())
 }

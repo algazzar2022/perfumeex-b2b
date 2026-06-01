@@ -60,6 +60,23 @@ export default function CompanySettingsPage() {
     }
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'logo' | 'coverImage') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 4 * 1024 * 1024) {
+      alert("Image must be smaller than 4MB");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Str = event.target?.result as string;
+      setFormData(prev => ({ ...prev, [field]: base64Str }));
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
@@ -214,18 +231,30 @@ export default function CompanySettingsPage() {
                     <div className="w-24 h-24 rounded-2xl bg-zinc-900 border border-white/10 overflow-hidden relative shadow-xl">
                       <Image src={formData.logo} alt="Logo Preview" fill className="object-cover" />
                     </div>
-                    <div className="flex-1 border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-zinc-900/50 hover:bg-zinc-900 transition-colors cursor-pointer group">
+                    <label className="flex-1 border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-zinc-900/50 hover:bg-zinc-900 transition-colors cursor-pointer group">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={(e) => handleImageUpload(e, 'logo')} 
+                      />
                       <UploadCloud className="w-6 h-6 text-zinc-500 group-hover:text-emerald-400 transition-colors mb-2" />
                       <p className="text-sm text-zinc-300 font-medium">{t("media.uploadLogoText")}</p>
                       <p className="text-xs text-zinc-500 mt-1">{t("media.uploadLogoHint")}</p>
-                    </div>
+                    </label>
                   </div>
                 </div>
 
                 {/* Cover Upload */}
                 <div>
                   <label className="block text-sm font-medium text-zinc-400 mb-4">{t("media.cover")}</label>
-                  <div className="border-2 border-dashed border-white/10 rounded-2xl p-2 relative group cursor-pointer hover:border-emerald-500/50 transition-colors bg-zinc-900/50">
+                  <label className="block border-2 border-dashed border-white/10 rounded-2xl p-2 relative group cursor-pointer hover:border-emerald-500/50 transition-colors bg-zinc-900/50">
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={(e) => handleImageUpload(e, 'coverImage')} 
+                    />
                     <div className="relative h-48 w-full rounded-xl overflow-hidden opacity-50 group-hover:opacity-100 transition-opacity">
                       <Image src={formData.coverImage} alt="Cover Preview" fill className="object-cover" />
                     </div>
@@ -234,7 +263,7 @@ export default function CompanySettingsPage() {
                         <UploadCloud className="w-5 h-5" /> {t("media.replaceCover")}
                       </div>
                     </div>
-                  </div>
+                  </label>
                 </div>
 
               </div>
