@@ -59,7 +59,7 @@ export default function MessagesPage() {
               <button
                 key={msg.id}
                 onClick={() => setActiveMessage(msg.id)}
-                className={`w-full text-left p-4 border-b border-white/5 transition-colors relative flex gap-3
+                className={`w-full ltr:text-left rtl:text-right p-4 border-b border-white/5 transition-colors relative flex gap-3
                   ${activeMessage === msg.id ? "bg-emerald-500/5" : "hover:bg-white/5"}
                 `}
               >
