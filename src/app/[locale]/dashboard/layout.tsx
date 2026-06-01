@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -13,7 +13,8 @@ import {
   Settings, 
   LogOut,
   Menu,
-  X
+  X,
+  ExternalLink
 } from "lucide-react";
 import LanguageSwitcher from "../../../components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
@@ -26,10 +27,24 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [slug, setSlug] = useState<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("Dashboard");
   const { data: session, status } = useSession();
+  const locale = pathname.split('/')[1] || 'en';
+
+  useEffect(() => {
+    fetch('/api/company/profile')
+      .then(res => {
+        if (res.ok) return res.json();
+        return {};
+      })
+      .then((data: any) => {
+        if (data?.slug) setSlug(data.slug);
+      })
+      .catch(console.error);
+  }, []);
 
   const companyName = session?.user?.name || "Company Name";
   const initial = companyName.charAt(0).toUpperCase();
@@ -42,6 +57,15 @@ export default function DashboardLayout({
     { name: t("sidebar.mediaGallery"), href: "/dashboard/gallery", icon: <ImageIcon className="w-5 h-5" /> },
     { name: t("sidebar.messages"), href: "/dashboard/messages", icon: <MessageSquare className="w-5 h-5" /> },
   ];
+
+  if (slug) {
+    navItems.push({
+      name: locale === 'ar' ? 'عرض صفحة الشركة' : 'View Profile',
+      href: `/${slug}`,
+      icon: <ExternalLink className="w-5 h-5" />,
+      external: true,
+    } as any);
+  }
 
   // Helper to check if a route is active (ignoring locale prefix)
   const isActive = (href: string) => {
@@ -84,12 +108,29 @@ export default function DashboardLayout({
           <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
             <div className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-4 px-2">{t("sidebar.menu")}</div>
             
-            {navItems.map((item) => {
+            {navItems.map((item: any) => {
               const active = isActive(item.href);
+              const href = `/${locale}${item.href}`;
+              
+              if (item.external) {
+                return (
+                  <a
+                    key={item.name}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent`}
+                  >
+                    {item.icon}
+                    {item.name}
+                  </a>
+                );
+              }
+
               return (
                 <Link
                   key={item.name}
-                  href={`/${pathname.split('/')[1] || 'en'}${item.href}`}
+                  href={href}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                     active 
                     ? "bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20" 
