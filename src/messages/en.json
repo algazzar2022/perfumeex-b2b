@@ -236,6 +236,16 @@
         "cancel": "Cancel",
         "save": "Save Product"
       }
+    },
+    "gallery": {
+      "title": "Company Gallery",
+      "subtitle": "Manage photos and videos showcasing your company, factory, or showroom.",
+      "add": "Upload New Media",
+      "noMedia": "No media uploaded yet. Start adding photos to your gallery.",
+      "uploadHint": "Click to upload image (max 5MB)",
+      "deleteConfirm": "Are you sure you want to delete this media?",
+      "deleteSuccess": "Media deleted successfully",
+      "uploadSuccess": "Media uploaded successfully"
     }
   }
 }
