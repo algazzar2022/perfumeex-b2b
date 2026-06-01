@@ -449,22 +449,24 @@ export default function CompanySettingsPage() {
               <div className="bg-zinc-950 border border-white/5 p-8 rounded-3xl">
                 <h2 className="text-xl font-bold text-white mb-6">{t("about.title")}</h2>
                 <div>
-                  <label className="block text-sm font-medium text-zinc-400 mb-2">{t("about.description")}</label>
-                  <div className="bg-zinc-900 border border-white/10 rounded-xl overflow-hidden focus-within:border-emerald-500 transition-colors">
-                    {/* Fake rich text toolbar */}
-                    <div className="border-b border-white/5 px-4 py-2 flex items-center gap-3 bg-zinc-950/50">
-                      <button className="text-zinc-400 hover:text-white font-bold">B</button>
-                      <button className="text-zinc-400 hover:text-white italic font-serif">I</button>
-                      <button className="text-zinc-400 hover:text-white underline">U</button>
-                      <div className="w-px h-4 bg-white/10 mx-1" />
-                      <button className="text-zinc-400 hover:text-white text-xs font-bold">H1</button>
-                      <button className="text-zinc-400 hover:text-white text-xs font-bold">H2</button>
-                    </div>
+                  <label className="block text-sm font-medium text-zinc-400 mb-2">{t("about.description")} (English)</label>
+                  <div className="bg-zinc-900 border border-white/10 rounded-xl overflow-hidden focus-within:border-emerald-500 transition-colors mb-6">
                     <textarea 
-                      rows={8}
+                      rows={5}
+                      value={formData.descriptionEn}
+                      onChange={(e) => setFormData({...formData, descriptionEn: e.target.value})}
+                      className="w-full bg-transparent p-4 text-white outline-none resize-y leading-relaxed font-light"
+                    />
+                  </div>
+                  
+                  <label className="block text-sm font-medium text-zinc-400 mb-2">{t("about.description")} (Arabic)</label>
+                  <div className="bg-zinc-900 border border-white/10 rounded-xl overflow-hidden focus-within:border-emerald-500 transition-colors">
+                    <textarea 
+                      rows={5}
                       value={formData.descriptionAr}
                       onChange={(e) => setFormData({...formData, descriptionAr: e.target.value})}
                       className="w-full bg-transparent p-4 text-white outline-none resize-y leading-relaxed font-light"
+                      dir="rtl"
                     />
                   </div>
                 </div>
