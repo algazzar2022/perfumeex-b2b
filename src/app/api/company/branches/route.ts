@@ -19,18 +19,17 @@ export async function GET(request: Request) {
       return new NextResponse("Company not found", { status: 404 });
     }
 
-    // Auto-create initial branch if none exists, using profile data
-    if (company.branches.length === 0 && (company.city || company.country || company.address)) {
+    if (company.branches.length === 0 && (company.cityAr || company.cityEn || company.countryAr || company.addressAr)) {
       const initialBranch = await prisma.branch.create({
         data: {
           companyId: company.id,
           nameEn: "Main Branch",
           nameAr: "الفرع الرئيسي",
-          country: company.country || "",
-          governorate: company.governorate || "",
-          city: company.city || "",
-          addressEn: company.address || "",
-          addressAr: company.address || "",
+          country: company.countryAr || company.countryEn || "",
+          governorate: company.governorateAr || company.governorateEn || "",
+          city: company.cityAr || company.cityEn || "",
+          addressEn: company.addressEn || company.addressAr || "",
+          addressAr: company.addressAr || company.addressEn || "",
           phone: company.whatsapp || company.email || ""
         }
       });

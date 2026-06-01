@@ -17,10 +17,14 @@ export default function CompanySettingsPage() {
     nameEn: "",
     nameAr: "",
     category: "readyPerfumes",
-    country: "",
-    governorate: "",
-    city: "",
-    address: "",
+    countryAr: "",
+    countryEn: "",
+    governorateAr: "",
+    governorateEn: "",
+    cityAr: "",
+    cityEn: "",
+    addressAr: "",
+    addressEn: "",
     whatsapp: "",
     email: "",
     facebook: "",
@@ -44,10 +48,14 @@ export default function CompanySettingsPage() {
           nameEn: data.nameEn || "",
           nameAr: data.nameAr || "",
           category: data.category || "readyPerfumes",
-          country: data.country || "",
-          governorate: data.governorate || "",
-          city: data.city || "",
-          address: data.address || "",
+          countryAr: data.countryAr || "",
+          countryEn: data.countryEn || "",
+          governorateAr: data.governorateAr || "",
+          governorateEn: data.governorateEn || "",
+          cityAr: data.cityAr || "",
+          cityEn: data.cityEn || "",
+          addressAr: data.addressAr || "",
+          addressEn: data.addressEn || "",
           whatsapp: data.whatsapp || "",
           email: data.email || "",
           facebook: data.facebook || "",
@@ -246,41 +254,88 @@ export default function CompanySettingsPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.country")}</label>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.country")} (English)</label>
                       <input 
                         type="text" 
-                        value={formData.country}
-                        onChange={(e) => setFormData({...formData, country: e.target.value})}
+                        value={formData.countryEn}
+                        onChange={(e) => setFormData({...formData, countryEn: e.target.value})}
                         className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.governorate")}</label>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.country")} (Arabic)</label>
                       <input 
                         type="text" 
-                        value={formData.governorate}
-                        onChange={(e) => setFormData({...formData, governorate: e.target.value})}
+                        value={formData.countryAr}
+                        onChange={(e) => setFormData({...formData, countryAr: e.target.value})}
                         className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                        dir="rtl"
                       />
                     </div>
                   </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.city")}</label>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.governorate")} (English)</label>
                       <input 
                         type="text" 
-                        value={formData.city}
-                        onChange={(e) => setFormData({...formData, city: e.target.value})}
+                        value={formData.governorateEn}
+                        onChange={(e) => setFormData({...formData, governorateEn: e.target.value})}
                         className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.address")}</label>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.governorate")} (Arabic)</label>
                       <input 
                         type="text" 
-                        value={formData.address}
-                        onChange={(e) => setFormData({...formData, address: e.target.value})}
+                        value={formData.governorateAr}
+                        onChange={(e) => setFormData({...formData, governorateAr: e.target.value})}
                         className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                        dir="rtl"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.city")} (English)</label>
+                      <input 
+                        type="text" 
+                        value={formData.cityEn}
+                        onChange={(e) => setFormData({...formData, cityEn: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.city")} (Arabic)</label>
+                      <input 
+                        type="text" 
+                        value={formData.cityAr}
+                        onChange={(e) => setFormData({...formData, cityAr: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                        dir="rtl"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.address")} (English)</label>
+                      <input 
+                        type="text" 
+                        value={formData.addressEn}
+                        onChange={(e) => setFormData({...formData, addressEn: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.address")} (Arabic)</label>
+                      <input 
+                        type="text" 
+                        value={formData.addressAr}
+                        onChange={(e) => setFormData({...formData, addressAr: e.target.value})}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                        dir="rtl"
                       />
                     </div>
                   </div>

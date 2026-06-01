@@ -41,11 +41,15 @@ model Company {
   coverImage  String? @db.LongText
   catalogPdf  String? @db.LongText
   
-  category    String?
-  country     String?
-  governorate String?
-  city        String?
-  address     String?
+  category      String?
+  countryAr     String?
+  countryEn     String?
+  governorateAr String?
+  governorateEn String?
+  cityAr        String?
+  cityEn        String?
+  addressAr     String?
+  addressEn     String?
   
   whatsapp    String?
   email       String?

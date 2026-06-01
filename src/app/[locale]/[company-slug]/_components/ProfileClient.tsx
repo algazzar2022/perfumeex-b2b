@@ -14,7 +14,12 @@ export default function ProfileClient({ company, locale }: { company: any, local
   const displayName = locale === 'ar' ? (company.nameAr || company.nameEn) : company.nameEn;
   const description = locale === 'ar' ? (company.descriptionAr || company.descriptionEn) : company.descriptionEn;
   
-  const locationParts = [company.address, company.city, company.governorate, company.country].filter(Boolean);
+  const address = locale === 'ar' ? (company.addressAr || company.addressEn) : (company.addressEn || company.addressAr);
+  const city = locale === 'ar' ? (company.cityAr || company.cityEn) : (company.cityEn || company.cityAr);
+  const governorate = locale === 'ar' ? (company.governorateAr || company.governorateEn) : (company.governorateEn || company.governorateAr);
+  const country = locale === 'ar' ? (company.countryAr || company.countryEn) : (company.countryEn || company.countryAr);
+
+  const locationParts = [address, city, governorate, country].filter(Boolean);
   const location = locationParts.length > 0 ? locationParts.join(', ') : (locale === 'ar' ? "الإمارات العربية المتحدة" : "United Arab Emirates");
   
   // Try to get translated category, fallback to default if not found
