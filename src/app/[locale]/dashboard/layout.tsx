@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import LanguageSwitcher from "../../../components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
   children,
@@ -25,7 +27,12 @@ export default function DashboardLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const t = useTranslations("Dashboard");
+  const { data: session, status } = useSession();
+
+  const companyName = session?.user?.name || "Company Name";
+  const initial = companyName.charAt(0).toUpperCase();
 
   const navItems = [
     { name: t("sidebar.overview"), href: "/dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
@@ -34,7 +41,6 @@ export default function DashboardLayout({
     { name: t("sidebar.products"), href: "/dashboard/products", icon: <Package className="w-5 h-5" /> },
     { name: t("sidebar.mediaGallery"), href: "/dashboard/gallery", icon: <ImageIcon className="w-5 h-5" /> },
     { name: t("sidebar.messages"), href: "/dashboard/messages", icon: <MessageSquare className="w-5 h-5" /> },
-    { name: t("sidebar.settings"), href: "/dashboard/settings", icon: <Settings className="w-5 h-5" /> },
   ];
 
   // Helper to check if a route is active (ignoring locale prefix)
@@ -100,16 +106,16 @@ export default function DashboardLayout({
           {/* User & Logout */}
           <div className="p-4 border-t border-white/5">
             <div className="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl bg-white/5">
-              <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-black">
-                L
+              <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold text-black uppercase">
+                {initial}
               </div>
               <div className="flex-1 overflow-hidden">
-                <div className="text-sm font-bold text-white truncate">Luxe Fragrance</div>
+                <div className="text-sm font-bold text-white truncate">{companyName}</div>
                 <div className="text-xs text-zinc-400 truncate">{t("sidebar.premiumAccount")}</div>
               </div>
             </div>
             
-            <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors">
+            <button onClick={() => signOut({ callbackUrl: '/' })} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-colors">
               <LogOut className="w-5 h-5" />
               <span className="font-bold">{t("sidebar.logout")}</span>
             </button>
@@ -136,7 +142,7 @@ export default function DashboardLayout({
             {/* Locale comes from pathname or you can get it from context, here we extract it */}
             <LanguageSwitcher currentLocale={pathname.split('/')[1] || 'en'} />
             
-            <Link href={`/${pathname.split('/')[1] || 'en'}`} className="hidden sm:flex text-sm font-bold text-zinc-400 hover:text-white px-4 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition-all">
+            <Link href={`/${pathname.split('/')[1] || 'en'}/companies/preview`} className="hidden sm:flex text-sm font-bold text-zinc-400 hover:text-white px-4 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition-all">
               {t("header.viewProfile")}
             </Link>
           </div>

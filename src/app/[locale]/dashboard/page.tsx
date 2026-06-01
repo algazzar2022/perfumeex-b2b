@@ -1,32 +1,31 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Eye, MousePointerClick, Package, MapPin, TrendingUp, Bell, Clock, CheckCircle2 } from "lucide-react";
+import { Eye, MousePointerClick, Package, MapPin, TrendingUp, Bell, Clock, CheckCircle2, Circle } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 export default function DashboardOverview() {
   const t = useTranslations("Dashboard.overview");
+  const { data: session } = useSession();
+  const companyName = session?.user?.name || "";
   
   const stats = [
-    { title: t("stats.profileViews"), value: "12,450", change: "+12.5%", isPositive: true, icon: <Eye className="w-5 h-5 text-emerald-500" /> },
-    { title: t("stats.contactClicks"), value: "840", change: "+5.2%", isPositive: true, icon: <MousePointerClick className="w-5 h-5 text-blue-500" /> },
-    { title: t("stats.activeProducts"), value: "24", change: "0%", isPositive: true, icon: <Package className="w-5 h-5 text-purple-500" /> },
-    { title: t("stats.branches"), value: "3", change: "+1", isPositive: true, icon: <MapPin className="w-5 h-5 text-amber-500" /> },
+    { title: t("stats.profileViews"), value: "0", change: "0%", isPositive: true, icon: <Eye className="w-5 h-5 text-emerald-500" /> },
+    { title: t("stats.contactClicks"), value: "0", change: "0%", isPositive: true, icon: <MousePointerClick className="w-5 h-5 text-blue-500" /> },
+    { title: t("stats.activeProducts"), value: "0", change: "0%", isPositive: true, icon: <Package className="w-5 h-5 text-purple-500" /> },
+    { title: t("stats.branches"), value: "0", change: "0", isPositive: true, icon: <MapPin className="w-5 h-5 text-amber-500" /> },
   ];
 
-  const recentActivity = [
-    { id: 1, text: t("activity.item1"), time: t("activity.time1"), type: "insight" },
-    { id: 2, text: t("activity.item2"), time: t("activity.time2"), type: "action" },
-    { id: 3, text: t("activity.item3"), time: t("activity.time3"), type: "success" },
-  ];
+  const recentActivity: any[] = [];
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">{t("welcome", { companyName: "Luxe Fragrance" })}</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">{t("welcome", { companyName: companyName })}</h1>
           <p className="text-zinc-400">{t("subtitle")}</p>
         </div>
         <button className="px-6 py-2.5 bg-emerald-500 text-black font-bold rounded-xl hover:bg-emerald-400 transition-colors flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
@@ -78,27 +77,42 @@ export default function DashboardOverview() {
             <div className="w-full bg-zinc-900 rounded-full h-4 mb-4 overflow-hidden border border-white/5">
               <motion.div 
                 initial={{ width: 0 }}
-                animate={{ width: "80%" }}
+                animate={{ width: "0%" }}
                 transition={{ duration: 1, delay: 0.5 }}
                 className="bg-gradient-to-r from-emerald-500 to-teal-400 h-4 rounded-full relative"
               >
-                <div className="absolute top-0 bottom-0 left-0 right-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.2)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.2)_75%,transparent_75%,transparent)] bg-[length:20px_20px] animate-[shimmer_1s_linear_infinite]" />
               </motion.div>
             </div>
             <div className="flex justify-between text-sm font-bold">
-              <span className="text-emerald-400">{t("completion.completed", { percentage: 80 })}</span>
+              <span className="text-emerald-400">{t("completion.completed", { percentage: 0 })}</span>
               <span className="text-zinc-500">100%</span>
             </div>
           </div>
 
           <div className="mt-8 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold"><CheckCircle2 className="w-4 h-4" /></div>
-              <span className="text-zinc-300 text-sm">{t("completion.uploadLogo")}</span>
+              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
+              <span className="text-zinc-500 text-sm">{t("completion.uploadLogo")}</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold"><CheckCircle2 className="w-4 h-4" /></div>
-              <span className="text-zinc-300 text-sm">{t("completion.addPhone")}</span>
+              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
+              <span className="text-zinc-500 text-sm">{t("completion.addLocation")}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
+              <span className="text-zinc-500 text-sm">{t("completion.uploadCover")}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
+              <span className="text-zinc-500 text-sm">{t("completion.addPhone")}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
+              <span className="text-zinc-500 text-sm">{t("completion.addFacebook")}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
+              <span className="text-zinc-500 text-sm">{t("completion.addDescription")}</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-500"></div>
@@ -123,21 +137,27 @@ export default function DashboardOverview() {
           </div>
 
           <div className="space-y-6">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex gap-4">
-                <div className="mt-1">
-                  {activity.type === 'insight' && <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />}
-                  {activity.type === 'action' && <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />}
-                  {activity.type === 'success' && <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />}
-                </div>
-                <div>
-                  <p className="text-sm text-zinc-300 mb-1 leading-relaxed">{activity.text}</p>
-                  <p className="text-xs text-zinc-500 flex items-center gap-1 font-medium">
-                    <Clock className="w-3 h-3" /> {activity.time}
-                  </p>
-                </div>
+            {recentActivity.length === 0 ? (
+              <div className="text-center py-8 text-zinc-500 border border-white/5 rounded-2xl bg-white/5">
+                {t("activity.noNotifications")}
               </div>
-            ))}
+            ) : (
+              recentActivity.map((activity) => (
+                <div key={activity.id} className="flex gap-4">
+                  <div className="mt-1">
+                    {activity.type === 'insight' && <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />}
+                    {activity.type === 'action' && <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />}
+                    {activity.type === 'success' && <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />}
+                  </div>
+                  <div>
+                    <p className="text-sm text-zinc-300 mb-1 leading-relaxed">{activity.text}</p>
+                    <p className="text-xs text-zinc-500 flex items-center gap-1 font-medium">
+                      <Clock className="w-3 h-3" /> {activity.time}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </motion.div>
       </div>
