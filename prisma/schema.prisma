@@ -134,6 +134,9 @@ model Product {
   price       Float?
   image       String? @db.LongText
   
+  stockStatus String? @default("IN_STOCK")
+  salesType   String? @default("WHOLESALE")
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
