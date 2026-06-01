@@ -3,8 +3,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -23,7 +24,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     // ensure the branch belongs to the company before updating
     const branch = await prisma.branch.updateMany({
       where: {
-        id: params.id,
+        id: id,
         companyId: company.id
       },
       data: {
@@ -49,8 +50,9 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -66,7 +68,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 
     const branch = await prisma.branch.deleteMany({
       where: {
-        id: params.id,
+        id: id,
         companyId: company.id
       }
     });

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, Trash2, MapPin, Phone, Loader2, CheckCircle2 } from "lucide-react";
+import { Plus, Edit2, Trash2, MapPin, Phone, Loader2, CheckCircle2, Save } from "lucide-react";
 
 type Branch = {
   id: string;
