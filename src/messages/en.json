@@ -28,7 +28,8 @@
         "bakhoor": "Bakhoor",
         "airFresheners": "Air Fresheners",
         "packaging": "Packaging",
-        "bottlesAndEmpties": "Bottles & Empties"
+        "bottlesAndEmpties": "Bottles & Empties",
+        "others": "Others"
       },
       "verifiedSuppliers": "Verified Suppliers"
     },
@@ -158,7 +159,8 @@
           "bakhoor": "Bakhoor",
           "airFresheners": "Air Fresheners",
           "packaging": "Packaging",
-          "bottlesAndEmpties": "Bottles & Empties"
+          "bottlesAndEmpties": "Bottles & Empties",
+          "others": "Others"
         },
         "country": "Country",
         "governorate": "Governorate",

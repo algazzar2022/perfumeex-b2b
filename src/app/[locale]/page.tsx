@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Search, MapPin, Building2, Droplet, Star, TrendingUp, Sparkles, ArrowRight, CheckCircle2, Share2, MessageCircle, Package } from "lucide-react";
+import { Search, MapPin, Building2, Droplet, Star, TrendingUp, Sparkles, ArrowRight, CheckCircle2, Share2, MessageCircle, Package, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
@@ -75,6 +75,7 @@ export default function Home() {
     { name: t('categories.items.airFresheners'), icon: <Sparkles strokeWidth={1.5} className="w-8 h-8" />, count: 210 },
     { name: t('categories.items.packaging'), icon: <Building2 strokeWidth={1.5} className="w-8 h-8" />, count: 320 },
     { name: t('categories.items.bottlesAndEmpties'), icon: <Package strokeWidth={1.5} className="w-8 h-8" />, count: 280 },
+    { name: t('categories.items.others'), icon: <MoreHorizontal strokeWidth={1.5} className="w-8 h-8" />, count: 50 },
   ];
 
   return (

@@ -220,7 +220,8 @@ export default function CompanySettingsPage() {
                         { id: "bakhoor", label: t("general.categoryOptions.bakhoor") },
                         { id: "airFresheners", label: t("general.categoryOptions.airFresheners") },
                         { id: "packaging", label: t("general.categoryOptions.packaging") },
-                        { id: "bottlesAndEmpties", label: t("general.categoryOptions.bottlesAndEmpties") }
+                        { id: "bottlesAndEmpties", label: t("general.categoryOptions.bottlesAndEmpties") },
+                        { id: "others", label: t("general.categoryOptions.others") }
                       ].map(cat => {
                         const selectedCategories = formData.category ? formData.category.split(',') : [];
                         const isSelected = selectedCategories.includes(cat.id);

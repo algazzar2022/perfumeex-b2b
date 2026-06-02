@@ -222,7 +222,8 @@ export default function ProductsManagementPage() {
                     { id: "bakhoor", label: tCompany("general.categoryOptions.bakhoor") },
                     { id: "airFresheners", label: tCompany("general.categoryOptions.airFresheners") },
                     { id: "packaging", label: tCompany("general.categoryOptions.packaging") },
-                    { id: "bottlesAndEmpties", label: tCompany("general.categoryOptions.bottlesAndEmpties") }
+                    { id: "bottlesAndEmpties", label: tCompany("general.categoryOptions.bottlesAndEmpties") },
+                    { id: "others", label: tCompany("general.categoryOptions.others") }
                   ].map((cat) => (
                     <option key={cat.id} value={cat.id}>{cat.label}</option>
                   ))}
@@ -299,7 +300,8 @@ export default function ProductsManagementPage() {
                 { id: "bakhoor", label: tCompany("general.categoryOptions.bakhoor") },
                 { id: "airFresheners", label: tCompany("general.categoryOptions.airFresheners") },
                 { id: "packaging", label: tCompany("general.categoryOptions.packaging") },
-                { id: "bottlesAndEmpties", label: tCompany("general.categoryOptions.bottlesAndEmpties") }
+                { id: "bottlesAndEmpties", label: tCompany("general.categoryOptions.bottlesAndEmpties") },
+                { id: "others", label: tCompany("general.categoryOptions.others") }
               ].map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.label}</option>
               ))}
