@@ -157,12 +157,12 @@ export default function SearchClient({
                   const location = locationParts.length > 0 ? locationParts.join(', ') : "";
 
                   const translatedCategory = company.category 
-                    ? company.category.split(',').filter(Boolean).map((c: string) => {
+                    ? Array.from(new Set(company.category.split(',').filter(Boolean).map((c: string) => {
                         try { 
                           const tr = t(c as any);
                           return tr.includes('Dashboard.companyProfile') ? c : tr;
                         } catch(e) { return c }
-                      }).join(' • ') 
+                      }))).join(' • ') 
                     : "";
 
                   const logoImage = company.logo || "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=200&h=200";

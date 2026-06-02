@@ -29,12 +29,12 @@ export default function ProfileClient({ company, locale }: { company: any, local
   const location = locationParts.length > 0 ? locationParts.join(', ') : (isAr ? "الإمارات العربية المتحدة" : "United Arab Emirates");
   
   const translatedCategory = company.category 
-    ? company.category.split(',').filter(Boolean).map((c: string) => {
+    ? Array.from(new Set(company.category.split(',').filter(Boolean).map((c: string) => {
         try { 
           const tr = t(c as any);
           return tr.includes('Dashboard.companyProfile') ? c : tr;
         } catch(e) { return c }
-      }).join(' • ') 
+      }))).join(' • ') 
     : (isAr ? "عطور جاهزة" : "Ready Perfumes");
   
   const coverImage = company.coverImage || "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1920&h=600";
