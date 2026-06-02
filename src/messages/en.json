@@ -270,5 +270,14 @@
       "welcomeBody": "Hello,\n\nWelcome to PerfumeEx! We are thrilled to have you join our platform as a verified company.\n\nOur goal is to help you connect with potential B2B buyers, expand your business, and showcase your products to a global audience. Please make sure your profile is complete and your products are up-to-date.\n\nIf you need any assistance, our support team is always here to help you grow.\n\nBest regards,\nPerfumeEx Administration Team",
       "justNow": "Just now"
     }
+  },
+  "CompaniesDirectory": {
+    "title": "Discover Companies",
+    "subtitle": "Browse through thousands of verified perfume manufacturers, suppliers, and packaging companies worldwide.",
+    "searchPlaceholder": "Search companies by name or keyword...",
+    "filters": "Filters",
+    "verified": "Verified Supplier",
+    "viewProfile": "View Profile",
+    "noCompanies": "No companies found matching your search."
   }
 }
