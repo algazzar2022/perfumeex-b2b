@@ -42,8 +42,8 @@ export default async function CategoryPage({
     }
   });
 
-  // Filter out products from unapproved companies just in case
-  const approvedProducts = products.filter(p => p.company.status === 'APPROVED');
+  // Pass all products directly (consistent with the rest of the app for now)
+  const approvedProducts = products;
 
   return (
     <CategoryProductsClient 
