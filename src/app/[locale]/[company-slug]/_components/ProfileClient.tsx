@@ -611,7 +611,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-2xl w-full max-h-[90vh] flex flex-col md:flex-row relative shadow-2xl cursor-default"
+              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-4xl w-full flex flex-col md:flex-row relative shadow-2xl cursor-default"
             >
               <button 
                 onClick={(e) => { e.stopPropagation(); setSelectedProduct(null); }} 
@@ -620,7 +620,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-full md:w-5/12 relative bg-white shrink-0 min-h-[300px] md:min-h-0 self-stretch">
+              <div className="w-full md:w-1/2 relative bg-white shrink-0 aspect-square">
                 <Image 
                   src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
                   alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
@@ -629,40 +629,42 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 />
               </div>
 
-              <div className="w-full md:w-7/12 p-6 md:p-8 flex flex-col max-h-[90vh]">
-                <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
-                  <Box className="w-3 h-3" />
-                  {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
-                </div>
-                
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 shrink-0">
-                  {isAr ? selectedProduct.nameAr : selectedProduct.nameEn}
-                </h3>
-                
-                <div className="text-emerald-500 font-extrabold text-xl md:text-2xl mb-6 shrink-0">
-                  {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
-                </div>
-                
-                <div className="prose prose-invert prose-sm mb-6 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                  <h4 className="text-zinc-400 uppercase tracking-wider text-xs font-bold mb-2 sticky top-0 bg-zinc-900 py-1">
-                    {isAr ? "وصف المنتج" : "Product Description"}
-                  </h4>
-                  <p className="text-zinc-300 leading-relaxed whitespace-pre-wrap">
-                    {isAr ? selectedProduct.descriptionAr : selectedProduct.descriptionEn}
-                  </p>
-                </div>
-                
-                <div className="grid grid-cols-1 gap-3 mt-auto pt-6 border-t border-white/10">
-                  <button onClick={() => { setSelectedProduct(null); handleContactClick(); }} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-3">
-                    <Mail className="w-5 h-5" />
-                    {isAr ? "مراسلة الشركة لطلب المنتج" : "Message Supplier to Order"}
-                  </button>
-                  {company.whatsapp && (
-                    <a href={`https://wa.me/${company.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(isAr ? `مرحباً، أود الاستفسار عن المنتج: ${selectedProduct.nameAr}` : `Hello, I'd like to inquire about the product: ${selectedProduct.nameEn}`)}`} target="_blank" rel="noreferrer" className="w-full py-4 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#25D366] font-bold rounded-xl transition-all flex items-center justify-center gap-3">
-                      <Phone className="w-5 h-5" />
-                      {isAr ? "تواصل عبر واتساب" : "Contact via WhatsApp"}
-                    </a>
-                  )}
+              <div className="w-full md:w-1/2 relative">
+                <div className="md:absolute md:inset-0 p-6 md:p-8 flex flex-col overflow-y-auto custom-scrollbar">
+                  <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
+                    <Box className="w-3 h-3" />
+                    {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
+                  </div>
+                  
+                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 shrink-0">
+                    {isAr ? selectedProduct.nameAr : selectedProduct.nameEn}
+                  </h3>
+                  
+                  <div className="text-emerald-500 font-extrabold text-xl md:text-2xl mb-6 shrink-0">
+                    {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
+                  </div>
+                  
+                  <div className="prose prose-invert prose-sm mb-6 flex-1 shrink-0">
+                    <h4 className="text-zinc-400 uppercase tracking-wider text-xs font-bold mb-2">
+                      {isAr ? "وصف المنتج" : "Product Description"}
+                    </h4>
+                    <p className="text-zinc-300 leading-relaxed whitespace-pre-wrap">
+                      {isAr ? selectedProduct.descriptionAr : selectedProduct.descriptionEn}
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 gap-3 mt-auto pt-6 border-t border-white/10 shrink-0">
+                    <button onClick={() => { setSelectedProduct(null); handleContactClick(); }} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-3">
+                      <Mail className="w-5 h-5" />
+                      {isAr ? "مراسلة الشركة لطلب المنتج" : "Message Supplier to Order"}
+                    </button>
+                    {company.whatsapp && (
+                      <a href={`https://wa.me/${company.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(isAr ? `مرحباً، أود الاستفسار عن المنتج: ${selectedProduct.nameAr}` : `Hello, I'd like to inquire about the product: ${selectedProduct.nameEn}`)}`} target="_blank" rel="noreferrer" className="w-full py-4 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#25D366] font-bold rounded-xl transition-all flex items-center justify-center gap-3">
+                        <Phone className="w-5 h-5" />
+                        {isAr ? "تواصل عبر واتساب" : "Contact via WhatsApp"}
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
