@@ -257,226 +257,176 @@ export default function CompanySettingsPage() {
                       })}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-6 border-b border-white/5 pb-8 mb-8">
-                    {/* Country Row */}
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div className="md:col-span-1">
-                          <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.country")}</label>
-                          <select
-                            value={(() => {
-                              const isCustom = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
-                              return isCustom ? "أخرى" : formData.countryAr;
-                            })()}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              const selected = ARAB_COUNTRIES.find(c => c.nameAr === val);
-                              if (selected && selected.id !== "OTHER") {
-                                setFormData(prev => ({
-                                  ...prev, countryAr: selected.nameAr, countryEn: selected.nameEn,
-                                  governorateAr: "", governorateEn: "", cityAr: "", cityEn: ""
-                                }));
-                              } else if (selected && selected.id === "OTHER") {
-                                setFormData(prev => ({
-                                  ...prev, countryAr: "أخرى", countryEn: "Other",
-                                  governorateAr: "", governorateEn: "", cityAr: "", cityEn: ""
-                                }));
-                              } else {
-                                setFormData(prev => ({ ...prev, countryAr: "", countryEn: "", governorateAr: "", governorateEn: "", cityAr: "", cityEn: "" }));
-                              }
-                            }}
-                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none"
-                          >
-                            <option value="">{isAr ? "اختر الدولة" : "Select Country"}</option>
-                            {ARAB_COUNTRIES.map(c => <option key={c.id} value={c.nameAr}>{isAr ? c.nameAr : c.nameEn}</option>)}
-                          </select>
-                        </div>
-                        {formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER") && (
-                          <>
-                            <div className="md:col-span-1">
-                              <label className="block text-sm font-medium text-emerald-400 mb-2">{t("general.country")} (English)</label>
-                              <input 
-                                type="text" 
-                                value={formData.countryEn === "Other" ? "" : formData.countryEn}
-                                onChange={(e) => setFormData({...formData, countryEn: e.target.value})}
-                                placeholder="ex: France"
-                                className="w-full bg-emerald-500/5 border border-emerald-500/30 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
-                              />
-                            </div>
-                            <div className="md:col-span-1">
-                              <label className="block text-sm font-medium text-emerald-400 mb-2">{t("general.country")} (Arabic)</label>
-                              <input 
-                                type="text" 
-                                value={formData.countryAr === "أخرى" ? "" : formData.countryAr}
-                                onChange={(e) => setFormData({...formData, countryAr: e.target.value})}
-                                placeholder="مثال: فرنسا"
-                                className="w-full bg-emerald-500/5 border border-emerald-500/30 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
-                                dir="rtl"
-                              />
-                            </div>
-                          </>
-                        )}
+                  <div className="border-b border-white/5 pb-8 mb-8">
+                    <h3 className="text-lg font-bold text-white mb-5">{t("general.locationTitle") || (isAr ? "الموقع الجغرافي" : "Geographic Location")}</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+                      {/* Country Select */}
+                      <div>
+                        <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.country")}</label>
+                        <select
+                          value={(() => {
+                            const isCustom = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
+                            return isCustom ? "أخرى" : formData.countryAr;
+                          })()}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const selected = ARAB_COUNTRIES.find(c => c.nameAr === val);
+                            if (selected && selected.id !== "OTHER") {
+                              setFormData(prev => ({ ...prev, countryAr: selected.nameAr, countryEn: selected.nameEn, governorateAr: "", governorateEn: "", cityAr: "", cityEn: "" }));
+                            } else if (selected && selected.id === "OTHER") {
+                              setFormData(prev => ({ ...prev, countryAr: "أخرى", countryEn: "Other", governorateAr: "", governorateEn: "", cityAr: "", cityEn: "" }));
+                            } else {
+                              setFormData(prev => ({ ...prev, countryAr: "", countryEn: "", governorateAr: "", governorateEn: "", cityAr: "", cityEn: "" }));
+                            }
+                          }}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none"
+                        >
+                          <option value="">{isAr ? "اختر الدولة" : "Select Country"}</option>
+                          {ARAB_COUNTRIES.map(c => <option key={c.id} value={c.nameAr}>{isAr ? c.nameAr : c.nameEn}</option>)}
+                        </select>
+                      </div>
+
+                      {/* Governorate Select */}
+                      <div>
+                        <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.governorate")}</label>
+                        <select
+                          value={(() => {
+                            const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
+                            const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
+                            const govs = cId ? (GOVERNORATES[cId] || []) : [];
+                            const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
+                            return isCustomGov ? "أخرى" : formData.governorateAr;
+                          })()}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
+                            const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
+                            const govs = cId ? (GOVERNORATES[cId] || []) : [];
+                            const selected = govs.find(g => g.nameAr === val);
+                            if (selected && selected.id !== "OTHER") {
+                              setFormData(prev => ({ ...prev, governorateAr: selected.nameAr, governorateEn: selected.nameEn, cityAr: "", cityEn: "" }));
+                            } else if (selected && selected.id === "OTHER") {
+                              setFormData(prev => ({ ...prev, governorateAr: "أخرى", governorateEn: "Other", cityAr: "", cityEn: "" }));
+                            } else {
+                              setFormData(prev => ({ ...prev, governorateAr: "", governorateEn: "", cityAr: "", cityEn: "" }));
+                            }
+                          }}
+                          disabled={!formData.countryAr}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none disabled:opacity-50"
+                        >
+                          <option value="">{isAr ? "اختر المحافظة" : "Select Governorate"}</option>
+                          {(() => {
+                            const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
+                            const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
+                            const govs = cId ? (GOVERNORATES[cId] || []) : [];
+                            return govs.map(g => <option key={g.id} value={g.nameAr}>{isAr ? g.nameAr : g.nameEn}</option>);
+                          })()}
+                        </select>
+                      </div>
+
+                      {/* City Select */}
+                      <div>
+                        <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.city")}</label>
+                        <select
+                          value={(() => {
+                            const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
+                            const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
+                            const govs = cId ? (GOVERNORATES[cId] || []) : [];
+                            const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
+                            const gId = govs.find(g => g.nameAr === formData.governorateAr)?.id || (isCustomGov ? "OTHER" : null);
+                            const cities = gId ? (CITIES[gId] || []) : [];
+                            const isCustomCity = formData.cityAr && !cities.find(c => c.nameAr === formData.cityAr && c.id !== "OTHER");
+                            return isCustomCity ? "أخرى" : formData.cityAr;
+                          })()}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
+                            const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
+                            const govs = cId ? (GOVERNORATES[cId] || []) : [];
+                            const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
+                            const gId = govs.find(g => g.nameAr === formData.governorateAr)?.id || (isCustomGov ? "OTHER" : null);
+                            const cities = gId ? (CITIES[gId] || []) : [];
+                            const selected = cities.find(c => c.nameAr === val);
+                            if (selected && selected.id !== "OTHER") {
+                              setFormData(prev => ({ ...prev, cityAr: selected.nameAr, cityEn: selected.nameEn }));
+                            } else if (selected && selected.id === "OTHER") {
+                              setFormData(prev => ({ ...prev, cityAr: "أخرى", cityEn: "Other" }));
+                            } else {
+                              setFormData(prev => ({ ...prev, cityAr: "", cityEn: "" }));
+                            }
+                          }}
+                          disabled={!formData.governorateAr}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none disabled:opacity-50"
+                        >
+                          <option value="">{isAr ? "اختر المدينة" : "Select City"}</option>
+                          {(() => {
+                            const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
+                            const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
+                            const govs = cId ? (GOVERNORATES[cId] || []) : [];
+                            const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
+                            const gId = govs.find(g => g.nameAr === formData.governorateAr)?.id || (isCustomGov ? "OTHER" : null);
+                            const cities = gId ? (CITIES[gId] || []) : [];
+                            return cities.map(c => <option key={c.id} value={c.nameAr}>{isAr ? c.nameAr : c.nameEn}</option>);
+                          })()}
+                        </select>
                       </div>
                     </div>
 
-                    {/* Governorate Row */}
+                    {/* Custom Inputs Rendering */}
                     <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div className="md:col-span-1">
-                          <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.governorate")}</label>
-                          <select
-                            value={(() => {
-                              const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
-                              const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
-                              const govs = cId ? (GOVERNORATES[cId] || []) : [];
-                              const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
-                              return isCustomGov ? "أخرى" : formData.governorateAr;
-                            })()}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
-                              const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
-                              const govs = cId ? (GOVERNORATES[cId] || []) : [];
-                              const selected = govs.find(g => g.nameAr === val);
-                              if (selected && selected.id !== "OTHER") {
-                                setFormData(prev => ({ ...prev, governorateAr: selected.nameAr, governorateEn: selected.nameEn, cityAr: "", cityEn: "" }));
-                              } else if (selected && selected.id === "OTHER") {
-                                setFormData(prev => ({ ...prev, governorateAr: "أخرى", governorateEn: "Other", cityAr: "", cityEn: "" }));
-                              } else {
-                                setFormData(prev => ({ ...prev, governorateAr: "", governorateEn: "", cityAr: "", cityEn: "" }));
-                              }
-                            }}
-                            disabled={!formData.countryAr}
-                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none disabled:opacity-50"
-                          >
-                            <option value="">{isAr ? "اختر المحافظة" : "Select Governorate"}</option>
-                            {(() => {
-                              const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
-                              const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
-                              const govs = cId ? (GOVERNORATES[cId] || []) : [];
-                              return govs.map(g => <option key={g.id} value={g.nameAr}>{isAr ? g.nameAr : g.nameEn}</option>);
-                            })()}
-                          </select>
+                      {formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER") && (
+                        <div className="bg-emerald-900/10 border border-emerald-500/20 p-5 rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div>
+                            <label className="block text-sm font-medium text-emerald-400 mb-2">{isAr ? "اكتب اسم الدولة (بالإنجليزية)" : "Write Country Name (English)"}</label>
+                            <input type="text" value={formData.countryEn === "Other" ? "" : formData.countryEn} onChange={(e) => setFormData({...formData, countryEn: e.target.value})} placeholder="ex: France" className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-emerald-400 mb-2">{isAr ? "اكتب اسم الدولة (بالعربية)" : "Write Country Name (Arabic)"}</label>
+                            <input type="text" value={formData.countryAr === "أخرى" ? "" : formData.countryAr} onChange={(e) => setFormData({...formData, countryAr: e.target.value})} placeholder="مثال: فرنسا" className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" dir="rtl" />
+                          </div>
                         </div>
-                        {(() => {
-                          const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
-                          const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
-                          const govs = cId ? (GOVERNORATES[cId] || []) : [];
-                          const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
-                          if (!isCustomGov) return null;
-                          return (
-                            <>
-                              <div className="md:col-span-1">
-                                <label className="block text-sm font-medium text-emerald-400 mb-2">{t("general.governorate")} (English)</label>
-                                <input 
-                                  type="text" 
-                                  value={formData.governorateEn === "Other" ? "" : formData.governorateEn}
-                                  onChange={(e) => setFormData({...formData, governorateEn: e.target.value})}
-                                  placeholder="ex: Paris"
-                                  className="w-full bg-emerald-500/5 border border-emerald-500/30 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
-                                />
-                              </div>
-                              <div className="md:col-span-1">
-                                <label className="block text-sm font-medium text-emerald-400 mb-2">{t("general.governorate")} (Arabic)</label>
-                                <input 
-                                  type="text" 
-                                  value={formData.governorateAr === "أخرى" ? "" : formData.governorateAr}
-                                  onChange={(e) => setFormData({...formData, governorateAr: e.target.value})}
-                                  placeholder="مثال: باريس"
-                                  className="w-full bg-emerald-500/5 border border-emerald-500/30 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
-                                  dir="rtl"
-                                />
-                              </div>
-                            </>
-                          );
-                        })()}
-                      </div>
-                    </div>
+                      )}
 
-                    {/* City Row */}
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div className="md:col-span-1">
-                          <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.city")}</label>
-                          <select
-                            value={(() => {
-                              const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
-                              const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
-                              const govs = cId ? (GOVERNORATES[cId] || []) : [];
-                              const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
-                              const gId = govs.find(g => g.nameAr === formData.governorateAr)?.id || (isCustomGov ? "OTHER" : null);
-                              const cities = gId ? (CITIES[gId] || []) : [];
-                              const isCustomCity = formData.cityAr && !cities.find(c => c.nameAr === formData.cityAr && c.id !== "OTHER");
-                              return isCustomCity ? "أخرى" : formData.cityAr;
-                            })()}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
-                              const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
-                              const govs = cId ? (GOVERNORATES[cId] || []) : [];
-                              const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
-                              const gId = govs.find(g => g.nameAr === formData.governorateAr)?.id || (isCustomGov ? "OTHER" : null);
-                              const cities = gId ? (CITIES[gId] || []) : [];
-                              const selected = cities.find(c => c.nameAr === val);
-                              if (selected && selected.id !== "OTHER") {
-                                setFormData(prev => ({ ...prev, cityAr: selected.nameAr, cityEn: selected.nameEn }));
-                              } else if (selected && selected.id === "OTHER") {
-                                setFormData(prev => ({ ...prev, cityAr: "أخرى", cityEn: "Other" }));
-                              } else {
-                                setFormData(prev => ({ ...prev, cityAr: "", cityEn: "" }));
-                              }
-                            }}
-                            disabled={!formData.governorateAr}
-                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none disabled:opacity-50"
-                          >
-                            <option value="">{isAr ? "اختر المدينة" : "Select City"}</option>
-                            {(() => {
-                              const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
-                              const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
-                              const govs = cId ? (GOVERNORATES[cId] || []) : [];
-                              const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
-                              const gId = govs.find(g => g.nameAr === formData.governorateAr)?.id || (isCustomGov ? "OTHER" : null);
-                              const cities = gId ? (CITIES[gId] || []) : [];
-                              return cities.map(c => <option key={c.id} value={c.nameAr}>{isAr ? c.nameAr : c.nameEn}</option>);
-                            })()}
-                          </select>
-                        </div>
-                        {(() => {
-                          const isCustomCountry = formData.countryAr && !ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER");
-                          const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (isCustomCountry ? "OTHER" : null);
-                          const govs = cId ? (GOVERNORATES[cId] || []) : [];
-                          const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
-                          const gId = govs.find(g => g.nameAr === formData.governorateAr)?.id || (isCustomGov ? "OTHER" : null);
-                          const cities = gId ? (CITIES[gId] || []) : [];
-                          const isCustomCity = formData.cityAr && !cities.find(c => c.nameAr === formData.cityAr && c.id !== "OTHER");
-                          if (!isCustomCity) return null;
-                          return (
-                            <>
-                              <div className="md:col-span-1">
-                                <label className="block text-sm font-medium text-emerald-400 mb-2">{t("general.city")} (English)</label>
-                                <input 
-                                  type="text" 
-                                  value={formData.cityEn === "Other" ? "" : formData.cityEn}
-                                  onChange={(e) => setFormData({...formData, cityEn: e.target.value})}
-                                  placeholder="ex: Lyon"
-                                  className="w-full bg-emerald-500/5 border border-emerald-500/30 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
-                                />
-                              </div>
-                              <div className="md:col-span-1">
-                                <label className="block text-sm font-medium text-emerald-400 mb-2">{t("general.city")} (Arabic)</label>
-                                <input 
-                                  type="text" 
-                                  value={formData.cityAr === "أخرى" ? "" : formData.cityAr}
-                                  onChange={(e) => setFormData({...formData, cityAr: e.target.value})}
-                                  placeholder="مثال: ليون"
-                                  className="w-full bg-emerald-500/5 border border-emerald-500/30 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
-                                  dir="rtl"
-                                />
-                              </div>
-                            </>
-                          );
-                        })()}
-                      </div>
+                      {(() => {
+                        const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (!ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER") ? "OTHER" : null);
+                        const govs = cId ? (GOVERNORATES[cId] || []) : [];
+                        const isCustomGov = formData.governorateAr && !govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER");
+                        if (!isCustomGov) return null;
+                        return (
+                          <div className="bg-emerald-900/10 border border-emerald-500/20 p-5 rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                              <label className="block text-sm font-medium text-emerald-400 mb-2">{isAr ? "اكتب اسم المحافظة (بالإنجليزية)" : "Write Governorate Name (English)"}</label>
+                              <input type="text" value={formData.governorateEn === "Other" ? "" : formData.governorateEn} onChange={(e) => setFormData({...formData, governorateEn: e.target.value})} placeholder="ex: Paris" className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-emerald-400 mb-2">{isAr ? "اكتب اسم المحافظة (بالعربية)" : "Write Governorate Name (Arabic)"}</label>
+                              <input type="text" value={formData.governorateAr === "أخرى" ? "" : formData.governorateAr} onChange={(e) => setFormData({...formData, governorateAr: e.target.value})} placeholder="مثال: باريس" className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" dir="rtl" />
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {(() => {
+                        const cId = ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr)?.id || (!ARAB_COUNTRIES.find(c => c.nameAr === formData.countryAr && c.id !== "OTHER") ? "OTHER" : null);
+                        const govs = cId ? (GOVERNORATES[cId] || []) : [];
+                        const gId = govs.find(g => g.nameAr === formData.governorateAr)?.id || (!govs.find(g => g.nameAr === formData.governorateAr && g.id !== "OTHER") ? "OTHER" : null);
+                        const cities = gId ? (CITIES[gId] || []) : [];
+                        const isCustomCity = formData.cityAr && !cities.find(c => c.nameAr === formData.cityAr && c.id !== "OTHER");
+                        if (!isCustomCity) return null;
+                        return (
+                          <div className="bg-emerald-900/10 border border-emerald-500/20 p-5 rounded-2xl grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                              <label className="block text-sm font-medium text-emerald-400 mb-2">{isAr ? "اكتب اسم المدينة (بالإنجليزية)" : "Write City Name (English)"}</label>
+                              <input type="text" value={formData.cityEn === "Other" ? "" : formData.cityEn} onChange={(e) => setFormData({...formData, cityEn: e.target.value})} placeholder="ex: Lyon" className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-emerald-400 mb-2">{isAr ? "اكتب اسم المدينة (بالعربية)" : "Write City Name (Arabic)"}</label>
+                              <input type="text" value={formData.cityAr === "أخرى" ? "" : formData.cityAr} onChange={(e) => setFormData({...formData, cityAr: e.target.value})} placeholder="مثال: ليون" className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" dir="rtl" />
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 
