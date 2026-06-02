@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search, MessageSquare, Trash2, Reply, Star, Info, Loader2, CheckCircle2 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,6 +15,16 @@ export default function MessagesPage() {
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [activeMessage, dbMessages]);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -162,7 +172,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-140px)] max-w-7xl mx-auto flex flex-col pb-20 md:pb-0 relative">
+    <div className="h-[85vh] min-h-[600px] max-w-7xl mx-auto flex flex-col pb-20 md:pb-0 relative">
       <AnimatePresence>
         {showToast && (
           <motion.div 
@@ -312,36 +322,39 @@ export default function MessagesPage() {
                       </div>
                     </div>
                   ))}
+                  <div ref={messagesEndRef} />
                 </div>
 
               </div>
 
               {/* Reply Box */}
-              <div className="p-6 border-t border-white/5 bg-zinc-950/80">
+              {/* Reply Box (Compact Chat Style) */}
+              <div className="p-4 border-t border-white/5 bg-zinc-900/80 backdrop-blur-xl shrink-0">
                 {activeMsgData.isSystem ? (
-                  <div className="flex items-center justify-center gap-2 p-4 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20 text-sm font-medium">
+                  <div className="flex items-center justify-center gap-2 p-3 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20 text-sm font-medium">
                     <Info className="w-4 h-4" /> {t("systemMessageWarning")}
                   </div>
                 ) : (
-                  <div className="bg-zinc-900 border border-white/10 rounded-xl overflow-hidden focus-within:border-emerald-500 transition-colors">
-                    <textarea 
-                      rows={4}
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      placeholder={t("replyPlaceholder")}
-                      className="w-full bg-transparent p-4 text-white outline-none resize-none"
-                    />
-                    <div className="bg-zinc-950/50 px-4 py-3 flex justify-between items-center border-t border-white/5">
-                      <button className="text-sm font-bold text-zinc-400 hover:text-white flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4" /> {t("replyWhatsapp")}
-                      </button>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 bg-zinc-950 border border-white/10 rounded-full overflow-hidden focus-within:border-emerald-500 transition-colors flex items-center">
+                        <input 
+                          type="text"
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          placeholder={t("replyPlaceholder")}
+                          className="w-full bg-transparent px-6 py-3 text-sm text-white outline-none"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleReply();
+                          }}
+                        />
+                      </div>
                       <button 
                         onClick={handleReply}
                         disabled={isReplying || !replyText.trim()}
-                        className="px-6 py-2 bg-emerald-500 text-black font-bold rounded-lg hover:bg-emerald-400 transition-colors flex items-center gap-2 disabled:opacity-50"
+                        className="w-12 h-12 bg-emerald-500 text-black font-bold rounded-full hover:bg-emerald-400 transition-colors flex items-center justify-center disabled:opacity-50 shrink-0"
                       >
-                        {isReplying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Reply className="w-4 h-4" />} 
-                        {isReplying ? (isAr ? "جاري الإرسال..." : "Sending...") : t("sendEmail")}
+                        {isReplying ? <Loader2 className="w-5 h-5 animate-spin" /> : <Reply className="w-5 h-5 rtl:rotate-180" />} 
                       </button>
                     </div>
                   </div>
