@@ -25,6 +25,8 @@ export default function SearchClient({
   const isAr = locale === 'ar';
 
   const [searchQuery, setSearchQuery] = useState(initialQuery || searchParams.get("q") || "");
+  
+  const hasSearched = initialQuery.trim() !== "" || !!searchParams.get("category") || !!searchParams.get("location") || !!searchParams.get("q");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,12 +210,20 @@ export default function SearchClient({
                     </motion.div>
                   );
                 })
-              ) : (
+              ) : hasSearched ? (
                 <div className="flex flex-col items-center justify-center p-16 bg-zinc-950 border border-white/5 rounded-3xl">
                   <SearchIcon className="w-16 h-16 text-zinc-700 mb-4" />
                   <h3 className="text-xl font-bold text-white mb-2">{isAr ? "لم نجد أية نتائج" : "No results found"}</h3>
                   <p className="text-zinc-500 text-center max-w-md">
                     {isAr ? "جرب البحث بكلمات أخرى أو تصفح الأقسام للعثور على ما تبحث عنه." : "Try adjusting your search terms or browse categories to find what you're looking for."}
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-16 bg-zinc-950 border border-white/5 rounded-3xl">
+                  <SearchIcon className="w-16 h-16 text-zinc-700 mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-2">{isAr ? "اكتشف الشركات والمنتجات" : "Discover Companies and Products"}</h3>
+                  <p className="text-zinc-500 text-center max-w-md">
+                    {isAr ? "قم بكتابة كلمة البحث أو استخدام الفلاتر الجانبية للبدء." : "Enter a search term or use the side filters to get started."}
                   </p>
                 </div>
               )}

@@ -62,16 +62,8 @@ export default async function SearchPage({
       take: 20, // Limit results
     });
   } else {
-    // If no query or filters, return all companies
-    companies = await prisma.company.findMany({
-      include: {
-        products: {
-          take: 1, // Include at least one product just in case
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 20, // Limit results initially
-    });
+    // If no query or filters, return empty results
+    companies = [];
   }
 
   return (
