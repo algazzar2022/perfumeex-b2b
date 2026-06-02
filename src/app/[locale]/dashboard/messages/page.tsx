@@ -4,13 +4,16 @@ import { useState, useEffect, useRef } from "react";
 import { Search, MessageSquare, Trash2, Reply, Star, Info, Loader2, CheckCircle2 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 export default function MessagesPage() {
   const locale = useLocale();
   const t = useTranslations("Dashboard.messages");
+  const { data: session } = useSession();
   const [activeMessage, setActiveMessage] = useState<string | number | null>(1);
   const [dbMessages, setDbMessages] = useState<any[]>([]);
   const [myCompanyId, setMyCompanyId] = useState<string | null>(null);
+  const [systemMessageRead, setSystemMessageRead] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
@@ -27,6 +30,11 @@ export default function MessagesPage() {
   }, [activeMessage, dbMessages]);
 
   useEffect(() => {
+    if (session?.user?.id) {
+      const isRead = localStorage.getItem(`systemMessageRead_${session.user.id}`) === 'true';
+      setSystemMessageRead(isRead);
+    }
+    
     const fetchMessages = async () => {
       try {
         const res = await fetch('/api/messages');
@@ -42,7 +50,7 @@ export default function MessagesPage() {
       }
     };
     fetchMessages();
-  }, []);
+  }, [session]);
 
   const isAr = locale === 'ar';
 
@@ -55,7 +63,7 @@ export default function MessagesPage() {
     subject: t("welcomeSubject"), 
     body: t("welcomeBody"), 
     time: t("justNow"), 
-    unread: true,
+    unread: !systemMessageRead,
     starred: true,
     isSystem: true
   };
@@ -114,8 +122,14 @@ export default function MessagesPage() {
   const handleMessageClick = async (msg: any) => {
     setActiveMessage(msg.isSystem ? 1 : msg.otherPartyId);
     
-    // Mark ALL unread messages from this conversation as read
-    if (!msg.isSystem) {
+    if (msg.isSystem && !systemMessageRead) {
+      setSystemMessageRead(true);
+      if (session?.user?.id) {
+        localStorage.setItem(`systemMessageRead_${session.user.id}`, 'true');
+        window.dispatchEvent(new Event('messagesUpdated'));
+      }
+    } else if (!msg.isSystem) {
+      // Mark ALL unread messages from this conversation as read
       const unreadIds = conversationsMap.get(msg.otherPartyId)
         ?.filter((m: any) => m.unread)
         .map((m: any) => m.id) || [];

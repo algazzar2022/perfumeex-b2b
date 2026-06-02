@@ -56,18 +56,25 @@ export default function DashboardLayout({
         })
         .catch(console.error);
         
-      fetch('/api/messages')
-        .then(res => {
-          if (res.ok) return res.json();
-          return { messages: [] };
-        })
-        .then((data: any) => {
-          const count = data.messages?.filter((m: any) => !m.isRead).length || 0;
-          setUnreadMessages(count > 0 ? count + 1 : 1); // +1 for the system welcome message which is unread
-        })
-        .catch(console.error);
+      const fetchUnread = () => {
+        fetch('/api/messages')
+          .then(res => {
+            if (res.ok) return res.json();
+            return { messages: [] };
+          })
+          .then((data: any) => {
+            const isSystemRead = localStorage.getItem(`systemMessageRead_${session?.user?.id}`) === 'true';
+            const count = data.messages?.filter((m: any) => !m.isRead && m.senderId !== data.companyId).length || 0;
+            setUnreadMessages(count + (isSystemRead ? 0 : 1));
+          })
+          .catch(console.error);
+      };
+
+      fetchUnread();
+      window.addEventListener('messagesUpdated', fetchUnread);
+      return () => window.removeEventListener('messagesUpdated', fetchUnread);
     }
-  }, [status]);
+  }, [status, session]);
 
   if (status === "loading") {
     return (

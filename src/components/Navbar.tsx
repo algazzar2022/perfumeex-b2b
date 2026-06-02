@@ -23,17 +23,30 @@ export default function Navbar() {
   const isAr = locale === 'ar';
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      fetch('/api/messages')
-        .then(res => res.ok ? res.json() : { messages: [] })
-        .then(data => {
-          if (data.messages) {
-            setUnreadMessages(data.messages.filter((m: any) => !m.isRead));
-          }
-        })
-        .catch(console.error);
-    }
-  }, [status, pathname]); // Re-fetch when pathname changes just in case
+    const fetchUnread = () => {
+      if (status === 'authenticated') {
+        fetch('/api/messages')
+          .then(res => res.ok ? res.json() : { messages: [] })
+          .then(data => {
+            const isSystemRead = localStorage.getItem(`systemMessageRead_${session?.user?.id}`) === 'true';
+            if (data.messages) {
+              const unreadDbMessages = data.messages.filter((m: any) => !m.isRead && m.senderId !== data.companyId);
+              // Provide an array of unread items. Since system message is not in DB, 
+              // we can just add a dummy object if it's unread so the badge count is correct.
+              const items = isSystemRead ? unreadDbMessages : [{ id: 1, isSystem: true }, ...unreadDbMessages];
+              setUnreadMessages(items);
+            } else {
+              setUnreadMessages(isSystemRead ? [] : [{ id: 1, isSystem: true }]);
+            }
+          })
+          .catch(console.error);
+      }
+    };
+
+    fetchUnread();
+    window.addEventListener('messagesUpdated', fetchUnread);
+    return () => window.removeEventListener('messagesUpdated', fetchUnread);
+  }, [status, pathname, session]); // Re-fetch when pathname or session changes
 
   useEffect(() => {
     const handleScroll = () => {
