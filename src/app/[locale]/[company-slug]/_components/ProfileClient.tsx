@@ -59,17 +59,16 @@ export default function ProfileClient({ company, locale }: { company: any, local
 
   useEffect(() => {
     const navbar = document.querySelector('header');
-    if (navbar) {
-      if (isAuthModalOpen || isMessageModalOpen || selectedProduct) {
-        navbar.style.display = 'none';
-      } else {
-        navbar.style.display = 'block';
-      }
+    if (isAuthModalOpen || isMessageModalOpen || selectedProduct) {
+      if (navbar) navbar.style.display = 'none';
+      document.body.style.overflow = 'hidden';
+    } else {
+      if (navbar) navbar.style.display = 'block';
+      document.body.style.overflow = '';
     }
     return () => {
-      if (navbar) {
-        navbar.style.display = 'block';
-      }
+      if (navbar) navbar.style.display = 'block';
+      document.body.style.overflow = '';
     };
   }, [isAuthModalOpen, isMessageModalOpen, selectedProduct]);
 
