@@ -620,12 +620,12 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-full md:w-5/12 relative bg-white shrink-0 min-h-[300px] md:min-h-0 flex items-center justify-center">
+              <div className="w-full md:w-5/12 relative bg-white shrink-0 aspect-square flex items-center justify-center self-start">
                 <Image 
                   src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
                   alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
                   fill 
-                  className="object-contain p-6" 
+                  className="object-contain" 
                 />
               </div>
 
