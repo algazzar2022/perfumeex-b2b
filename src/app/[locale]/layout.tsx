@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale = resolvedParams.locale;
   const isAr = locale === 'ar';
   
-  const title = isAr ? "PerfumeEx | منصة بورصة العطور للتبادل التجاري" : "PerfumeEx | Premium B2B Perfume Marketplace";
+  const title = isAr ? "PerfumeEx | دليل بورصة العطور" : "PerfumeEx | Premium B2B Perfume Marketplace";
   const description = isAr 
     ? "المنصة الأولى المخصصة لشركات ومصانع وتجار العطور في الشرق الأوسط لعرض منتجاتهم وعقد صفقات تجارية (جملة وتجزئة)." 
     : "The premier B2B marketplace and directory for the perfume industry.";
