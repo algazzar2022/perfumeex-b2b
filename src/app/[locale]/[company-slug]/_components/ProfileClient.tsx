@@ -593,37 +593,37 @@ export default function ProfileClient({ company, locale }: { company: any, local
           >
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row relative"
+              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-3xl w-full max-h-[90vh] flex flex-col md:flex-row relative"
             >
               <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 rtl:left-4 rtl:right-auto z-10 w-10 h-10 bg-black/50 hover:bg-black text-white rounded-full flex items-center justify-center backdrop-blur-md transition-colors">
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="md:w-1/2 relative h-64 md:h-auto bg-zinc-950 shrink-0">
+              <div className="md:w-5/12 relative h-64 md:h-auto bg-zinc-950 shrink-0 flex items-center justify-center p-4">
                 <Image 
                   src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
                   alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
                   fill 
-                  className="object-cover" 
+                  className="object-contain p-4" 
                 />
               </div>
 
-              <div className="md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto">
-                <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit">
+              <div className="md:w-7/12 p-6 md:p-8 flex flex-col max-h-[90vh]">
+                <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
                   <Box className="w-3 h-3" />
                   {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
                 </div>
                 
-                <h3 className="text-3xl font-bold text-white mb-4">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 shrink-0">
                   {isAr ? selectedProduct.nameAr : selectedProduct.nameEn}
                 </h3>
                 
-                <div className="text-emerald-500 font-extrabold text-2xl mb-6">
+                <div className="text-emerald-500 font-extrabold text-xl md:text-2xl mb-6 shrink-0">
                   {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
                 </div>
                 
-                <div className="prose prose-invert prose-sm mb-8 flex-1">
-                  <h4 className="text-zinc-400 uppercase tracking-wider text-xs font-bold mb-2">
+                <div className="prose prose-invert prose-sm mb-6 flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                  <h4 className="text-zinc-400 uppercase tracking-wider text-xs font-bold mb-2 sticky top-0 bg-zinc-900 py-1">
                     {isAr ? "وصف المنتج" : "Product Description"}
                   </h4>
                   <p className="text-zinc-300 leading-relaxed whitespace-pre-wrap">
