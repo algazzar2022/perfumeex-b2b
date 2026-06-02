@@ -630,7 +630,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
               </div>
 
               <div className="w-full md:w-1/2 relative">
-                <div className="md:absolute md:inset-0 p-6 md:p-8 flex flex-col overflow-y-auto custom-scrollbar">
+                <div className="md:absolute md:inset-0 p-6 md:p-8 flex flex-col h-full max-h-[90vh] md:max-h-none">
                   <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
                     <Box className="w-3 h-3" />
                     {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
@@ -644,11 +644,11 @@ export default function ProfileClient({ company, locale }: { company: any, local
                     {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
                   </div>
                   
-                  <div className="prose prose-invert prose-sm mb-6 flex-1 shrink-0">
-                    <h4 className="text-zinc-400 uppercase tracking-wider text-xs font-bold mb-2">
+                  <div className="prose prose-invert prose-sm mb-6 flex-1 min-h-0 overflow-y-auto custom-scrollbar ltr:pr-2 rtl:pl-2">
+                    <h4 className="text-zinc-400 uppercase tracking-wider text-xs font-bold mb-2 sticky top-0 bg-zinc-900 py-1 z-10">
                       {isAr ? "وصف المنتج" : "Product Description"}
                     </h4>
-                    <p className="text-zinc-300 leading-relaxed whitespace-pre-wrap">
+                    <p className="text-zinc-300 leading-relaxed whitespace-pre-wrap pt-1">
                       {isAr ? selectedProduct.descriptionAr : selectedProduct.descriptionEn}
                     </p>
                   </div>
