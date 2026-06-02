@@ -88,7 +88,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-6xl md:text-8xl lg:text-[7rem] font-bold tracking-tighter text-white mb-8 leading-[1.05]"
+            className="text-3xl min-[375px]:text-4xl md:text-8xl lg:text-[7rem] whitespace-nowrap md:whitespace-normal font-bold tracking-tighter text-white mb-8 leading-[1.05]"
           >
             {t.rich('title', {
               br: () => <br className="hidden lg:block" />,
@@ -139,18 +139,41 @@ export default function Home() {
               </button>
             </form>
             
-            {/* Quick Filters */}
-            <div className="flex overflow-x-auto scrollbar-hide w-full mt-8 pb-4 px-4 md:px-0">
-              <div className="flex md:flex-wrap md:justify-center gap-3 mx-auto w-max md:w-auto">
-                {[t('tags.dubai'), t('tags.perfumeClones'), t('tags.glassBottles'), t('tags.riyadh')].map((tag) => (
-                  <button 
-                    key={tag} 
-                    className="px-6 py-2 whitespace-nowrap rounded-full bg-white/5 border border-white/10 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300"
-                  >
-                    {tag}
-                  </button>
+            {/* Quick Filters - Desktop */}
+            <div className="hidden md:flex md:flex-wrap md:justify-center gap-3 w-full mt-8 pb-4">
+              {[t('tags.dubai'), t('tags.perfumeClones'), t('tags.glassBottles'), t('tags.riyadh')].map((tag) => (
+                <button 
+                  key={tag} 
+                  className="px-6 py-2 whitespace-nowrap rounded-full bg-white/5 border border-white/10 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+
+            {/* Quick Filters - Mobile (Infinite Marquee) */}
+            <div className="flex md:hidden overflow-hidden w-full mt-8 pb-4 relative" dir="ltr">
+              <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
+              
+              <motion.div 
+                animate={{ x: ["-50%", "0%"] }} 
+                transition={{ repeat: Infinity, ease: "linear", duration: 15 }}
+                className="flex items-center w-max"
+              >
+                {[...Array(2)].map((_, arrayIndex) => (
+                  <div key={arrayIndex} className="flex gap-3 px-1.5" dir={pathname.includes('/ar') ? 'rtl' : 'ltr'}>
+                    {[t('tags.dubai'), t('tags.perfumeClones'), t('tags.glassBottles'), t('tags.riyadh')].map((tag) => (
+                      <button 
+                        key={`${arrayIndex}-${tag}`} 
+                        className="px-6 py-2 whitespace-nowrap rounded-full bg-white/5 border border-white/10 text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/10 hover:border-emerald-500/30 transition-all duration-300"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
                 ))}
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         </motion.div>
