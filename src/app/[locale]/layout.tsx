@@ -75,7 +75,7 @@ export default async function RootLayout({
 
           <NextIntlClientProvider messages={messages}>
             <Navbar />
-            <div className="pt-0 relative z-10">
+            <div className="pt-0 relative">
               {children}
             </div>
           </NextIntlClientProvider>

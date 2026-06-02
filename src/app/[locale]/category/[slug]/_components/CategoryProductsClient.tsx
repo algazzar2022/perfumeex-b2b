@@ -39,7 +39,7 @@ export default function CategoryProductsClient({
 
   return (
     <main className="min-h-screen bg-black text-white pt-32 pb-20 font-cairo">
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 relative">
         
         {/* Header */}
         <div className="mb-16">
@@ -139,88 +139,88 @@ export default function CategoryProductsClient({
             })}
           </div>
         )}
-
-        {/* Product Details Modal */}
-        <AnimatePresence>
-          {selectedProduct && (
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-pointer"
-              onClick={() => setSelectedProduct(null)}
-            >
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-5xl w-full min-h-[90vh] md:min-h-[75vh] flex flex-col md:flex-row relative shadow-2xl cursor-default"
-              >
-                <button 
-                  onClick={(e) => { e.stopPropagation(); setSelectedProduct(null); }} 
-                  className="absolute top-4 end-4 z-50 w-10 h-10 bg-black/20 hover:bg-black/50 border border-white/10 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-lg"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-
-                <div className="w-full md:w-1/2 relative bg-white shrink-0 min-h-[300px] md:min-h-0">
-                  <Image 
-                    src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
-                    alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
-                    fill 
-                    className="object-contain" 
-                  />
-                </div>
-
-                <div className="w-full md:w-1/2 relative flex flex-col p-4 md:p-6 max-h-[90vh] md:max-h-[85vh]">
-                  <div className="mb-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
-                    <Box className="w-3 h-3" />
-                    {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
-                  </div>
-                  
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2 shrink-0 line-clamp-2">
-                    {isAr ? selectedProduct.nameAr : selectedProduct.nameEn}
-                  </h3>
-
-                  <div className="flex items-center gap-2 mb-3 shrink-0">
-                    <span className="text-zinc-500 text-xs">{isAr ? "مقدم من:" : "By:"}</span>
-                    <Link 
-                      href={`/${locale}/${selectedProduct.company.slug}`}
-                      className="text-sm font-bold text-white hover:text-emerald-400 transition-colors flex items-center gap-1.5 line-clamp-1"
-                    >
-                      {isAr ? selectedProduct.company.nameAr : selectedProduct.company.nameEn}
-                      {selectedProduct.company.isVerified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />}
-                    </Link>
-                  </div>
-                  
-                  <div className="text-emerald-500 font-extrabold text-lg md:text-xl mb-4 shrink-0 border-b border-white/10 pb-4">
-                    {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
-                  </div>
-                  
-                  <div className="mb-4 flex-1 min-h-[150px] overflow-y-auto custom-scrollbar ltr:pr-2 rtl:pl-2">
-                    <h4 className="text-emerald-400 uppercase tracking-wider text-xs font-bold mb-2 sticky top-0 bg-zinc-900 py-1 z-10">
-                      {isAr ? "وصف المنتج" : "Product Description"}
-                    </h4>
-                    <p className="text-white text-base md:text-lg leading-relaxed whitespace-pre-wrap font-medium">
-                      {isAr ? selectedProduct.descriptionAr : selectedProduct.descriptionEn}
-                    </p>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 gap-2 mt-auto pt-4 border-t border-white/10 shrink-0">
-                    <Link href={`/${locale}/${selectedProduct.company.slug}`} className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all flex items-center justify-center gap-2 text-sm md:text-base">
-                      <Mail className="w-4 h-4" />
-                      {isAr ? "مراسلة الشركة لطلب المنتج" : "Message Supplier to Order"}
-                    </Link>
-                    {selectedProduct.company.whatsapp && (
-                      <a href={`https://wa.me/${selectedProduct.company.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(isAr ? `مرحباً، أود الاستفسار عن المنتج: ${selectedProduct.nameAr}` : `Hello, I'd like to inquire about the product: ${selectedProduct.nameEn}`)}`} target="_blank" rel="noreferrer" className="w-full py-3 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#25D366] font-bold rounded-xl transition-all flex items-center justify-center gap-2 text-sm md:text-base">
-                        <Phone className="w-4 h-4" />
-                        {isAr ? "تواصل عبر واتساب" : "Contact via WhatsApp"}
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
+
+      {/* Product Details Modal */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-pointer"
+            onClick={() => setSelectedProduct(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-5xl w-full min-h-[90vh] md:min-h-[75vh] flex flex-col md:flex-row relative shadow-2xl cursor-default"
+            >
+              <button 
+                onClick={(e) => { e.stopPropagation(); setSelectedProduct(null); }} 
+                className="absolute top-4 end-4 z-50 w-10 h-10 bg-black/20 hover:bg-black/50 border border-white/10 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="w-full md:w-1/2 relative bg-white shrink-0 min-h-[300px] md:min-h-0">
+                <Image 
+                  src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
+                  alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
+                  fill 
+                  className="object-contain" 
+                />
+              </div>
+
+              <div className="w-full md:w-1/2 relative flex flex-col p-4 md:p-6 max-h-[90vh] md:max-h-[85vh]">
+                <div className="mb-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
+                  <Box className="w-3 h-3" />
+                  {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
+                </div>
+                
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-2 shrink-0 line-clamp-2">
+                  {isAr ? selectedProduct.nameAr : selectedProduct.nameEn}
+                </h3>
+
+                <div className="flex items-center gap-2 mb-3 shrink-0">
+                  <span className="text-zinc-500 text-xs">{isAr ? "مقدم من:" : "By:"}</span>
+                  <Link 
+                    href={`/${locale}/${selectedProduct.company.slug}`}
+                    className="text-sm font-bold text-white hover:text-emerald-400 transition-colors flex items-center gap-1.5 line-clamp-1"
+                  >
+                    {isAr ? selectedProduct.company.nameAr : selectedProduct.company.nameEn}
+                    {selectedProduct.company.isVerified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />}
+                  </Link>
+                </div>
+                
+                <div className="text-emerald-500 font-extrabold text-lg md:text-xl mb-4 shrink-0 border-b border-white/10 pb-4">
+                  {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
+                </div>
+                
+                <div className="mb-4 flex-1 min-h-[150px] overflow-y-auto custom-scrollbar ltr:pr-2 rtl:pl-2">
+                  <h4 className="text-emerald-400 uppercase tracking-wider text-xs font-bold mb-2 sticky top-0 bg-zinc-900 py-1 z-10">
+                    {isAr ? "وصف المنتج" : "Product Description"}
+                  </h4>
+                  <p className="text-white text-base md:text-lg leading-relaxed whitespace-pre-wrap font-medium">
+                    {isAr ? selectedProduct.descriptionAr : selectedProduct.descriptionEn}
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-2 mt-auto pt-4 border-t border-white/10 shrink-0">
+                  <Link href={`/${locale}/${selectedProduct.company.slug}`} className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all flex items-center justify-center gap-2 text-sm md:text-base">
+                    <Mail className="w-4 h-4" />
+                    {isAr ? "مراسلة الشركة لطلب المنتج" : "Message Supplier to Order"}
+                  </Link>
+                  {selectedProduct.company.whatsapp && (
+                    <a href={`https://wa.me/${selectedProduct.company.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(isAr ? `مرحباً، أود الاستفسار عن المنتج: ${selectedProduct.nameAr}` : `Hello, I'd like to inquire about the product: ${selectedProduct.nameEn}`)}`} target="_blank" rel="noreferrer" className="w-full py-3 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#25D366] font-bold rounded-xl transition-all flex items-center justify-center gap-2 text-sm md:text-base">
+                      <Phone className="w-4 h-4" />
+                      {isAr ? "تواصل عبر واتساب" : "Contact via WhatsApp"}
+                    </a>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
