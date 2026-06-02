@@ -10,6 +10,7 @@ export default function MessagesPage() {
   const t = useTranslations("Dashboard.messages");
   const [activeMessage, setActiveMessage] = useState<string | number | null>(1);
   const [dbMessages, setDbMessages] = useState<any[]>([]);
+  const [myCompanyId, setMyCompanyId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
@@ -22,6 +23,7 @@ export default function MessagesPage() {
         if (res.ok) {
           const data = await res.json();
           setDbMessages(data.messages || []);
+          if (data.companyId) setMyCompanyId(data.companyId);
         }
       } catch (err) {
         console.error("Failed to load messages", err);
@@ -48,52 +50,115 @@ export default function MessagesPage() {
     isSystem: true
   };
 
-  const formattedDbMessages = dbMessages.map(msg => ({
-    id: msg.id,
-    sender: isAr ? msg.sender.nameAr : msg.sender.nameEn,
-    company: isAr ? msg.sender.nameAr : msg.sender.nameEn,
-    email: msg.sender.email || "-",
-    phone: msg.sender.whatsapp || "-",
-    subject: isAr ? "رسالة جديدة عبر بورصة العطور" : "New Message via PerfumeEx",
-    body: msg.content,
-    time: new Date(msg.createdAt).toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short' }),
-    unread: !msg.isRead,
-    starred: false,
-    isSystem: false
-  }));
+  const formattedDbMessages = dbMessages.map(msg => {
+    const isSentByMe = msg.senderId === myCompanyId;
+    // If I sent it, the "other" party is the receiver. If I received it, the "other" party is the sender.
+    const otherParty = isSentByMe ? msg.receiver : msg.sender;
+    const otherName = otherParty ? (isAr ? otherParty.nameAr : otherParty.nameEn) : t("adminName");
+    
+    return {
+      id: msg.id,
+      senderId: msg.senderId,
+      receiverId: msg.receiverId,
+      isSentByMe,
+      otherPartyId: isSentByMe ? msg.receiverId : msg.senderId,
+      sender: isSentByMe ? (isAr ? "أنت" : "You") : otherName,
+      company: otherName,
+      email: otherParty?.email || "-",
+      phone: otherParty?.whatsapp || "-",
+      subject: isSentByMe ? (isAr ? "رسالة صادرة" : "Sent Message") : (isAr ? "رسالة جديدة عبر بورصة العطور" : "New Message via PerfumeEx"),
+      body: msg.content,
+      rawTime: new Date(msg.createdAt),
+      time: new Date(msg.createdAt).toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+      unread: !isSentByMe && !msg.isRead,
+      starred: false,
+      isSystem: false
+    };
+  });
 
-  const messages = [systemMessage, ...formattedDbMessages];
+  // Group into conversations
+  const conversationsMap = new Map();
+  formattedDbMessages.forEach(msg => {
+    if (!msg.otherPartyId) return;
+    if (!conversationsMap.has(msg.otherPartyId)) {
+      conversationsMap.set(msg.otherPartyId, []);
+    }
+    conversationsMap.get(msg.otherPartyId).push(msg);
+  });
 
-  const activeMsgData = messages.find(m => m.id === activeMessage);
+  const conversationPreviews = Array.from(conversationsMap.values()).map(convo => {
+    // Sort descending by time to get the latest message for preview
+    convo.sort((a: any, b: any) => b.rawTime.getTime() - a.rawTime.getTime());
+    return convo[0];
+  });
+
+  // Sidebar list
+  const sidebarMessages = [systemMessage, ...conversationPreviews];
+
+  const activeConversation = activeMessage === 1 
+    ? [systemMessage] 
+    : (conversationsMap.get(activeMessage) || []).sort((a: any, b: any) => a.rawTime.getTime() - b.rawTime.getTime()); // Chronological for chat view
+
+  const activeMsgData = activeConversation.length > 0 ? activeConversation[activeConversation.length - 1] : null;
 
   const handleMessageClick = async (msg: any) => {
-    setActiveMessage(msg.id);
-    if (msg.unread && !msg.isSystem) {
-      // Optimistic UI update
-      setDbMessages(prev => prev.map(m => m.id === msg.id ? { ...m, isRead: true } : m));
-      try {
-        await fetch('/api/messages', {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messageId: msg.id })
-        });
-        window.dispatchEvent(new Event('messagesUpdated'));
-      } catch (err) {
-        console.error("Failed to mark message as read", err);
+    setActiveMessage(msg.isSystem ? 1 : msg.otherPartyId);
+    
+    // Mark ALL unread messages from this conversation as read
+    if (!msg.isSystem) {
+      const unreadIds = conversationsMap.get(msg.otherPartyId)
+        ?.filter((m: any) => m.unread)
+        .map((m: any) => m.id) || [];
+
+      if (unreadIds.length > 0) {
+        // Optimistic UI update
+        setDbMessages(prev => prev.map(m => unreadIds.includes(m.id) ? { ...m, isRead: true } : m));
+        
+        try {
+          await Promise.all(unreadIds.map((id: string) => 
+            fetch('/api/messages', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ messageId: id })
+            })
+          ));
+          window.dispatchEvent(new Event('messagesUpdated'));
+        } catch (err) {
+          console.error("Failed to mark messages as read", err);
+        }
       }
     }
   };
 
-  const handleReply = () => {
-    if (!replyText.trim()) return;
+  const handleReply = async () => {
+    if (!replyText.trim() || !activeMsgData || activeMsgData.isSystem) return;
     setIsReplying(true);
-    // Simulate sending reply
-    setTimeout(() => {
+    
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          receiverId: activeMsgData.otherPartyId, 
+          content: replyText 
+        })
+      });
+
+      if (res.ok) {
+        const newMessage = await res.json();
+        // Optimistically add to state
+        setDbMessages(prev => [newMessage, ...prev]);
+        setReplyText("");
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      } else {
+        console.error("Failed to send reply");
+      }
+    } catch (err) {
+      console.error("Failed to send reply", err);
+    } finally {
       setIsReplying(false);
-      setReplyText("");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-    }, 1500);
+    }
   };
 
   return (
@@ -137,12 +202,12 @@ export default function MessagesPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            {messages.map((msg) => (
+            {sidebarMessages.map((msg) => (
               <button
                 key={msg.id}
                 onClick={() => handleMessageClick(msg)}
                 className={`w-full ltr:text-left rtl:text-right p-4 border-b border-white/5 transition-colors relative flex gap-3
-                  ${activeMessage === msg.id ? "bg-emerald-500/5" : "hover:bg-white/5"}
+                  ${(activeMessage === msg.id || activeMessage === msg.otherPartyId) ? "bg-emerald-500/5" : "hover:bg-white/5"}
                 `}
               >
                 {msg.unread && (
@@ -221,19 +286,32 @@ export default function MessagesPage() {
                   </div>
                 </div>
 
-                {/* Chat Bubble */}
-                <div className="flex flex-col gap-2 w-full max-w-3xl ltr:self-start rtl:self-start">
-                   <div className="flex items-end gap-2">
-                     <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-xs ${activeMsgData.isSystem ? 'bg-emerald-500 text-black' : 'bg-zinc-800 text-zinc-300'}`}>
-                       {activeMsgData.isSystem ? 'P' : activeMsgData.sender.charAt(0)}
-                     </div>
-                     <div className="bg-zinc-800/80 text-zinc-200 p-4 rounded-2xl ltr:rounded-bl-none rtl:rounded-br-none border border-white/5 whitespace-pre-wrap leading-relaxed shadow-lg">
-                       {activeMsgData.body}
-                     </div>
-                   </div>
-                   <div className="text-xs text-zinc-500 ltr:ml-10 rtl:mr-10">
-                     {activeMsgData.time}
-                   </div>
+                {/* Chat Bubbles */}
+                <div className="flex flex-col gap-6 w-full">
+                  {activeConversation.map((msg, idx) => (
+                    <div 
+                      key={msg.id || idx} 
+                      className={`flex flex-col gap-2 w-full max-w-2xl ${msg.isSentByMe ? 'ltr:self-end rtl:self-end items-end' : 'ltr:self-start rtl:self-start items-start'}`}
+                    >
+                      <div className={`flex items-end gap-2 ${msg.isSentByMe ? 'flex-row-reverse' : ''}`}>
+                        {!msg.isSentByMe && (
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-xs ${msg.isSystem ? 'bg-emerald-500 text-black' : 'bg-zinc-800 text-zinc-300'}`}>
+                            {msg.isSystem ? 'P' : (msg.company ? msg.company.charAt(0) : 'A')}
+                          </div>
+                        )}
+                        <div className={`p-4 rounded-2xl whitespace-pre-wrap leading-relaxed shadow-lg border ${
+                          msg.isSentByMe 
+                          ? 'bg-emerald-600 text-white ltr:rounded-br-none rtl:rounded-bl-none border-emerald-500' 
+                          : 'bg-zinc-800/80 text-zinc-200 ltr:rounded-bl-none rtl:rounded-br-none border-white/5'
+                        }`}>
+                          {msg.body}
+                        </div>
+                      </div>
+                      <div className="text-xs text-zinc-500 mx-10">
+                        {msg.time}
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
               </div>

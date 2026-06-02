@@ -38,6 +38,14 @@ export async function POST(req: Request) {
         receiverId,
         content,
       },
+      include: {
+        sender: {
+          select: { id: true, nameAr: true, nameEn: true, email: true, whatsapp: true, logo: true }
+        },
+        receiver: {
+          select: { id: true, nameAr: true, nameEn: true, email: true, whatsapp: true, logo: true }
+        }
+      }
     });
 
     return NextResponse.json(message);
@@ -64,10 +72,26 @@ export async function GET(req: Request) {
     }
 
     const messages = await prisma.message.findMany({
-      where: { receiverId: user.company.id },
+      where: { 
+        OR: [
+          { receiverId: user.company.id },
+          { senderId: user.company.id }
+        ]
+      },
       include: {
         sender: {
           select: {
+            id: true,
+            nameAr: true,
+            nameEn: true,
+            email: true,
+            whatsapp: true,
+            logo: true
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
             nameAr: true,
             nameEn: true,
             email: true,
@@ -79,7 +103,7 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json({ messages });
+    return NextResponse.json({ messages, companyId: user.company.id });
   } catch (error) {
     console.error('Error fetching messages:', error);
     return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 });
