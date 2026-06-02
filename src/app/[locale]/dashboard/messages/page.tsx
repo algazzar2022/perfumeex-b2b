@@ -1,29 +1,64 @@
 "use client";
 
-import { useState } from "react";
-import { Search, MessageSquare, Trash2, Reply, Star, Info } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useState, useEffect } from "react";
+import { Search, MessageSquare, Trash2, Reply, Star, Info, Loader2 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function MessagesPage() {
+  const locale = useLocale();
   const t = useTranslations("Dashboard.messages");
-  const [activeMessage, setActiveMessage] = useState<number | null>(1);
+  const [activeMessage, setActiveMessage] = useState<string | number | null>(1);
+  const [dbMessages, setDbMessages] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // We are currently using a hardcoded system message since there are no user messages yet.
-  const messages = [
-    { 
-      id: 1, 
-      sender: t("adminName"), 
-      company: t("adminCompany"), 
-      email: "support@perfumeex.com",
-      phone: "-",
-      subject: t("welcomeSubject"), 
-      body: t("welcomeBody"), 
-      time: t("justNow"), 
-      unread: true,
-      starred: true,
-      isSystem: true
-    }
-  ];
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await fetch('/api/messages');
+        if (res.ok) {
+          const data = await res.json();
+          setDbMessages(data.messages || []);
+        }
+      } catch (err) {
+        console.error("Failed to load messages", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchMessages();
+  }, []);
+
+  const isAr = locale === 'ar';
+
+  const systemMessage = { 
+    id: 1, 
+    sender: t("adminName"), 
+    company: t("adminCompany"), 
+    email: "support@perfumeex.com",
+    phone: "-",
+    subject: t("welcomeSubject"), 
+    body: t("welcomeBody"), 
+    time: t("justNow"), 
+    unread: true,
+    starred: true,
+    isSystem: true
+  };
+
+  const formattedDbMessages = dbMessages.map(msg => ({
+    id: msg.id,
+    sender: isAr ? msg.sender.nameAr : msg.sender.nameEn,
+    company: isAr ? msg.sender.nameAr : msg.sender.nameEn,
+    email: msg.sender.email || "-",
+    phone: msg.sender.whatsapp || "-",
+    subject: isAr ? "رسالة جديدة عبر بورصة العطور" : "New Message via PerfumeEx",
+    body: msg.content,
+    time: new Date(msg.createdAt).toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short' }),
+    unread: !msg.isRead,
+    starred: false,
+    isSystem: false
+  }));
+
+  const messages = [systemMessage, ...formattedDbMessages];
 
   const activeMsgData = messages.find(m => m.id === activeMessage);
 

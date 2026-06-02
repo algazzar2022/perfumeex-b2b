@@ -1,18 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   MapPin, Star, ShieldCheck, Globe, Mail, Phone, 
   ExternalLink, Download, FileText, Package, 
   Store, Building, Calendar, Image as ImageIcon,
-  CheckCircle2, Box, ChevronRight
+  CheckCircle2, Box, ChevronRight, X, Loader2
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 
 export default function ProfileClient({ company, locale }: { company: any, locale: string }) {
   const [activeTab, setActiveTab] = useState("overview");
+  const { data: session } = useSession();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+  const [senderCompany, setSenderCompany] = useState<any>(null);
+  const [messageContent, setMessageContent] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [sendStatus, setSendStatus] = useState<"idle" | "success" | "error">("idle");
   const t = useTranslations("Dashboard.companyProfile.general.categoryOptions");
 
   const isAr = locale === 'ar';
@@ -47,12 +56,61 @@ export default function ProfileClient({ company, locale }: { company: any, local
     { id: "gallery", label: isAr ? "معرض الصور" : "Gallery", icon: ImageIcon }
   ];
 
-  const handleContactClick = () => {
+  const handleContactClick = async (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
     fetch('/api/company/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ companyId: company.id, type: 'contact' })
     }).catch(() => {});
+
+    if (!session) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    if (!senderCompany) {
+      try {
+        const res = await fetch('/api/company/profile');
+        if (res.ok) {
+          const data = await res.json();
+          setSenderCompany(data.company);
+        }
+      } catch (err) {}
+    }
+    setIsMessageModalOpen(true);
+  };
+
+  const handleSendMessage = async () => {
+    if (!messageContent.trim()) return;
+    setIsSending(true);
+    setSendStatus("idle");
+    
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          receiverId: company.id,
+          content: messageContent
+        })
+      });
+      
+      if (res.ok) {
+        setSendStatus("success");
+        setTimeout(() => {
+          setIsMessageModalOpen(false);
+          setMessageContent("");
+          setSendStatus("idle");
+        }, 2000);
+      } else {
+        setSendStatus("error");
+      }
+    } catch (err) {
+      setSendStatus("error");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -138,10 +196,10 @@ export default function ProfileClient({ company, locale }: { company: any, local
             transition={{ delay: 0.4 }}
             className="w-full md:w-auto pb-4"
           >
-            <a href={`tel:${company.whatsapp || company.email}`} onClick={handleContactClick} className="w-full md:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center gap-3 group active:scale-95">
-              <Phone className="w-5 h-5 group-hover:-rotate-12 transition-transform" />
+            <button onClick={handleContactClick} className="w-full md:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center gap-3 group active:scale-95">
+              <Mail className="w-5 h-5 group-hover:-rotate-12 transition-transform" />
               {isAr ? "مراسلة الشركة" : "Message Supplier"}
-            </a>
+            </button>
           </motion.div>
         </div>
 
@@ -412,6 +470,117 @@ export default function ProfileClient({ company, locale }: { company: any, local
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AnimatePresence>
+        {isAuthModalOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-zinc-900 border border-white/10 rounded-3xl p-8 max-w-md w-full relative"
+            >
+              <button onClick={() => setIsAuthModalOpen(false)} className="absolute top-4 right-4 rtl:left-4 rtl:right-auto text-zinc-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+              <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 mx-auto border border-emerald-500/20">
+                <ShieldCheck className="w-8 h-8 text-emerald-500" />
+              </div>
+              <h3 className="text-xl font-bold text-center text-white mb-2">
+                {isAr ? "تسجيل الدخول مطلوب" : "Login Required"}
+              </h3>
+              <p className="text-zinc-400 text-center mb-8">
+                {isAr ? "يجب عليك تسجيل الدخول أو إنشاء حساب شركة لتتمكن من مراسلة الشركات الأخرى." : "You must log in or create a company account to message other suppliers."}
+              </p>
+              <div className="flex flex-col gap-3">
+                <Link href={`/${locale}/login`} className="w-full py-3 bg-emerald-500 text-black font-bold rounded-xl text-center hover:bg-emerald-400 transition-colors">
+                  {isAr ? "تسجيل الدخول" : "Login"}
+                </Link>
+                <Link href={`/${locale}/register`} className="w-full py-3 bg-white/5 text-white font-bold rounded-xl text-center hover:bg-white/10 transition-colors border border-white/10">
+                  {isAr ? "إنشاء حساب جديد" : "Create Account"}
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Message Modal */}
+      <AnimatePresence>
+        {isMessageModalOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-zinc-900 border border-white/10 rounded-3xl p-6 md:p-8 max-w-lg w-full relative"
+            >
+              <button onClick={() => setIsMessageModalOpen(false)} className="absolute top-4 right-4 rtl:left-4 rtl:right-auto text-zinc-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+              
+              <h3 className="text-2xl font-bold text-white mb-6">
+                {isAr ? `إرسال رسالة إلى ${displayName}` : `Message ${displayName}`}
+              </h3>
+              
+              {senderCompany && (
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6">
+                  <div className="text-xs text-emerald-500 font-bold mb-2 uppercase tracking-wider">
+                    {isAr ? "يتم الإرسال باسم:" : "Sending as:"}
+                  </div>
+                  <div className="text-white font-bold text-lg mb-1">{isAr ? senderCompany.nameAr : senderCompany.nameEn}</div>
+                  <div className="text-zinc-400 text-sm flex items-center gap-2">
+                    <Phone className="w-4 h-4" /> {senderCompany.whatsapp || senderCompany.email || (isAr ? "لا يوجد رقم مسجل" : "No contact registered")}
+                  </div>
+                </div>
+              )}
+
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-zinc-400 mb-2">
+                  {isAr ? "محتوى الرسالة" : "Message Content"}
+                </label>
+                <textarea
+                  value={messageContent}
+                  onChange={(e) => setMessageContent(e.target.value)}
+                  placeholder={isAr ? "اكتب رسالتك هنا... (مثال: نود الاستفسار عن أسعار الجملة لمنتجاتكم)" : "Type your message here..."}
+                  className="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-white min-h-[150px] outline-none focus:border-emerald-500 transition-colors resize-none"
+                />
+              </div>
+
+              {sendStatus === "error" && (
+                <div className="text-red-400 text-sm mb-4 text-center">
+                  {isAr ? "حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى أو التأكد من إكمال بيانات شركتك." : "Error sending message. Please try again or ensure your company profile is complete."}
+                </div>
+              )}
+              {sendStatus === "success" && (
+                <div className="text-emerald-400 text-sm mb-4 text-center flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-5 h-5" />
+                  {isAr ? "تم إرسال الرسالة بنجاح!" : "Message sent successfully!"}
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setIsMessageModalOpen(false)} 
+                  className="flex-1 py-3.5 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl transition-colors border border-white/10"
+                >
+                  {isAr ? "إلغاء" : "Cancel"}
+                </button>
+                <button 
+                  onClick={handleSendMessage}
+                  disabled={isSending || !messageContent.trim() || sendStatus === "success"}
+                  className="flex-1 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : (isAr ? "إرسال الرسالة" : "Send Message")}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

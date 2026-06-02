@@ -73,6 +73,9 @@ model Company {
   galleries   Gallery[]
   categories  Category[] @relation("CompanyCategories")
   reviews     Review[]
+  
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 enum CompanyStatus {
@@ -201,4 +204,19 @@ model Analytics {
   pageView    Int      @default(0)
   whatsappClick Int    @default(0)
   date        DateTime @default(now())
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  
+  senderId    String
+  sender      Company  @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  
+  receiverId  String
+  receiver    Company  @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  
+  content     String   @db.LongText
+  isRead      Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
 }
