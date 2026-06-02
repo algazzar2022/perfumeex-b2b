@@ -194,11 +194,11 @@ export default function CategoryProductsClient({
                     {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
                   </div>
                   
-                  <div className="prose prose-invert prose-sm mb-6 flex-1 min-h-0 overflow-y-auto custom-scrollbar ltr:pr-2 rtl:pl-2">
-                    <h4 className="text-zinc-400 uppercase tracking-wider text-xs font-bold mb-2 sticky top-0 bg-zinc-900 py-1 z-10">
+                  <div className="mb-6 flex-1 min-h-0 overflow-y-auto custom-scrollbar ltr:pr-2 rtl:pl-2">
+                    <h4 className="text-emerald-400 uppercase tracking-wider text-sm font-bold mb-3 sticky top-0 bg-zinc-900 py-1 z-10">
                       {isAr ? "وصف المنتج" : "Product Description"}
                     </h4>
-                    <p className="text-zinc-300 leading-relaxed whitespace-pre-wrap pt-1">
+                    <p className="text-white text-base md:text-lg leading-relaxed whitespace-pre-wrap pt-1 font-medium">
                       {isAr ? selectedProduct.descriptionAr : selectedProduct.descriptionEn}
                     </p>
                   </div>
