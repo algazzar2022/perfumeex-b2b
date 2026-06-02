@@ -14,10 +14,35 @@ const cairo = Cairo({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-export const metadata: Metadata = {
-  title: "PerfumeEx | Premium B2B Perfume Marketplace",
-  description: "The premier B2B marketplace and directory for the perfume industry.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  const locale = resolvedParams.locale;
+  const isAr = locale === 'ar';
+  
+  const title = isAr ? "PerfumeEx | منصة بورصة العطور للتبادل التجاري" : "PerfumeEx | Premium B2B Perfume Marketplace";
+  const description = isAr 
+    ? "المنصة الأولى المخصصة لشركات ومصانع وتجار العطور في الشرق الأوسط لعرض منتجاتهم وعقد صفقات تجارية (جملة وتجزئة)." 
+    : "The premier B2B marketplace and directory for the perfume industry.";
+
+  return {
+    title,
+    description,
+    metadataBase: new URL('https://www.perfumeex.app'),
+    openGraph: {
+      title,
+      description,
+      url: 'https://www.perfumeex.app',
+      siteName: 'PerfumeEx',
+      locale: isAr ? 'ar_EG' : 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    }
+  };
+}
 
 export default async function RootLayout({
   children,
