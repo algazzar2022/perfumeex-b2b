@@ -29,6 +29,18 @@ export default async function SearchPage({
           { cityAr: { contains: query } },
           { governorateEn: { contains: query } },
           { governorateAr: { contains: query } },
+          {
+            branches: {
+              some: {
+                OR: [
+                  { cityEn: { contains: query } },
+                  { cityAr: { contains: query } },
+                  { governorateEn: { contains: query } },
+                  { governorateAr: { contains: query } },
+                ]
+              }
+            }
+          }
         ],
       });
     }
@@ -46,6 +58,18 @@ export default async function SearchPage({
           { governorateAr: { contains: location } },
           { cityEn: { contains: location } },
           { cityAr: { contains: location } },
+          {
+            branches: {
+              some: {
+                OR: [
+                  { governorateEn: { contains: location } },
+                  { governorateAr: { contains: location } },
+                  { cityEn: { contains: location } },
+                  { cityAr: { contains: location } },
+                ]
+              }
+            }
+          }
         ],
       });
     }
