@@ -8,6 +8,37 @@ import Image from "next/image";
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
 
+const sponsorLogos = [
+  "AL Madinah AL Munawwarah.png",
+  "Aknan.png",
+  "Al-Mawardi.png",
+  "Al-Rihani.png",
+  "Al-Safa.png",
+  "French.png",
+  "Halim.png",
+  "Hamed.png",
+  "Hashim.png",
+  "Khader Group.png",
+  "Sea of ​​Perfumes.png",
+  "abketko.png",
+  "afaq.png",
+  "alfaroq.png",
+  "alharamayn.png",
+  "almasa alzahbeya.png",
+  "alsharkisii.png",
+  "bet malke.png",
+  "diamond.png",
+  "eid.png",
+  "euro.png",
+  "motawea.png",
+  "rahiq.png",
+  "sabarah.png",
+  "teba.png",
+  "twins.png",
+  "vegas.png",
+  "zamany.png"
+];
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const t = useTranslations('Index');
@@ -188,17 +219,20 @@ export default function Home() {
           <div className="flex w-full overflow-hidden">
             <motion.div 
               animate={{ x: pathname.includes('/ar') ? ["0%", "50%"] : ["0%", "-50%"] }}
-              transition={{ repeat: Infinity, ease: "linear", duration: 30 }}
-              className="flex items-center gap-12 md:gap-24 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700 w-max rtl:pr-12 ltr:pl-12"
+              transition={{ repeat: Infinity, ease: "linear", duration: 80 }}
+              className="flex items-center gap-12 md:gap-20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700 w-max rtl:pr-12 ltr:pl-12"
             >
               {[...Array(2)].map((_, arrayIndex) => (
-                <div key={arrayIndex} className="flex items-center gap-12 md:gap-24">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
-                    <div key={i} className="text-2xl font-light tracking-widest text-white flex items-center gap-3 shrink-0">
-                      <span className="w-8 h-8 rounded-full border border-zinc-700 flex items-center justify-center bg-zinc-900">
-                        <Droplet className="w-4 h-4 text-emerald-500" />
-                      </span> 
-                      BRAND {i}
+                <div key={arrayIndex} className="flex items-center gap-12 md:gap-20">
+                  {sponsorLogos.map((logo, i) => (
+                    <div key={`${arrayIndex}-${i}`} className="w-24 md:w-32 h-16 relative shrink-0">
+                      <Image
+                        src={`/sponsor-logos/${logo}`}
+                        alt={`Sponsor ${logo.split('.')[0]}`}
+                        fill
+                        unoptimized
+                        className="object-contain"
+                      />
                     </div>
                   ))}
                 </div>
