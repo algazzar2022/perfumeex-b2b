@@ -30,7 +30,10 @@ export default function ProfileClient({ company, locale }: { company: any, local
   
   const translatedCategory = company.category 
     ? company.category.split(',').filter(Boolean).map((c: string) => {
-        try { return t(c as any) } catch(e) { return c }
+        try { 
+          const tr = t(c as any);
+          return tr.includes('Dashboard.companyProfile') ? c : tr;
+        } catch(e) { return c }
       }).join(' • ') 
     : (isAr ? "عطور جاهزة" : "Ready Perfumes");
   

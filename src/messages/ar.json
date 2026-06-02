@@ -160,7 +160,9 @@
           "airFresheners": "المعطرات",
           "packaging": "التعبئة والتغليف",
           "bottlesAndEmpties": "العبوات والفوارغ",
-          "others": "أخرى"
+          "others": "أخرى",
+          "clonePerfumes": "عطور محاكاه",
+          "glassBottles": "الزجاج"
         },
         "country": "الدولة",
         "governorate": "المحافظة",

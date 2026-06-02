@@ -160,7 +160,9 @@
           "airFresheners": "Air Fresheners",
           "packaging": "Packaging",
           "bottlesAndEmpties": "Bottles & Empties",
-          "others": "Others"
+          "others": "Others",
+          "clonePerfumes": "Clone Perfumes",
+          "glassBottles": "Glass"
         },
         "country": "Country",
         "governorate": "Governorate",
