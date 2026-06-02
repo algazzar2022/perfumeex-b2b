@@ -164,6 +164,7 @@
           "clonePerfumes": "Clone Perfumes",
           "glassBottles": "Glass"
         },
+        "locationTitle": "Geographic Location",
         "country": "Country",
         "governorate": "Governorate",
         "city": "City",
