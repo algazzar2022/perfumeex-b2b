@@ -34,8 +34,8 @@ model Company {
   nameAr      String
   nameEn      String
   slug        String   @unique
-  descriptionAr String?
-  descriptionEn String?
+  descriptionAr String? @db.LongText
+  descriptionEn String? @db.LongText
   
   logo        String? @db.LongText
   coverImage  String? @db.LongText
@@ -132,8 +132,8 @@ model Product {
   
   nameAr      String
   nameEn      String
-  descriptionAr String?
-  descriptionEn String?
+  descriptionAr String? @db.LongText
+  descriptionEn String? @db.LongText
   
   price       Float?
   image       String? @db.LongText
