@@ -57,6 +57,22 @@ export default function ProfileClient({ company, locale }: { company: any, local
     { id: "gallery", label: isAr ? "معرض الصور" : "Gallery", icon: ImageIcon }
   ];
 
+  useEffect(() => {
+    const navbar = document.querySelector('header');
+    if (navbar) {
+      if (isAuthModalOpen || isMessageModalOpen || selectedProduct) {
+        navbar.style.display = 'none';
+      } else {
+        navbar.style.display = 'block';
+      }
+    }
+    return () => {
+      if (navbar) {
+        navbar.style.display = 'block';
+      }
+    };
+  }, [isAuthModalOpen, isMessageModalOpen, selectedProduct]);
+
   const handleContactClick = async (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     fetch('/api/company/track', {
@@ -595,7 +611,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-3xl w-full max-h-[90vh] flex flex-col md:flex-row relative shadow-2xl cursor-default"
+              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-2xl w-full max-h-[90vh] flex flex-col md:flex-row relative shadow-2xl cursor-default"
             >
               <button 
                 onClick={(e) => { e.stopPropagation(); setSelectedProduct(null); }} 
@@ -604,16 +620,16 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-full md:w-1/2 relative bg-white shrink-0 min-h-[300px] md:min-h-0 flex items-center justify-center">
+              <div className="w-full md:w-5/12 relative bg-white shrink-0 min-h-[300px] md:min-h-0 flex items-center justify-center">
                 <Image 
                   src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
                   alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
                   fill 
-                  className="object-contain p-6 md:p-10" 
+                  className="object-contain p-6" 
                 />
               </div>
 
-              <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col max-h-[90vh]">
+              <div className="w-full md:w-7/12 p-6 md:p-8 flex flex-col max-h-[90vh]">
                 <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
                   <Box className="w-3 h-3" />
                   {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
