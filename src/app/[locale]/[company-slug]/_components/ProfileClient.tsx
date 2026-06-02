@@ -593,22 +593,22 @@ export default function ProfileClient({ company, locale }: { company: any, local
           >
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-3xl w-full max-h-[90vh] flex flex-col md:flex-row relative shadow-2xl"
+              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row relative shadow-2xl"
             >
-              <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 rtl:left-4 rtl:right-auto z-10 w-10 h-10 bg-black/50 hover:bg-black text-white rounded-full flex items-center justify-center backdrop-blur-md transition-colors shadow-lg">
+              <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 rtl:left-4 rtl:right-auto z-20 w-10 h-10 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-lg">
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-full md:w-5/12 relative aspect-square md:aspect-auto md:h-auto bg-zinc-950 shrink-0">
+              <div className="w-full md:w-1/2 relative bg-white shrink-0 min-h-[300px] md:min-h-0 flex items-center justify-center">
                 <Image 
                   src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
                   alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
                   fill 
-                  className="object-cover" 
+                  className="object-contain p-6 md:p-10" 
                 />
               </div>
 
-              <div className="w-full md:w-7/12 p-5 md:p-6 flex flex-col max-h-[90vh]">
+              <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col max-h-[90vh]">
                 <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
                   <Box className="w-3 h-3" />
                   {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
