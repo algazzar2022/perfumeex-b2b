@@ -2,11 +2,8 @@ export const ARAB_COUNTRIES = [
   { id: "EG", nameAr: "مصر", nameEn: "Egypt" },
   { id: "SA", nameAr: "السعودية", nameEn: "Saudi Arabia" },
   { id: "AE", nameAr: "الإمارات", nameEn: "UAE" },
-  { id: "KW", nameAr: "الكويت", nameEn: "Kuwait" },
-  { id: "QA", nameAr: "قطر", nameEn: "Qatar" },
-  { id: "BH", nameAr: "البحرين", nameEn: "Bahrain" },
-  { id: "OM", nameAr: "عمان", nameEn: "Oman" },
-  { id: "JO", nameAr: "الأردن", nameEn: "Jordan" },
+  { id: "LY", nameAr: "ليبيا", nameEn: "Libya" },
+  { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
 ];
 
 export const GOVERNORATES: Record<string, { id: string; nameAr: string; nameEn: string }[]> = {
@@ -36,21 +33,26 @@ export const GOVERNORATES: Record<string, { id: string; nameAr: string; nameEn: 
     { id: "EG-MT", nameAr: "مطروح", nameEn: "Matrouh" },
     { id: "EG-WAD", nameAr: "الوادي الجديد", nameEn: "New Valley" },
     { id: "EG-NSIN", nameAr: "شمال سيناء", nameEn: "North Sinai" },
-    { id: "EG-SSIN", nameAr: "جنوب سيناء", nameEn: "South Sinai" }
+    { id: "EG-SSIN", nameAr: "جنوب سيناء", nameEn: "South Sinai" },
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
   ],
   "SA": [
     { id: "SA-RIY", nameAr: "الرياض", nameEn: "Riyadh" },
     { id: "SA-MAK", nameAr: "مكة المكرمة", nameEn: "Makkah" },
     { id: "SA-MED", nameAr: "المدينة المنورة", nameEn: "Madinah" },
-    { id: "SA-EP", nameAr: "المنطقة الشرقية", nameEn: "Eastern Province" },
-    { id: "SA-ASR", nameAr: "عسير", nameEn: "Asir" }
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
   ],
   "AE": [
     { id: "AE-DU", nameAr: "دبي", nameEn: "Dubai" },
     { id: "AE-AD", nameAr: "أبوظبي", nameEn: "Abu Dhabi" },
     { id: "AE-SH", nameAr: "الشارقة", nameEn: "Sharjah" },
-    { id: "AE-AJ", nameAr: "عجمان", nameEn: "Ajman" },
-    { id: "AE-RAK", nameAr: "رأس الخيمة", nameEn: "Ras Al Khaimah" }
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
+  ],
+  "LY": [
+    { id: "LY-TR", nameAr: "طرابلس", nameEn: "Tripoli" },
+    { id: "LY-BN", nameAr: "بنغازي", nameEn: "Benghazi" },
+    { id: "LY-MS", nameAr: "مصراتة", nameEn: "Misrata" },
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
   ]
 };
 
@@ -60,43 +62,48 @@ export const CITIES: Record<string, { id: string; nameAr: string; nameEn: string
     { id: "C-1", nameAr: "مدينة نصر", nameEn: "Nasr City" },
     { id: "C-2", nameAr: "مصر الجديدة", nameEn: "Heliopolis" },
     { id: "C-3", nameAr: "المعادي", nameEn: "Maadi" },
-    { id: "C-4", nameAr: "التجمع الخامس", nameEn: "New Cairo" },
-    { id: "C-5", nameAr: "وسط البلد", nameEn: "Downtown" },
-    { id: "C-6", nameAr: "شبرا", nameEn: "Shoubra" }
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
   ],
   // Egypt - Giza
   "EG-GZ": [
     { id: "GZ-1", nameAr: "المهندسين", nameEn: "Mohandeseen" },
-    { id: "GZ-2", nameAr: "الدقي", nameEn: "Dokki" },
-    { id: "GZ-3", nameAr: "الهرم", nameEn: "Haram" },
-    { id: "GZ-4", nameAr: "فيصل", nameEn: "Faisal" },
-    { id: "GZ-5", nameAr: "6 أكتوبر", nameEn: "6th of October" },
-    { id: "GZ-6", nameAr: "الشيخ زايد", nameEn: "Sheikh Zayed" }
+    { id: "GZ-2", nameAr: "الهرم", nameEn: "Haram" },
+    { id: "GZ-3", nameAr: "6 أكتوبر", nameEn: "6th of October" },
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
   ],
   // Egypt - Alexandria
   "EG-ALX": [
     { id: "ALX-1", nameAr: "سموحة", nameEn: "Smouha" },
     { id: "ALX-2", nameAr: "سيدي بشر", nameEn: "Sidi Bishr" },
-    { id: "ALX-3", nameAr: "ميامي", nameEn: "Miami" },
-    { id: "ALX-4", nameAr: "المنتزه", nameEn: "Montaza" },
-    { id: "ALX-5", nameAr: "محطة الرمل", nameEn: "Raml Station" }
+    { id: "ALX-3", nameAr: "المنتزه", nameEn: "Montaza" },
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
   ],
   // Saudi - Riyadh
   "SA-RIY": [
     { id: "RIY-1", nameAr: "الرياض", nameEn: "Riyadh" },
     { id: "RIY-2", nameAr: "الخرج", nameEn: "Al Kharj" },
-    { id: "RIY-3", nameAr: "الدرعية", nameEn: "Diriyah" }
+    { id: "RIY-3", nameAr: "الدرعية", nameEn: "Diriyah" },
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
   ],
   // Saudi - Makkah
   "SA-MAK": [
     { id: "MAK-1", nameAr: "مكة المكرمة", nameEn: "Makkah" },
     { id: "MAK-2", nameAr: "جدة", nameEn: "Jeddah" },
-    { id: "MAK-3", nameAr: "الطائف", nameEn: "Taif" }
+    { id: "MAK-3", nameAr: "الطائف", nameEn: "Taif" },
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
   ],
   // UAE - Dubai
   "AE-DU": [
     { id: "DU-1", nameAr: "دبي", nameEn: "Dubai" },
     { id: "DU-2", nameAr: "جبل علي", nameEn: "Jebel Ali" },
-    { id: "DU-3", nameAr: "ديرة", nameEn: "Deira" }
+    { id: "DU-3", nameAr: "ديرة", nameEn: "Deira" },
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
+  ],
+  // Libya - Tripoli
+  "LY-TR": [
+    { id: "TR-1", nameAr: "طرابلس", nameEn: "Tripoli" },
+    { id: "TR-2", nameAr: "تاجوراء", nameEn: "Tajoura" },
+    { id: "TR-3", nameAr: "سوق الجمعة", nameEn: "Souq al Jumaa" },
+    { id: "OTHER", nameAr: "أخرى", nameEn: "Other" }
   ]
 };
