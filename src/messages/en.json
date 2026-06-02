@@ -24,10 +24,11 @@
       "items": {
         "perfumeClones": "Clone Perfumes",
         "readyPerfumes": "Ready Perfumes",
+        "glass": "Glass",
         "bakhoor": "Bakhoor",
         "airFresheners": "Air Fresheners",
-        "packaging": "Packaging & Filling",
-        "glassBottles": "Glass"
+        "packaging": "Packaging",
+        "bottlesAndEmpties": "Bottles & Empties"
       },
       "verifiedSuppliers": "Verified Suppliers"
     },
@@ -151,12 +152,13 @@
         "nameAr": "Company Name (Arabic)",
         "category": "Main Category",
         "categoryOptions": {
+          "perfumeClones": "Clone Perfumes",
           "readyPerfumes": "Ready Perfumes",
-          "clonePerfumes": "Clone Perfumes",
+          "glass": "Glass",
           "bakhoor": "Bakhoor",
           "airFresheners": "Air Fresheners",
           "packaging": "Packaging",
-          "glassBottles": "Glass Bottles"
+          "bottlesAndEmpties": "Bottles & Empties"
         },
         "country": "Country",
         "governorate": "Governorate",

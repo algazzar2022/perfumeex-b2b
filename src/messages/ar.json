@@ -24,10 +24,11 @@
       "items": {
         "perfumeClones": "عطور محاكاه",
         "readyPerfumes": "عطور جاهزة",
+        "glass": "الزجاج",
         "bakhoor": "البخور",
         "airFresheners": "المعطرات",
-        "packaging": "التغليف و التعبئة",
-        "glassBottles": "الزجاج"
+        "packaging": "التعبئة والتغليف",
+        "bottlesAndEmpties": "العبوات والفوارغ"
       },
       "verifiedSuppliers": "مورّد موثّق"
     },
@@ -151,12 +152,13 @@
         "nameAr": "اسم الشركة (بالعربية)",
         "category": "التصنيف الرئيسي",
         "categoryOptions": {
+          "perfumeClones": "عطور محاكاه",
           "readyPerfumes": "عطور جاهزة",
-          "clonePerfumes": "عطور محاكاه",
-          "bakhoor": "بخور ومعطرات",
-          "airFresheners": "معطرات جو",
-          "packaging": "تعبئة وتغليف",
-          "glassBottles": "زجاجات فارغة"
+          "glass": "الزجاج",
+          "bakhoor": "البخور",
+          "airFresheners": "المعطرات",
+          "packaging": "التعبئة والتغليف",
+          "bottlesAndEmpties": "العبوات والفوارغ"
         },
         "country": "الدولة",
         "governorate": "المحافظة",

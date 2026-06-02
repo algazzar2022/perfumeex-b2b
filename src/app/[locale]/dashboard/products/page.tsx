@@ -216,12 +216,13 @@ export default function ProductsManagementPage() {
                 <select value={formData.categoryId} onChange={(e) => setFormData({...formData, categoryId: e.target.value})} className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors appearance-none">
                   <option value="">{locale === 'ar' ? 'اختر تصنيفاً' : 'Select a category'}</option>
                   {[
+                    { id: "perfumeClones", label: tCompany("general.categoryOptions.perfumeClones") },
                     { id: "readyPerfumes", label: tCompany("general.categoryOptions.readyPerfumes") },
-                    { id: "clonePerfumes", label: tCompany("general.categoryOptions.clonePerfumes") },
+                    { id: "glass", label: tCompany("general.categoryOptions.glass") },
                     { id: "bakhoor", label: tCompany("general.categoryOptions.bakhoor") },
                     { id: "airFresheners", label: tCompany("general.categoryOptions.airFresheners") },
                     { id: "packaging", label: tCompany("general.categoryOptions.packaging") },
-                    { id: "glassBottles", label: tCompany("general.categoryOptions.glassBottles") }
+                    { id: "bottlesAndEmpties", label: tCompany("general.categoryOptions.bottlesAndEmpties") }
                   ].map((cat) => (
                     <option key={cat.id} value={cat.id}>{cat.label}</option>
                   ))}
@@ -292,12 +293,13 @@ export default function ProductsManagementPage() {
             <select className="bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none w-full sm:w-48 appearance-none">
               <option>{t("allCategories")}</option>
               {[
+                { id: "perfumeClones", label: tCompany("general.categoryOptions.perfumeClones") },
                 { id: "readyPerfumes", label: tCompany("general.categoryOptions.readyPerfumes") },
-                { id: "clonePerfumes", label: tCompany("general.categoryOptions.clonePerfumes") },
+                { id: "glass", label: tCompany("general.categoryOptions.glass") },
                 { id: "bakhoor", label: tCompany("general.categoryOptions.bakhoor") },
                 { id: "airFresheners", label: tCompany("general.categoryOptions.airFresheners") },
                 { id: "packaging", label: tCompany("general.categoryOptions.packaging") },
-                { id: "glassBottles", label: tCompany("general.categoryOptions.glassBottles") }
+                { id: "bottlesAndEmpties", label: tCompany("general.categoryOptions.bottlesAndEmpties") }
               ].map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.label}</option>
               ))}

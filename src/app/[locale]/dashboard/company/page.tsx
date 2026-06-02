@@ -214,12 +214,13 @@ export default function CompanySettingsPage() {
                     <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.category")}</label>
                     <div className="flex flex-wrap gap-3">
                       {[
+                        { id: "perfumeClones", label: t("general.categoryOptions.perfumeClones") },
                         { id: "readyPerfumes", label: t("general.categoryOptions.readyPerfumes") },
-                        { id: "clonePerfumes", label: t("general.categoryOptions.clonePerfumes") },
+                        { id: "glass", label: t("general.categoryOptions.glass") },
                         { id: "bakhoor", label: t("general.categoryOptions.bakhoor") },
                         { id: "airFresheners", label: t("general.categoryOptions.airFresheners") },
                         { id: "packaging", label: t("general.categoryOptions.packaging") },
-                        { id: "glassBottles", label: t("general.categoryOptions.glassBottles") }
+                        { id: "bottlesAndEmpties", label: t("general.categoryOptions.bottlesAndEmpties") }
                       ].map(cat => {
                         const selectedCategories = formData.category ? formData.category.split(',') : [];
                         const isSelected = selectedCategories.includes(cat.id);
