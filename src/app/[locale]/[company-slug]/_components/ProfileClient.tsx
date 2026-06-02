@@ -23,6 +23,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
   const [isSending, setIsSending] = useState(false);
   const [sendStatus, setSendStatus] = useState<"idle" | "success" | "error">("idle");
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const t = useTranslations("Dashboard.companyProfile.general.categoryOptions");
 
   const isAr = locale === 'ar';
@@ -59,7 +60,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
 
   useEffect(() => {
     const navbar = document.querySelector('header');
-    if (isAuthModalOpen || isMessageModalOpen || selectedProduct) {
+    if (isAuthModalOpen || isMessageModalOpen || selectedProduct || selectedImage) {
       if (navbar) navbar.style.display = 'none';
       document.body.style.overflow = 'hidden';
     } else {
@@ -70,7 +71,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
       if (navbar) navbar.style.display = 'block';
       document.body.style.overflow = '';
     };
-  }, [isAuthModalOpen, isMessageModalOpen, selectedProduct]);
+  }, [isAuthModalOpen, isMessageModalOpen, selectedProduct, selectedImage]);
 
   const handleContactClick = async (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
@@ -461,7 +462,8 @@ export default function ProfileClient({ company, locale }: { company: any, local
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: idx * 0.05 }}
-                            className="relative group rounded-3xl overflow-hidden break-inside-avoid shadow-xl bg-zinc-900 border border-white/5"
+                            className="relative group rounded-3xl overflow-hidden break-inside-avoid shadow-xl bg-zinc-900 border border-white/5 cursor-pointer"
+                            onClick={() => setSelectedImage(item.url)}
                           >
                             <Image 
                               src={item.url} 
@@ -669,6 +671,38 @@ export default function ProfileClient({ company, locale }: { company: any, local
                     )}
                   </div>
                 </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Image Lightbox Modal */}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 md:p-8 cursor-pointer"
+            onClick={() => setSelectedImage(null)}
+          >
+            <button 
+              onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }} 
+              className="absolute top-4 end-4 md:top-8 md:end-8 z-50 w-12 h-12 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-lg"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-full max-h-full cursor-default flex items-center justify-center"
+            >
+              <Image 
+                src={selectedImage} 
+                alt="Enlarged gallery view" 
+                width={1920}
+                height={1080}
+                className="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-xl shadow-2xl" 
+                unoptimized
+              />
             </motion.div>
           </motion.div>
         )}
