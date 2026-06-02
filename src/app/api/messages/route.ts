@@ -86,3 +86,48 @@ export async function GET(req: Request) {
   }
 }
 
+export async function PATCH(req: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { messageId } = body;
+
+    if (!messageId) {
+      return NextResponse.json({ error: 'Missing message ID' }, { status: 400 });
+    }
+
+    // Verify ownership
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { company: true }
+    });
+
+    if (!user?.company?.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Ensure the message belongs to this company
+    const message = await prisma.message.findUnique({
+      where: { id: messageId }
+    });
+
+    if (!message || message.receiverId !== user.company.id) {
+      return NextResponse.json({ error: 'Not found or forbidden' }, { status: 404 });
+    }
+
+    const updated = await prisma.message.update({
+      where: { id: messageId },
+      data: { isRead: true }
+    });
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error('Error updating message:', error);
+    return NextResponse.json({ error: 'Failed to update message' }, { status: 500 });
+  }
+}
+

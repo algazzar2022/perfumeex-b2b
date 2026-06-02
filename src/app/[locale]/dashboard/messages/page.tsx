@@ -66,6 +66,24 @@ export default function MessagesPage() {
 
   const activeMsgData = messages.find(m => m.id === activeMessage);
 
+  const handleMessageClick = async (msg: any) => {
+    setActiveMessage(msg.id);
+    if (msg.unread && !msg.isSystem) {
+      // Optimistic UI update
+      setDbMessages(prev => prev.map(m => m.id === msg.id ? { ...m, isRead: true } : m));
+      try {
+        await fetch('/api/messages', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messageId: msg.id })
+        });
+        window.dispatchEvent(new Event('messagesUpdated'));
+      } catch (err) {
+        console.error("Failed to mark message as read", err);
+      }
+    }
+  };
+
   const handleReply = () => {
     if (!replyText.trim()) return;
     setIsReplying(true);
@@ -122,7 +140,7 @@ export default function MessagesPage() {
             {messages.map((msg) => (
               <button
                 key={msg.id}
-                onClick={() => setActiveMessage(msg.id)}
+                onClick={() => handleMessageClick(msg)}
                 className={`w-full ltr:text-left rtl:text-right p-4 border-b border-white/5 transition-colors relative flex gap-3
                   ${activeMessage === msg.id ? "bg-emerald-500/5" : "hover:bg-white/5"}
                 `}
@@ -176,34 +194,48 @@ export default function MessagesPage() {
                 </div>
               </div>
 
-              {/* Message Details / Body */}
-              <div className="flex-1 overflow-y-auto p-6">
-                <div className="bg-zinc-900/50 rounded-2xl p-6 mb-8 border border-white/5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
-                    <div>
-                      <span className="text-zinc-500 block mb-1">{t("email")}</span>
+              {/* Message Details / Body (Chat Style) */}
+              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+                
+                {/* Contact Info Card */}
+                <div className="bg-zinc-900/40 rounded-2xl p-4 border border-white/5 flex flex-col sm:flex-row gap-6 justify-between items-center text-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-zinc-500 mb-1">{t("email")}</span>
                       {activeMsgData.email !== "-" ? (
-                        <a href={`mailto:${activeMsgData.email}`} className="text-white hover:text-emerald-400">{activeMsgData.email}</a>
-                      ) : (
-                        <span className="text-zinc-400">-</span>
-                      )}
-                    </div>
-                    <div>
-                      <span className="text-zinc-500 block mb-1">{t("phone")}</span>
-                      {activeMsgData.phone !== "-" ? (
-                        <a href={`tel:${activeMsgData.phone}`} className="text-white hover:text-emerald-400 dir-ltr inline-block">{activeMsgData.phone}</a>
+                        <a href={`mailto:${activeMsgData.email}`} className="text-white hover:text-emerald-400 font-bold">{activeMsgData.email}</a>
                       ) : (
                         <span className="text-zinc-400">-</span>
                       )}
                     </div>
                   </div>
-                  <div className="w-full h-px bg-white/5 mb-6" />
-                  <div className="prose prose-invert prose-emerald max-w-none">
-                    <div className="text-zinc-300 leading-relaxed whitespace-pre-wrap">
-                      {activeMsgData.body}
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-zinc-500 mb-1">{t("phone")}</span>
+                      {activeMsgData.phone !== "-" ? (
+                        <a href={`tel:${activeMsgData.phone}`} className="text-white hover:text-emerald-400 font-bold dir-ltr inline-block">{activeMsgData.phone}</a>
+                      ) : (
+                        <span className="text-zinc-400">-</span>
+                      )}
                     </div>
                   </div>
                 </div>
+
+                {/* Chat Bubble */}
+                <div className="flex flex-col gap-2 w-full max-w-3xl ltr:self-start rtl:self-start">
+                   <div className="flex items-end gap-2">
+                     <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-xs ${activeMsgData.isSystem ? 'bg-emerald-500 text-black' : 'bg-zinc-800 text-zinc-300'}`}>
+                       {activeMsgData.isSystem ? 'P' : activeMsgData.sender.charAt(0)}
+                     </div>
+                     <div className="bg-zinc-800/80 text-zinc-200 p-4 rounded-2xl ltr:rounded-bl-none rtl:rounded-br-none border border-white/5 whitespace-pre-wrap leading-relaxed shadow-lg">
+                       {activeMsgData.body}
+                     </div>
+                   </div>
+                   <div className="text-xs text-zinc-500 ltr:ml-10 rtl:mr-10">
+                     {activeMsgData.time}
+                   </div>
+                </div>
+
               </div>
 
               {/* Reply Box */}
