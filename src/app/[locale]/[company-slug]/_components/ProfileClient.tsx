@@ -333,7 +333,12 @@ export default function ProfileClient({ company, locale }: { company: any, local
             </motion.div>
 
             {/* Tab Panels */}
-            <div className="min-h-[500px]">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="min-h-[500px]"
+            >
               <AnimatePresence mode="wait">
                 
                 {/* OVERVIEW */}
@@ -482,7 +487,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 )}
 
               </AnimatePresence>
-            </div>
+            </motion.div>
 
           </div>
         </div>
