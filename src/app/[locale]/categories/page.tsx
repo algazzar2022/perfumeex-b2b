@@ -52,7 +52,7 @@ export default function CategoriesPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((category, idx) => (
-            <Link key={category.id} href={`/${locale}/search?category=${category.id}`}>
+            <Link key={category.id} href={`/${locale}/category/${category.id}`}>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}

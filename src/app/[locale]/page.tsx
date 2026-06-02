@@ -68,14 +68,14 @@ export default function Home() {
   }, []);
 
   const categories = [
-    { name: t('categories.items.perfumeClones'), icon: <Droplet strokeWidth={1.5} className="w-8 h-8" />, count: 120 },
-    { name: t('categories.items.readyPerfumes'), icon: <Star strokeWidth={1.5} className="w-8 h-8" />, count: 450 },
-    { name: t('categories.items.glass'), icon: <MapPin strokeWidth={1.5} className="w-8 h-8" />, count: 150 },
-    { name: t('categories.items.bakhoor'), icon: <TrendingUp strokeWidth={1.5} className="w-8 h-8" />, count: 85 },
-    { name: t('categories.items.airFresheners'), icon: <Sparkles strokeWidth={1.5} className="w-8 h-8" />, count: 210 },
-    { name: t('categories.items.packaging'), icon: <Building2 strokeWidth={1.5} className="w-8 h-8" />, count: 320 },
-    { name: t('categories.items.bottlesAndEmpties'), icon: <Package strokeWidth={1.5} className="w-8 h-8" />, count: 280 },
-    { name: t('categories.items.others'), icon: <MoreHorizontal strokeWidth={1.5} className="w-8 h-8" />, count: 50 },
+    { id: "perfumeClones", name: t('categories.items.perfumeClones'), icon: <Droplet strokeWidth={1.5} className="w-8 h-8" />, count: 120 },
+    { id: "readyPerfumes", name: t('categories.items.readyPerfumes'), icon: <Star strokeWidth={1.5} className="w-8 h-8" />, count: 450 },
+    { id: "glass", name: t('categories.items.glass'), icon: <MapPin strokeWidth={1.5} className="w-8 h-8" />, count: 150 },
+    { id: "bakhoor", name: t('categories.items.bakhoor'), icon: <TrendingUp strokeWidth={1.5} className="w-8 h-8" />, count: 85 },
+    { id: "airFresheners", name: t('categories.items.airFresheners'), icon: <Sparkles strokeWidth={1.5} className="w-8 h-8" />, count: 210 },
+    { id: "packaging", name: t('categories.items.packaging'), icon: <Building2 strokeWidth={1.5} className="w-8 h-8" />, count: 320 },
+    { id: "bottlesAndEmpties", name: t('categories.items.bottlesAndEmpties'), icon: <Package strokeWidth={1.5} className="w-8 h-8" />, count: 280 },
+    { id: "others", name: t('categories.items.others'), icon: <MoreHorizontal strokeWidth={1.5} className="w-8 h-8" />, count: 50 },
   ];
 
   return (
@@ -267,33 +267,34 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((category, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -5 }}
-                className="group relative p-10 rounded-[2rem] bg-zinc-950 border border-white/5 hover:bg-zinc-900 transition-colors duration-500 cursor-pointer overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-black border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition-all duration-500 mb-8">
-                    {category.icon}
-                  </div>
-                  <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">{category.name}</h3>
+              <Link key={category.id} href={`/${pathname.split('/')[1] || 'en'}/category/${category.id}`}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ y: -5 }}
+                  className="group relative p-10 rounded-[2rem] bg-zinc-950 border border-white/5 hover:bg-zinc-900 transition-colors duration-500 cursor-pointer overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   
-                  <div className="flex items-center gap-3 text-zinc-500 font-light text-sm">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500/70" />
-                    <span>{category.count} {t('categories.verifiedSuppliers')}</span>
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 rounded-2xl bg-black border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition-all duration-500 mb-8">
+                      {category.icon}
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">{category.name}</h3>
+                    
+                    <div className="flex items-center gap-3 text-zinc-500 font-light text-sm">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500/70" />
+                      <span>{category.count} {t('categories.verifiedSuppliers')}</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="absolute bottom-10 ltr:right-10 rtl:left-10 opacity-0 group-hover:opacity-100 ltr:group-hover:translate-x-2 rtl:group-hover:-translate-x-2 transition-all duration-500 text-emerald-500">
-                  <ArrowRight className="w-6 h-6 rtl:rotate-180" />
-                </div>
-              </motion.div>
+                  <div className="absolute bottom-10 ltr:right-10 rtl:left-10 opacity-0 group-hover:opacity-100 ltr:group-hover:translate-x-2 rtl:group-hover:-translate-x-2 transition-all duration-500 text-emerald-500">
+                    <ArrowRight className="w-6 h-6 rtl:rotate-180" />
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
