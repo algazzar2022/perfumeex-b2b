@@ -611,7 +611,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-6xl w-full flex flex-col md:flex-row relative shadow-2xl cursor-default"
+              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-5xl w-full min-h-[90vh] md:min-h-[75vh] flex flex-col md:flex-row relative shadow-2xl cursor-default"
             >
               <button 
                 onClick={(e) => { e.stopPropagation(); setSelectedProduct(null); }} 
@@ -620,7 +620,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-full md:w-7/12 relative bg-white shrink-0 aspect-square">
+              <div className="w-full md:w-1/2 relative bg-white shrink-0 min-h-[300px] md:min-h-0">
                 <Image 
                   src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
                   alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
@@ -629,8 +629,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 />
               </div>
 
-              <div className="w-full md:w-5/12 relative">
-                <div className="md:absolute md:inset-0 p-6 md:p-8 flex flex-col h-full max-h-[90vh] md:max-h-none">
+              <div className="w-full md:w-1/2 relative flex flex-col p-6 md:p-8 max-h-[90vh] md:max-h-[75vh]">
                   <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
                     <Box className="w-3 h-3" />
                     {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
@@ -666,7 +665,6 @@ export default function ProfileClient({ company, locale }: { company: any, local
                     )}
                   </div>
                 </div>
-              </div>
             </motion.div>
           </motion.div>
         )}
