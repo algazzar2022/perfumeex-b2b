@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, LayoutDashboard, LogOut } from "lucide-react";
+import { Menu, X, User, LayoutDashboard, LogOut, Bell } from "lucide-react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslations } from "next-intl";
 import { useSession, signOut } from "next-auth/react";
@@ -13,12 +13,27 @@ import { useSession, signOut } from "next-auth/react";
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState<any[]>([]);
   const pathname = usePathname();
   const t = useTranslations("Navbar");
   const { data: session, status } = useSession();
 
   const locale = pathname.split('/')[1] || 'en';
   const isAr = locale === 'ar';
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetch('/api/messages')
+        .then(res => res.ok ? res.json() : { messages: [] })
+        .then(data => {
+          if (data.messages) {
+            setUnreadMessages(data.messages.filter((m: any) => !m.isRead));
+          }
+        })
+        .catch(console.error);
+    }
+  }, [status, pathname]); // Re-fetch when pathname changes just in case
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,7 +101,62 @@ export default function Navbar() {
           <LanguageSwitcher currentLocale={locale} />
           
           {status === 'authenticated' ? (
-            <div className="flex items-center gap-3 ml-2">
+            <div className="flex items-center gap-3 ml-2 relative">
+              
+              {/* Notifications */}
+              <div className="relative">
+                <button 
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className="relative p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-full transition-colors focus:outline-none"
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadMessages.length > 0 && (
+                    <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-black animate-pulse" />
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {notificationsOpen && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute top-full mt-2 ltr:right-0 rtl:left-0 w-80 bg-zinc-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50"
+                    >
+                      <div className="p-4 border-b border-white/10 flex justify-between items-center bg-zinc-950/50">
+                        <h3 className="font-bold text-white">{isAr ? "الإشعارات" : "Notifications"}</h3>
+                        {unreadMessages.length > 0 && (
+                          <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded-full font-bold">
+                            {unreadMessages.length} {isAr ? "جديدة" : "new"}
+                          </span>
+                        )}
+                      </div>
+                      <div className="max-h-80 overflow-y-auto">
+                        {unreadMessages.length === 0 ? (
+                          <div className="p-8 text-center text-zinc-500 text-sm">
+                            {isAr ? "لا توجد إشعارات جديدة" : "No new notifications"}
+                          </div>
+                        ) : (
+                          unreadMessages.map((msg: any) => (
+                            <Link 
+                              key={msg.id} 
+                              href={`/${locale}/dashboard/messages`}
+                              onClick={() => setNotificationsOpen(false)}
+                              className="block p-4 border-b border-white/5 hover:bg-white/5 transition-colors"
+                            >
+                              <div className="text-sm font-bold text-white mb-1">
+                                {isAr ? "رسالة جديدة من:" : "New message from:"} {isAr ? msg.sender?.nameAr || 'Admin' : msg.sender?.nameEn || 'Admin'}
+                              </div>
+                              <div className="text-xs text-zinc-400 line-clamp-1">{msg.content}</div>
+                            </Link>
+                          ))
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
               <Link
                 href={`/${locale}/dashboard`}
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold hover:bg-emerald-500 hover:text-black transition-colors"

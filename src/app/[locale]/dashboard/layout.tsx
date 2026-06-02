@@ -31,6 +31,7 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [slug, setSlug] = useState<string | null>(null);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("Dashboard");
@@ -52,6 +53,17 @@ export default function DashboardLayout({
         })
         .then((data: any) => {
           if (data?.slug) setSlug(data.slug);
+        })
+        .catch(console.error);
+        
+      fetch('/api/messages')
+        .then(res => {
+          if (res.ok) return res.json();
+          return { messages: [] };
+        })
+        .then((data: any) => {
+          const count = data.messages?.filter((m: any) => !m.isRead).length || 0;
+          setUnreadMessages(count > 0 ? count + 1 : 1); // +1 for the system welcome message which is unread
         })
         .catch(console.error);
     }
@@ -78,7 +90,7 @@ export default function DashboardLayout({
     { name: t("sidebar.branches"), href: "/dashboard/branches", icon: <MapPin className="w-5 h-5" /> },
     { name: t("sidebar.products"), href: "/dashboard/products", icon: <Package className="w-5 h-5" /> },
     { name: t("sidebar.mediaGallery"), href: "/dashboard/gallery", icon: <ImageIcon className="w-5 h-5" /> },
-    { name: t("sidebar.messages"), href: "/dashboard/messages", icon: <MessageSquare className="w-5 h-5" /> },
+    { name: t("sidebar.messages"), href: "/dashboard/messages", icon: <MessageSquare className="w-5 h-5" />, badge: unreadMessages > 0 ? unreadMessages : null },
   ];
 
   if (slug) {
@@ -161,14 +173,21 @@ export default function DashboardLayout({
                 <Link
                   key={item.name}
                   href={href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all ${
                     active 
                     ? "bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20" 
                     : "text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent"
                   }`}
                 >
-                  {item.icon}
-                  {item.name}
+                  <div className="flex items-center gap-3">
+                    {item.icon}
+                    {item.name}
+                  </div>
+                  {item.badge && (
+                    <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}

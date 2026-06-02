@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, MessageSquare, Trash2, Reply, Star, Info, Loader2 } from "lucide-react";
+import { Search, MessageSquare, Trash2, Reply, Star, Info, Loader2, CheckCircle2 } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function MessagesPage() {
   const locale = useLocale();
@@ -10,6 +11,9 @@ export default function MessagesPage() {
   const [activeMessage, setActiveMessage] = useState<string | number | null>(1);
   const [dbMessages, setDbMessages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [replyText, setReplyText] = useState("");
+  const [isReplying, setIsReplying] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -62,8 +66,33 @@ export default function MessagesPage() {
 
   const activeMsgData = messages.find(m => m.id === activeMessage);
 
+  const handleReply = () => {
+    if (!replyText.trim()) return;
+    setIsReplying(true);
+    // Simulate sending reply
+    setTimeout(() => {
+      setIsReplying(false);
+      setReplyText("");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }, 1500);
+  };
+
   return (
-    <div className="h-[calc(100vh-140px)] max-w-7xl mx-auto flex flex-col pb-20 md:pb-0">
+    <div className="h-[calc(100vh-140px)] max-w-7xl mx-auto flex flex-col pb-20 md:pb-0 relative">
+      <AnimatePresence>
+        {showToast && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            exit={{ opacity: 0, y: 50 }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-black px-6 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center gap-2"
+          >
+            <CheckCircle2 className="w-5 h-5" />
+            {isAr ? "تم إرسال الرد بنجاح" : "Reply sent successfully"}
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Header */}
       <div className="flex justify-between items-center mb-6 shrink-0">
@@ -187,6 +216,8 @@ export default function MessagesPage() {
                   <div className="bg-zinc-900 border border-white/10 rounded-xl overflow-hidden focus-within:border-emerald-500 transition-colors">
                     <textarea 
                       rows={4}
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
                       placeholder={t("replyPlaceholder")}
                       className="w-full bg-transparent p-4 text-white outline-none resize-none"
                     />
@@ -194,8 +225,13 @@ export default function MessagesPage() {
                       <button className="text-sm font-bold text-zinc-400 hover:text-white flex items-center gap-2">
                         <MessageSquare className="w-4 h-4" /> {t("replyWhatsapp")}
                       </button>
-                      <button className="px-6 py-2 bg-emerald-500 text-black font-bold rounded-lg hover:bg-emerald-400 transition-colors flex items-center gap-2">
-                        <Reply className="w-4 h-4" /> {t("sendEmail")}
+                      <button 
+                        onClick={handleReply}
+                        disabled={isReplying || !replyText.trim()}
+                        className="px-6 py-2 bg-emerald-500 text-black font-bold rounded-lg hover:bg-emerald-400 transition-colors flex items-center gap-2 disabled:opacity-50"
+                      >
+                        {isReplying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Reply className="w-4 h-4" />} 
+                        {isReplying ? (isAr ? "جاري الإرسال..." : "Sending...") : t("sendEmail")}
                       </button>
                     </div>
                   </div>
