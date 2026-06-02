@@ -22,6 +22,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
   const [messageContent, setMessageContent] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [sendStatus, setSendStatus] = useState<"idle" | "success" | "error">("idle");
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const t = useTranslations("Dashboard.companyProfile.general.categoryOptions");
 
   const isAr = locale === 'ar';
@@ -348,7 +349,8 @@ export default function ProfileClient({ company, locale }: { company: any, local
                           <motion.div 
                             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}
                             key={product.id} 
-                            className="group bg-zinc-900/50 border border-white/5 rounded-3xl overflow-hidden hover:border-emerald-500/30 transition-all shadow-xl hover:shadow-emerald-500/10"
+                            onClick={() => setSelectedProduct(product)}
+                            className="group cursor-pointer bg-zinc-900/50 border border-white/5 rounded-3xl overflow-hidden hover:border-emerald-500/30 transition-all shadow-xl hover:shadow-emerald-500/10"
                           >
                             <div className="relative h-56 w-full bg-zinc-950 overflow-hidden">
                               <Image 
@@ -576,6 +578,69 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 >
                   {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : (isAr ? "إرسال الرسالة" : "Send Message")}
                 </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      {/* Product Details Modal */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row relative"
+            >
+              <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 rtl:left-4 rtl:right-auto z-10 w-10 h-10 bg-black/50 hover:bg-black text-white rounded-full flex items-center justify-center backdrop-blur-md transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="md:w-1/2 relative h-64 md:h-auto bg-zinc-950 shrink-0">
+                <Image 
+                  src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
+                  alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
+                  fill 
+                  className="object-cover" 
+                />
+              </div>
+
+              <div className="md:w-1/2 p-6 md:p-8 flex flex-col overflow-y-auto">
+                <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit">
+                  <Box className="w-3 h-3" />
+                  {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
+                </div>
+                
+                <h3 className="text-3xl font-bold text-white mb-4">
+                  {isAr ? selectedProduct.nameAr : selectedProduct.nameEn}
+                </h3>
+                
+                <div className="text-emerald-500 font-extrabold text-2xl mb-6">
+                  {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
+                </div>
+                
+                <div className="prose prose-invert prose-sm mb-8 flex-1">
+                  <h4 className="text-zinc-400 uppercase tracking-wider text-xs font-bold mb-2">
+                    {isAr ? "وصف المنتج" : "Product Description"}
+                  </h4>
+                  <p className="text-zinc-300 leading-relaxed whitespace-pre-wrap">
+                    {isAr ? selectedProduct.descriptionAr : selectedProduct.descriptionEn}
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-3 mt-auto pt-6 border-t border-white/10">
+                  <button onClick={() => { setSelectedProduct(null); handleContactClick(); }} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-3">
+                    <Mail className="w-5 h-5" />
+                    {isAr ? "مراسلة الشركة لطلب المنتج" : "Message Supplier to Order"}
+                  </button>
+                  {company.whatsapp && (
+                    <a href={`https://wa.me/${company.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(isAr ? `مرحباً، أود الاستفسار عن المنتج: ${selectedProduct.nameAr}` : `Hello, I'd like to inquire about the product: ${selectedProduct.nameEn}`)}`} target="_blank" rel="noreferrer" className="w-full py-4 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#25D366] font-bold rounded-xl transition-all flex items-center justify-center gap-3">
+                      <Phone className="w-5 h-5" />
+                      {isAr ? "تواصل عبر واتساب" : "Contact via WhatsApp"}
+                    </a>
+                  )}
+                </div>
               </div>
             </motion.div>
           </motion.div>
