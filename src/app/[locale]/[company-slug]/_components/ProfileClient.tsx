@@ -582,6 +582,8 @@ export default function ProfileClient({ company, locale }: { company: any, local
             </motion.div>
           </motion.div>
         )}
+      </AnimatePresence>
+
       {/* Product Details Modal */}
       <AnimatePresence>
         {selectedProduct && (
