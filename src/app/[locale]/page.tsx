@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Search, MapPin, Building2, Droplet, Star, TrendingUp, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Search, MapPin, Building2, Droplet, Star, TrendingUp, Sparkles, ArrowRight, CheckCircle2, Share2, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
+import { useSession } from "next-auth/react";
 
 const sponsorLogos = [
   "AL Madinah AL Munawwarah.png",
@@ -44,6 +45,7 @@ export default function Home() {
   const t = useTranslations('Index');
   const router = useRouter();
   const pathname = usePathname();
+  const { data: session } = useSession();
   
   // Luxury Parallax
   const { scrollYProgress } = useScroll();
@@ -309,21 +311,57 @@ export default function Home() {
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="p-12 md:p-24 rounded-[3rem] border border-white/10 bg-white/[0.02] backdrop-blur-xl shadow-2xl"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tight">
-              {t('cta.title')}
-            </h2>
-            <p className="text-xl text-zinc-400 mb-14 max-w-2xl mx-auto font-light leading-relaxed">
-              {t('cta.subtitle')}
-            </p>
-            
-            <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <button className="px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:bg-emerald-50 hover:scale-[1.02] transition-all duration-300">
-                {t('cta.register')}
-              </button>
-              <button className="px-10 py-5 bg-transparent text-white font-bold text-lg rounded-full border border-white/20 hover:bg-white/10 transition-all duration-300">
-                {t('cta.contact')}
-              </button>
-            </div>
+            {session ? (
+              <>
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">
+                  {pathname.includes('/ar') ? 'شارك منصة بورصة العطور' : 'Share PerfumeEx'}
+                </h2>
+                <p className="text-lg md:text-xl text-zinc-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+                  {pathname.includes('/ar') 
+                    ? 'ساعدنا في بناء أكبر مجتمع لشركات العطور في مصر. شارك المنصة مع زملائك في المجال لتعزيز التواصل وعقد صفقات أكثر.' 
+                    : 'Help us build the largest perfume companies community in Egypt. Share the platform with your colleagues in the industry.'}
+                </p>
+                
+                <div className="flex flex-col sm:flex-row justify-center gap-6">
+                  <a 
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://perfumeex.app')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-10 py-5 bg-[#1877F2] text-white font-bold text-lg rounded-full hover:bg-[#1877F2]/90 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3"
+                  >
+                    <Share2 className="w-5 h-5" />
+                    {pathname.includes('/ar') ? 'شارك على فيسبوك' : 'Share on Facebook'}
+                  </a>
+                  <a 
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent('انضم إلى منصة بورصة العطور، الشبكة الأولى لشركات العطور في مصر! https://perfumeex.app')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-10 py-5 bg-[#25D366] text-white font-bold text-lg rounded-full hover:bg-[#25D366]/90 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    {pathname.includes('/ar') ? 'شارك عبر واتساب' : 'Share via WhatsApp'}
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tight">
+                  {t('cta.title')}
+                </h2>
+                <p className="text-xl text-zinc-400 mb-14 max-w-2xl mx-auto font-light leading-relaxed">
+                  {t('cta.subtitle')}
+                </p>
+                
+                <div className="flex flex-col sm:flex-row justify-center gap-6">
+                  <button onClick={() => router.push(`/${pathname.split('/')[1] || 'en'}/auth/register`)} className="px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:bg-emerald-50 hover:scale-[1.02] transition-all duration-300">
+                    {t('cta.register')}
+                  </button>
+                  <button className="px-10 py-5 bg-transparent text-white font-bold text-lg rounded-full border border-white/20 hover:bg-white/10 transition-all duration-300">
+                    {t('cta.contact')}
+                  </button>
+                </div>
+              </>
+            )}
           </motion.div>
         </div>
       </section>
