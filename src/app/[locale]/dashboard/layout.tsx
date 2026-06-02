@@ -38,16 +38,36 @@ export default function DashboardLayout({
   const locale = pathname.split('/')[1] || 'en';
 
   useEffect(() => {
-    fetch('/api/company/profile')
-      .then(res => {
-        if (res.ok) return res.json();
-        return {};
-      })
-      .then((data: any) => {
-        if (data?.slug) setSlug(data.slug);
-      })
-      .catch(console.error);
-  }, []);
+    if (status === "unauthenticated") {
+      router.push(`/${locale}/login`);
+    }
+  }, [status, router, locale]);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetch('/api/company/profile')
+        .then(res => {
+          if (res.ok) return res.json();
+          return {};
+        })
+        .then((data: any) => {
+          if (data?.slug) setSlug(data.slug);
+        })
+        .catch(console.error);
+    }
+  }, [status]);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-emerald-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return null;
+  }
 
   const companyName = session?.user?.name || "Company Name";
   const initial = companyName.charAt(0).toUpperCase();
