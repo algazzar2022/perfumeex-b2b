@@ -17,10 +17,6 @@ export default function DashboardGallery() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
-  useEffect(() => {
-    fetchGallery();
-  }, []);
-
   const fetchGallery = async () => {
     try {
       const res = await fetch("/api/company/gallery");
@@ -34,6 +30,10 @@ export default function DashboardGallery() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchGallery();
+  }, []);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

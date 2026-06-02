@@ -31,10 +31,6 @@ export default function ProductsManagementPage() {
     categoryId: ""
   });
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
   const fetchProducts = async () => {
     try {
       const res = await fetch("/api/company/products");
@@ -48,6 +44,10 @@ export default function ProductsManagementPage() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const handleOpenForm = (product: any = null) => {
     if (product) {

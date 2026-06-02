@@ -48,10 +48,6 @@ export default function BranchesPage() {
     phone: ""
   });
 
-  useEffect(() => {
-    fetchBranches();
-  }, []);
-
   const fetchBranches = async () => {
     try {
       const res = await fetch("/api/company/branches");
@@ -65,6 +61,10 @@ export default function BranchesPage() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchBranches();
+  }, []);
 
   const handleOpenForm = (branch?: Branch) => {
     if (branch) {
