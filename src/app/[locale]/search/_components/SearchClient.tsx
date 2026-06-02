@@ -87,14 +87,25 @@ export default function SearchClient({
               <div className="mb-8">
                 <h3 className="text-zinc-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "التصنيف" : "Category"}</h3>
                 <div className="space-y-3">
-                  {["عطور محاكاة", "عطور جاهزة", "بخور", "زجاجات عطر", "تعبئة وتغليف"].map((cat) => {
-                    const isActive = searchParams.get("category") === cat;
+                  {[
+                    "perfumeClones", 
+                    "readyPerfumes", 
+                    "glass", 
+                    "bakhoor", 
+                    "airFresheners", 
+                    "packaging", 
+                    "bottlesAndEmpties", 
+                    "others"
+                  ].map((catId) => {
+                    const isActive = searchParams.get("category") === catId;
                     return (
-                      <label key={cat} onClick={() => applyFilter("category", cat)} className="flex items-center gap-3 group cursor-pointer">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
+                      <label key={catId} onClick={() => applyFilter("category", catId)} className="flex items-center gap-3 group cursor-pointer">
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
                           {isActive && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
                         </div>
-                        <span className={`text-sm transition-colors ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>{cat}</span>
+                        <span className={`text-sm transition-colors ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>
+                          {t(catId as any)}
+                        </span>
                       </label>
                     );
                   })}
