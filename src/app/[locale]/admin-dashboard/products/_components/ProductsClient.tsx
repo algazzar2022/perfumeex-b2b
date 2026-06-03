@@ -10,6 +10,8 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
   const [searchQuery, setSearchQuery] = useState("");
   const [isPending, startTransition] = useTransition();
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [companySearchQuery, setCompanySearchQuery] = useState("");
+  const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
   
   // Custom Toast State
   const [toastMessage, setToastMessage] = useState<{message: string, type: 'success' | 'error'} | null>(null);
@@ -25,6 +27,11 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
     p.nameAr.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.company.nameAr.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredDropdownCompanies = companies.filter(c => 
+    c.nameAr.toLowerCase().includes(companySearchQuery.toLowerCase()) || 
+    c.nameEn.toLowerCase().includes(companySearchQuery.toLowerCase())
   );
 
   const handleStatusChange = (id: string, status: 'APPROVED' | 'REJECTED') => {
@@ -252,18 +259,61 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
             <h3 className="text-xl font-bold mb-6">{editingProduct.id ? `تعديل بيانات: ${editingProduct.nameAr}` : 'إضافة منتج جديد'}</h3>
             <form onSubmit={handleSaveProduct} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
-              <div className="md:col-span-2">
+              <div className="md:col-span-2 relative">
                 <label className="block text-sm text-gray-400 mb-1">الشركة المالكة للمنتج</label>
-                <select 
-                  value={editingProduct.companyId || ''} 
-                  onChange={e => setEditingProduct({...editingProduct, companyId: e.target.value})}
-                  className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
-                >
-                  <option value="">اختر الشركة...</option>
-                  {companies.map(c => (
-                    <option key={c.id} value={c.id}>{c.nameAr} - {c.nameEn}</option>
-                  ))}
-                </select>
+                {!editingProduct.companyId ? (
+                  <div className="relative">
+                    <input 
+                      type="text" 
+                      placeholder="ابحث عن الشركة هنا (بالعربية أو الإنجليزية)..." 
+                      value={companySearchQuery}
+                      onChange={e => {
+                        setCompanySearchQuery(e.target.value);
+                        setShowCompanyDropdown(true);
+                      }}
+                      onFocus={() => setShowCompanyDropdown(true)}
+                      className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
+                    />
+                    {showCompanyDropdown && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-[#222] border border-white/10 rounded-xl max-h-48 overflow-y-auto z-50 shadow-2xl">
+                        {filteredDropdownCompanies.map(c => (
+                          <div 
+                            key={c.id} 
+                            onClick={() => {
+                              setEditingProduct({...editingProduct, companyId: c.id});
+                              setShowCompanyDropdown(false);
+                            }}
+                            className="px-4 py-3 hover:bg-white/10 cursor-pointer border-b border-white/5 last:border-0"
+                          >
+                            <div className="font-bold">{c.nameAr}</div>
+                            <div className="text-xs text-gray-400">{c.nameEn}</div>
+                          </div>
+                        ))}
+                        {filteredDropdownCompanies.length === 0 && (
+                          <div className="px-4 py-3 text-gray-500 text-sm">لا توجد شركات مطابقة</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between w-full bg-[#111] border border-white/10 rounded-xl px-4 py-3">
+                    <div className="flex flex-col">
+                      <span className="text-white font-bold">
+                        {companies.find(c => c.id === editingProduct.companyId)?.nameAr}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {companies.find(c => c.id === editingProduct.companyId)?.nameEn}
+                      </span>
+                    </div>
+                    <button type="button" onClick={() => {
+                      setEditingProduct({...editingProduct, companyId: ''});
+                      setCompanySearchQuery('');
+                      setShowCompanyDropdown(true);
+                    }} className="text-emerald-400 hover:text-emerald-300 text-sm font-bold px-3 py-1 bg-emerald-500/10 rounded-lg transition-colors">
+                      تغيير الشركة
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div>
