@@ -13,7 +13,8 @@ import {
   X,
   LayoutDashboard,
   LogOut,
-  Calendar
+  Calendar,
+  Info
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
@@ -29,6 +30,7 @@ export default function Sidebar() {
     { name: 'الرعاة', href: `/${locale}/admin-dashboard/sponsors`, icon: Star },
     { name: 'المنتجات', href: `/${locale}/admin-dashboard/products`, icon: PackageSearch },
     { name: 'ايفنتات', href: `/${locale}/admin-dashboard/events`, icon: Calendar },
+    { name: 'صفحة من نحن', href: `/${locale}/admin-dashboard/about`, icon: Info },
   ];
 
   return (
