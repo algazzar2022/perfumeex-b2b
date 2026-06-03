@@ -70,6 +70,8 @@ export default function Navbar() {
     { name: t("search"), href: "/search" },
     { name: t("companies"), href: "/companies" },
     { name: t("categories"), href: "/categories" },
+    { name: t("events"), href: "/events" },
+    { name: t("about"), href: "/about" },
   ];
 
   const isActive = (href: string) => {
