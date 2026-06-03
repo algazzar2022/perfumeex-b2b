@@ -264,7 +264,6 @@ model EventRegistration {
   event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   
   name            String
-  age             Int
   brandName       String
   location        String
   phone           String

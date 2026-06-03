@@ -15,7 +15,6 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
   
   const [formData, setFormData] = useState({
     name: '',
-    age: '',
     brandName: '',
     location: '',
     phone: '',
@@ -31,7 +30,6 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
       await submitEventRegistration({
         eventId: event.id,
         name: formData.name,
-        age: parseInt(formData.age),
         brandName: formData.brandName,
         location: formData.location,
         phone: formData.phone,
@@ -100,7 +98,7 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
         <form onSubmit={handleSubmit} className="space-y-6">
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
               <label className="text-sm font-medium text-gray-300">{isAr ? 'الاسم بالكامل' : 'Full Name'}</label>
               <div className="relative">
                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none text-gray-500">
@@ -115,20 +113,6 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
                   placeholder={isAr ? 'الاسم الثلاثي' : 'John Doe'}
                 />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-300">{isAr ? 'السن' : 'Age'}</label>
-              <input
-                type="number"
-                required
-                min="16"
-                max="100"
-                value={formData.age}
-                onChange={e => setFormData({...formData, age: e.target.value})}
-                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
-                placeholder="25"
-              />
             </div>
           </div>
 

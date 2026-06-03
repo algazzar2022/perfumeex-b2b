@@ -37,22 +37,20 @@ export default async function EventRegistrationsPage({ params }: { params: Promi
           <div className="overflow-x-auto">
             <table className="w-full text-right border-collapse">
               <thead>
-                <tr className="bg-white/5 border-b border-white/10">
-                  <th className="p-4 font-semibold text-gray-300">الاسم</th>
-                  <th className="p-4 font-semibold text-gray-300">السن</th>
-                  <th className="p-4 font-semibold text-gray-300">اسم البراند</th>
-                  <th className="p-4 font-semibold text-gray-300">المكان</th>
-                  <th className="p-4 font-semibold text-gray-300">رقم الاتصال</th>
-                  <th className="p-4 font-semibold text-gray-300">واتساب</th>
-                  <th className="p-4 font-semibold text-gray-300">سنوات الخبرة</th>
-                  <th className="p-4 font-semibold text-gray-300">تاريخ التسجيل</th>
+                <tr className="text-right text-gray-400 bg-[#1a1a1a]">
+                  <th className="p-4 font-medium">الاسم</th>
+                  <th className="p-4 font-medium">البراند</th>
+                  <th className="p-4 font-medium">المكان</th>
+                  <th className="p-4 font-medium">رقم الهاتف</th>
+                  <th className="p-4 font-medium">واتساب</th>
+                  <th className="p-4 font-medium">سنوات الخبرة</th>
+                  <th className="p-4 font-medium">تاريخ التسجيل</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {registrations.map((reg) => (
                   <tr key={reg.id} className="hover:bg-white/5 transition-colors">
                     <td className="p-4 font-medium text-emerald-400">{reg.name}</td>
-                    <td className="p-4">{reg.age}</td>
                     <td className="p-4 text-blue-300">{reg.brandName}</td>
                     <td className="p-4">{reg.location}</td>
                     <td className="p-4">{reg.phone}</td>
