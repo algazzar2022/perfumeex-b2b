@@ -10,6 +10,16 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
   const [searchQuery, setSearchQuery] = useState("");
   const [isPending, startTransition] = useTransition();
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  
+  // Custom Toast State
+  const [toastMessage, setToastMessage] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToastMessage({ message, type });
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
 
   const filteredProducts = products.filter(p => 
     p.nameAr.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -22,9 +32,9 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
       try {
         await updateProductStatus(id, status);
         setProducts(products.map(p => p.id === id ? { ...p, status } : p));
-        alert(`تم ${status === 'APPROVED' ? 'قبول' : 'رفض'} المنتج بنجاح`);
+        showToast(`تم ${status === 'APPROVED' ? 'قبول' : 'رفض'} المنتج بنجاح`, 'success');
       } catch (error) {
-        alert("حدث خطأ أثناء التحديث");
+        showToast("حدث خطأ أثناء التحديث", 'error');
       }
     });
   };
@@ -36,9 +46,9 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
       try {
         await deleteProduct(id);
         setProducts(products.filter(p => p.id !== id));
-        alert("تم حذف المنتج بنجاح");
+        showToast("تم حذف المنتج بنجاح", 'success');
       } catch (error) {
-        alert("حدث خطأ أثناء الحذف");
+        showToast("حدث خطأ أثناء الحذف", 'error');
       }
     });
   };
@@ -55,9 +65,9 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
         });
         setProducts(products.map(p => p.id === editingProduct.id ? editingProduct : p));
         setEditingProduct(null);
-        alert("تم تحديث المنتج بنجاح");
+        showToast("تم تحديث المنتج بنجاح", 'success');
       } catch (error) {
-        alert("حدث خطأ أثناء التحديث");
+        showToast("حدث خطأ أثناء التحديث", 'error');
       }
     });
   };
@@ -219,6 +229,17 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[200] animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className={`px-6 py-3 rounded-full shadow-2xl flex items-center gap-2 font-bold text-sm ${
+            toastMessage.type === 'success' ? 'bg-emerald-500 text-black' : 'bg-red-500 text-white'
+          }`}>
+            {toastMessage.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+            {toastMessage.message}
           </div>
         </div>
       )}
