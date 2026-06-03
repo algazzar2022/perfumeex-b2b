@@ -72,6 +72,7 @@ export default function Navbar() {
     { name: t("categories"), href: "/categories" },
     { name: t("events"), href: "/events" },
     { name: t("about"), href: "/about" },
+    { name: t("support"), href: "/contact" },
   ];
 
   const isActive = (href: string) => {

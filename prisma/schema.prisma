@@ -272,3 +272,13 @@ model EventRegistration {
   
   createdAt       DateTime @default(now())
 }
+
+model SupportTicket {
+  id        String   @id @default(cuid())
+  name      String
+  brandName String
+  phone     String
+  message   String   @db.LongText
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

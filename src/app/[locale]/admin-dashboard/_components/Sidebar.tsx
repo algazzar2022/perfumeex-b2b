@@ -14,7 +14,8 @@ import {
   LayoutDashboard,
   LogOut,
   Calendar,
-  Info
+  Info,
+  MessageSquare
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
@@ -31,6 +32,7 @@ export default function Sidebar() {
     { name: 'المنتجات', href: `/${locale}/admin-dashboard/products`, icon: PackageSearch },
     { name: 'ايفنتات', href: `/${locale}/admin-dashboard/events`, icon: Calendar },
     { name: 'صفحة من نحن', href: `/${locale}/admin-dashboard/about`, icon: Info },
+    { name: 'الدعم الفني', href: `/${locale}/admin-dashboard/support`, icon: MessageSquare },
   ];
 
   return (

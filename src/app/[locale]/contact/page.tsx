@@ -1,7 +1,8 @@
-export default function contact() {
-  return (
-    <div className="min-h-screen pt-24 px-4 flex items-center justify-center bg-black text-white">
-      <h1 className="text-4xl font-bold">contact</h1>
-    </div>
-  );
+import ContactClient from './_components/ContactClient';
+
+export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
+  const resolvedParams = await params;
+  const isAr = resolvedParams.locale === 'ar';
+
+  return <ContactClient isAr={isAr} />;
 }
