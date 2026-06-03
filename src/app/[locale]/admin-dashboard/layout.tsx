@@ -20,7 +20,7 @@ export default async function AdminLayout(props: {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col md:flex-row" dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col md:flex-row">
       <Sidebar />
       
       {/* Main Content */}

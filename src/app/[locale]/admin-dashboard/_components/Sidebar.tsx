@@ -43,9 +43,9 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <div className={`
-        fixed md:static inset-y-0 ${locale === 'ar' ? 'right-0' : 'left-0'} z-50 
-        w-64 bg-[#111] border-${locale === 'ar' ? 'l' : 'r'} border-white/10 
-        transform transition-transform duration-300 ease-in-out flex flex-col
+        fixed md:static inset-y-0 ${locale === 'ar' ? 'right-0 border-l' : 'left-0 border-r'} z-50 
+        w-64 bg-[#111] border-white/10 
+        transform transition-transform duration-300 ease-in-out flex flex-col shrink-0
         ${isSidebarOpen ? 'translate-x-0' : (locale === 'ar' ? 'translate-x-full md:translate-x-0' : '-translate-x-full md:translate-x-0')}
       `}>
         <div className="p-6 hidden md:block">
