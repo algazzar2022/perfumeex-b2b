@@ -32,9 +32,10 @@ export default async function CategoryPage({
         }
       }
     },
-    orderBy: {
-      createdAt: 'desc'
-    }
+    orderBy: [
+      { order: 'desc' },
+      { createdAt: 'desc' }
+    ]
   });
 
   // Pass all products directly (consistent with the rest of the app for now)

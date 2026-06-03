@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import { Box, ChevronRight, X, Mail, Phone, ShieldCheck, MapPin } from "lucide-react";
+import { Box, ChevronRight, X, Mail, Phone, ShieldCheck, MapPin, Star } from "lucide-react";
 
 export default function CategoryProductsClient({ 
   initialProducts, 
@@ -37,6 +37,9 @@ export default function CategoryProductsClient({
     return () => { document.body.style.overflow = ''; };
   }, [selectedProduct]);
 
+  const featuredProducts = initialProducts.filter(p => p.isFeatured);
+  const regularProducts = initialProducts.filter(p => !p.isFeatured);
+
   return (
     <main className="min-h-screen bg-black text-white pt-32 pb-20 font-cairo">
       <div className="max-w-7xl mx-auto px-4 relative">
@@ -67,76 +70,36 @@ export default function CategoryProductsClient({
             <p className="text-zinc-500">{isAr ? "لم يتم إضافة منتجات في هذا التصنيف بعد." : "No products have been added to this category yet."}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {initialProducts.map((product, idx) => {
-              const companyName = isAr ? product.company.nameAr : product.company.nameEn;
-              const productName = isAr ? product.nameAr : product.nameEn;
-              const productDesc = isAr ? product.descriptionAr : product.descriptionEn;
+          <div className="space-y-16">
+            {featuredProducts.length > 0 && (
+              <div>
+                <h2 className="text-3xl font-bold text-purple-400 mb-8 flex items-center gap-3">
+                  <Star className="w-8 h-8 fill-purple-400" />
+                  {isAr ? 'منتجات مميزة' : 'Featured Products'}
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {featuredProducts.map((product, idx) => (
+                    <ProductCard key={product.id} product={product} idx={idx} isAr={isAr} locale={locale} setSelectedProduct={setSelectedProduct} isFeatured />
+                  ))}
+                </div>
+              </div>
+            )}
 
-              return (
-                <motion.div 
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05, duration: 0.5 }}
-                  key={product.id} 
-                  onClick={() => setSelectedProduct(product)}
-                  className="group cursor-pointer bg-zinc-950 border border-white/5 rounded-3xl overflow-hidden hover:border-emerald-500/30 transition-all duration-500 shadow-xl hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] flex flex-col"
-                >
-                  <div className="relative h-64 w-full bg-white/5 overflow-hidden shrink-0">
-                    <Image 
-                      src={product.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=600"} 
-                      alt={productName} 
-                      fill 
-                      className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
-                    
-                    <div className="absolute top-4 right-4 rtl:left-4 rtl:right-auto bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg">
-                      <Box className="w-3 h-3 text-emerald-400" /> {product.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
-                    </div>
-                  </div>
-
-                  <div className="p-6 flex-1 flex flex-col">
-                    {/* Company Info */}
-                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/5">
-                      <div className="w-8 h-8 rounded-full overflow-hidden bg-white/5 border border-white/10 shrink-0 relative">
-                        {product.company.logo ? (
-                          <Image src={product.company.logo} alt={companyName} fill className="object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-xs text-white">
-                            {companyName.charAt(0)}
-                          </div>
-                        )}
-                      </div>
-                      <Link 
-                        href={`/${locale}/${product.company.slug}`} 
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-sm font-bold text-zinc-300 hover:text-emerald-400 transition-colors flex items-center gap-1.5 line-clamp-1"
-                      >
-                        {companyName}
-                        {product.company.isVerified && <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />}
-                      </Link>
-                    </div>
-
-                    <h4 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors line-clamp-1">
-                      {productName}
-                    </h4>
-                    <p className="text-sm text-zinc-400 line-clamp-2 mb-6 font-light leading-relaxed">
-                      {productDesc}
-                    </p>
-                    
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="text-emerald-400 font-extrabold text-lg bg-emerald-400/10 px-3 py-1 rounded-lg border border-emerald-400/20">
-                        {product.price ? `${product.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل للسعر" : "Contact")}
-                      </div>
-                      <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-black transition-colors">
-                        <ChevronRight className="w-5 h-5 rtl:rotate-180" />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+            {regularProducts.length > 0 && (
+              <div>
+                {featuredProducts.length > 0 && (
+                  <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                    <Box className="w-6 h-6 text-emerald-400" />
+                    {isAr ? 'جميع المنتجات' : 'All Products'}
+                  </h2>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {regularProducts.map((product, idx) => (
+                    <ProductCard key={product.id} product={product} idx={idx} isAr={isAr} locale={locale} setSelectedProduct={setSelectedProduct} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -222,5 +185,86 @@ export default function CategoryProductsClient({
         )}
       </AnimatePresence>
     </main>
+  );
+}
+
+function ProductCard({ product, idx, isAr, locale, setSelectedProduct, isFeatured = false }: any) {
+  const companyName = isAr ? product.company.nameAr : product.company.nameEn;
+  const productName = isAr ? product.nameAr : product.nameEn;
+  const productDesc = isAr ? product.descriptionAr : product.descriptionEn;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: idx * 0.05, duration: 0.5 }}
+      onClick={() => setSelectedProduct(product)}
+      className={`group cursor-pointer bg-zinc-950 border overflow-hidden transition-all duration-500 flex flex-col ${
+        isFeatured 
+          ? 'rounded-[2.5rem] border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:border-purple-500/60' 
+          : 'rounded-3xl border-white/5 shadow-xl hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)]'
+      }`}
+    >
+      <div className={`relative w-full bg-white/5 overflow-hidden shrink-0 ${isFeatured ? 'h-72' : 'h-64'}`}>
+        <Image 
+          src={product.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=600"} 
+          alt={productName} 
+          fill 
+          className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+        
+        <div className="absolute top-4 right-4 rtl:left-4 rtl:right-auto bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg">
+          <Box className={`w-3 h-3 ${isFeatured ? 'text-purple-400' : 'text-emerald-400'}`} /> {product.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
+        </div>
+      </div>
+
+      <div className="p-6 flex-1 flex flex-col">
+        {/* Company Info */}
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/5">
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-white/5 border border-white/10 shrink-0 relative">
+            {product.company.logo ? (
+              <Image src={product.company.logo} alt={companyName} fill className="object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-xs text-white">
+                {companyName.charAt(0)}
+              </div>
+            )}
+          </div>
+          <Link 
+            href={`/${locale}/${product.company.slug}`} 
+            onClick={(e) => e.stopPropagation()}
+            className={`text-sm font-bold text-zinc-300 transition-colors flex items-center gap-1.5 line-clamp-1 ${isFeatured ? 'hover:text-purple-400' : 'hover:text-emerald-400'}`}
+          >
+            {companyName}
+            {product.company.isVerified && <ShieldCheck className={`w-3.5 h-3.5 shrink-0 ${isFeatured ? 'text-purple-500' : 'text-emerald-500'}`} />}
+          </Link>
+        </div>
+
+        <h4 className={`text-xl font-bold text-white mb-2 transition-colors line-clamp-1 ${isFeatured ? 'group-hover:text-purple-400' : 'group-hover:text-emerald-400'}`}>
+          {productName}
+        </h4>
+        <p className="text-sm text-zinc-400 line-clamp-2 mb-6 font-light leading-relaxed">
+          {productDesc}
+        </p>
+        
+        <div className="flex items-center justify-between mt-auto">
+          <div className={`font-extrabold text-lg px-3 py-1 rounded-lg border ${
+            isFeatured 
+              ? 'text-purple-400 bg-purple-400/10 border-purple-400/20' 
+              : 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20'
+          }`}>
+            {product.price ? `${product.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل للسعر" : "Contact")}
+          </div>
+          <button className={`w-10 h-10 rounded-full bg-white/5 flex items-center justify-center transition-colors ${
+            isFeatured 
+              ? 'group-hover:bg-purple-500 group-hover:text-black' 
+              : 'group-hover:bg-emerald-500 group-hover:text-black'
+          }`}>
+            <ChevronRight className="w-5 h-5 rtl:rotate-180" />
+          </button>
+        </div>
+      </div>
+    </motion.div>
   );
 }

@@ -147,6 +147,7 @@ model Product {
   
   status      ProductStatus @default(PENDING)
   order       Int       @default(0)
+  isFeatured  Boolean   @default(false)
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
