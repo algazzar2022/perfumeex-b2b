@@ -182,9 +182,10 @@ export default function AboutUsClient({ content, isAr }: { content: any, isAr: b
                   className="relative h-[400px] lg:h-[600px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
                 >
                   <Image 
-                    src={data.story.image || "https://images.unsplash.com/photo-1615486171448-4fd677e20300?q=80&w=2070&auto=format&fit=crop"} 
+                    src={data.story?.image || "https://images.unsplash.com/photo-1615486171448-4fd677e20300?q=80&w=2070&auto=format&fit=crop"} 
                     alt="Story" 
                     fill 
+                    unoptimized={true}
                     className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-tr from-[#050505] via-transparent to-transparent opacity-80" />
