@@ -27,7 +27,7 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
     setIsLoading(true);
     
     try {
-      await submitEventRegistration({
+      const response = await submitEventRegistration({
         eventId: event.id,
         name: formData.name,
         brandName: formData.brandName,
@@ -36,6 +36,12 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
         whatsapp: formData.whatsapp,
         experienceYears: parseInt(formData.experienceYears)
       });
+
+      if (response && response.error === 'already_registered') {
+        alert(isAr ? 'هذا الرقم مسجل بالفعل في هذه الفعالية!' : 'This phone number is already registered for this event!');
+        return;
+      }
+
       setIsSuccess(true);
       setTimeout(() => {
         router.push(`/${isAr ? 'ar' : 'en'}/events`);
