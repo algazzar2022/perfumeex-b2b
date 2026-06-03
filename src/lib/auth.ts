@@ -64,6 +64,19 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as any).role;
         token.id = user.id;
+        
+        // Fetch company info if not super admin
+        if ((user as any).role === "COMPANY") {
+          const company = await prisma.company.findUnique({
+            where: { userId: user.id },
+            select: { slug: true, logo: true, nameAr: true }
+          });
+          if (company) {
+            token.companySlug = company.slug;
+            token.companyLogo = company.logo;
+            token.companyName = company.nameAr;
+          }
+        }
       }
       return token;
     },
@@ -71,6 +84,11 @@ export const authOptions: NextAuthOptions = {
       if (session?.user) {
         (session.user as any).role = token.role;
         (session.user as any).id = token.id;
+        if (token.companySlug) {
+          (session.user as any).companySlug = token.companySlug;
+          (session.user as any).companyLogo = token.companyLogo;
+          (session.user as any).companyName = token.companyName;
+        }
       }
       return session;
     }

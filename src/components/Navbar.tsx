@@ -177,6 +177,29 @@ export default function Navbar() {
                 <LayoutDashboard className="w-4 h-4" />
                 {isAr ? "لوحة التحكم" : "Dashboard"}
               </Link>
+
+              {/* Company Logo Link */}
+              {(session?.user as any)?.role === "COMPANY" && (session?.user as any)?.companySlug && (
+                <Link
+                  href={`/${locale}/${(session?.user as any).companySlug}`}
+                  className="w-10 h-10 rounded-full border border-white/20 overflow-hidden relative group hover:border-emerald-500 transition-colors shadow-lg"
+                  title={(session?.user as any).companyName || "Profile"}
+                >
+                  {(session?.user as any).companyLogo ? (
+                    <Image 
+                      src={(session?.user as any).companyLogo} 
+                      alt="Company Logo" 
+                      fill 
+                      className="object-cover group-hover:scale-110 transition-transform duration-300" 
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                      {((session?.user as any).companyName || "C")[0]}
+                    </div>
+                  )}
+                </Link>
+              )}
+
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
                 className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-red-400 hover:bg-red-500/10 transition-colors border border-transparent hover:border-red-500/20 group"
@@ -257,6 +280,27 @@ export default function Navbar() {
                     <LayoutDashboard className="w-5 h-5" />
                     {isAr ? "لوحة التحكم" : "Dashboard"}
                   </Link>
+                  
+                  {/* Mobile Company Logo Link */}
+                  {(session?.user as any)?.role === "COMPANY" && (session?.user as any)?.companySlug && (
+                    <Link
+                      href={`/${locale}/${(session?.user as any).companySlug}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-3 text-lg font-bold text-emerald-400 border border-emerald-500/20 rounded-2xl py-4 hover:bg-emerald-500/10 transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-full overflow-hidden relative border border-emerald-500/30">
+                        {(session?.user as any).companyLogo ? (
+                          <Image src={(session?.user as any).companyLogo} alt="Logo" fill className="object-cover" />
+                        ) : (
+                          <div className="w-full h-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">
+                            {((session?.user as any).companyName || "C")[0]}
+                          </div>
+                        )}
+                      </div>
+                      {isAr ? "صفحة الشركة" : "Company Profile"}
+                    </Link>
+                  )}
+
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
