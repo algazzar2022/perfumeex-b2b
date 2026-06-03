@@ -60,24 +60,26 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET || "supersecret123",
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.role = (user as any).role;
         token.id = user.id;
-        
-        // Fetch company info if not super admin
-        if ((user as any).role === "COMPANY") {
-          const company = await prisma.company.findUnique({
-            where: { userId: user.id },
-            select: { slug: true, logo: true, nameAr: true }
-          });
-          if (company) {
-            token.companySlug = company.slug;
-            token.companyLogo = company.logo;
-            token.companyName = company.nameAr;
-          }
+      }
+
+      // Always fetch company info if it's a company and we don't have it yet, 
+      // or if we explicitly want to update it.
+      if (token.role === "COMPANY" && !token.companySlug) {
+        const company = await prisma.company.findUnique({
+          where: { userId: token.id as string },
+          select: { slug: true, logo: true, nameAr: true }
+        });
+        if (company) {
+          token.companySlug = company.slug;
+          token.companyLogo = company.logo;
+          token.companyName = company.nameAr;
         }
       }
+      
       return token;
     },
     async session({ session, token }) {
