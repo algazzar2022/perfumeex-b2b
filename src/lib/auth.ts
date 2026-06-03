@@ -47,7 +47,24 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
-        return user;
+        // Fetch company data if COMPANY_OWNER
+        let companyData = null;
+        if (user.role === "COMPANY_OWNER") {
+          const company = await prisma.company.findUnique({
+            where: { userId: user.id },
+            select: { slug: true, logo: true, nameAr: true }
+          });
+          if (company) {
+            companyData = company;
+          }
+        }
+
+        return {
+          ...user,
+          companySlug: companyData?.slug,
+          companyLogo: companyData?.logo,
+          companyName: companyData?.nameAr
+        };
       }
     })
   ],
@@ -60,30 +77,17 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET || "supersecret123",
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role;
         token.id = user.id;
-      }
-
-      // Fetch company info if it's a company and we haven't checked yet
-      if (token.role === "COMPANY_OWNER" && !token.companyChecked) {
-        token.companyChecked = true; // Prevents infinite DB queries
-        try {
-          const company = await prisma.company.findUnique({
-            where: { userId: token.id as string },
-            select: { slug: true, logo: true, nameAr: true }
-          });
-          if (company) {
-            token.companySlug = company.slug;
-            token.companyLogo = company.logo;
-            token.companyName = company.nameAr;
-          }
-        } catch (error) {
-          console.error("Error fetching company for JWT:", error);
+        
+        if ((user as any).companySlug) {
+          token.companySlug = (user as any).companySlug;
+          token.companyLogo = (user as any).companyLogo;
+          token.companyName = (user as any).companyName;
         }
       }
-      
       return token;
     },
     async session({ session, token }) {
