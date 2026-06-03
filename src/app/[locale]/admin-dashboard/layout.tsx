@@ -26,7 +26,7 @@ export default async function AdminLayout(props: {
       {/* Main Content */}
       <main className="flex-1 w-full md:w-auto p-4 md:p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
-          {children}
+          {props.children}
         </div>
       </main>
     </div>
