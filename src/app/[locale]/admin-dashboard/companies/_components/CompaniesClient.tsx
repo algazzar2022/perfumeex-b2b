@@ -98,7 +98,8 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
         instagram: editingCompany.instagram,
         twitter: editingCompany.twitter,
         isFeatured: editingCompany.isFeatured,
-        isSponsor: editingCompany.isSponsor
+        isSponsor: editingCompany.isSponsor,
+        order: editingCompany.order
       });
       setCompanies(companies.map(c => c.id === editingCompany.id ? editingCompany : c));
       setEditingCompany(null);
@@ -382,9 +383,6 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                 <input type="text" value={editingCompany.twitter || ''} onChange={e => setEditingCompany({...editingCompany, twitter: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
               </div>
               
-              <div className="md:col-span-2 pt-4 flex flex-col md:flex-row gap-4">
-              </div>
-
               <div className="md:col-span-2 flex items-center gap-3 mt-6">
                 <button type="submit" disabled={isPending} className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-xl hover:opacity-90 flex items-center justify-center disabled:opacity-50">
                   {isPending ? <Loader2 className="animate-spin" /> : 'حفظ التعديلات'}

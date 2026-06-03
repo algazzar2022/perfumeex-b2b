@@ -204,9 +204,6 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
                 />
               </div>
 
-              <div>
-              </div>
-
               <div className="flex items-center gap-3 mt-8">
                 <button type="submit" disabled={isPending} className="flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl hover:bg-emerald-400 flex items-center justify-center disabled:opacity-50">
                   {isPending ? <Loader2 className="animate-spin" /> : 'حفظ التعديلات'}
