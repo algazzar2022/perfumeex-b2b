@@ -27,11 +27,11 @@ export default async function EventsPage({ params }: { params: Promise<{ locale:
       <Navbar />
       
       <main className="pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-500">
+        <div className="text-center mb-16 space-y-6">
+          <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-500 pb-2">
             {isAr ? 'الفعاليات والأحداث' : 'Events & Exhibitions'}
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto mt-6">
             {isAr ? 'انضم إلى أهم الفعاليات والمعارض في عالم العطور والتغليف وتواصل مع صناع القرار.' : 'Join the most important events and exhibitions in the perfume world and connect with decision makers.'}
           </p>
         </div>
