@@ -165,8 +165,8 @@ export default function AboutClient({ initialContent }: { initialContent: any })
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        if (file.size > 2 * 1024 * 1024) {
-                          showToast('حجم الصورة يجب أن لا يتعدى 2 ميجابايت', 'error');
+                        if (file.size > 3 * 1024 * 1024) {
+                          showToast('حجم الصورة يجب أن لا يتعدى 3 ميجابايت', 'error');
                           return;
                         }
                         const reader = new FileReader();
@@ -178,7 +178,7 @@ export default function AboutClient({ initialContent }: { initialContent: any })
                     }} 
                     className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-2 focus:border-emerald-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-500/10 file:text-emerald-400 hover:file:bg-emerald-500/20" 
                   />
-                  <p className="text-sm text-gray-500 mt-2">رفع صورة من جهازك (الحد الأقصى 2 ميجا)</p>
+                  <p className="text-sm text-gray-500 mt-2">رفع صورة من جهازك (الحد الأقصى 3 ميجا)</p>
                 </div>
                 
                 <div className="flex items-center gap-4">
