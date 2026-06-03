@@ -150,9 +150,6 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                     <div>
                       <div className="font-bold flex items-center gap-2">
                         {company.nameAr}
-                        {company.isSponsor && <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full">راعية</span>}
-                        {company.isFeatured && !company.isSponsor && <span className="bg-purple-500/20 text-purple-400 text-[10px] px-2 py-0.5 rounded-full">مميزة</span>}
-                        {!company.isSponsor && !company.isFeatured && <span className="bg-white/10 text-gray-400 text-[10px] px-2 py-0.5 rounded-full">عادية</span>}
                       </div>
                       <div className="text-xs text-gray-400 mt-1">
                         {company.nameEn} • الترتيب: {company.order || 0}
@@ -386,21 +383,6 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
               </div>
               
               <div className="md:col-span-2 pt-4 flex flex-col md:flex-row gap-4">
-                <label className="flex-1 flex items-center gap-3 p-4 bg-white/5 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                  <input type="checkbox" checked={editingCompany.isSponsor} onChange={e => setEditingCompany({...editingCompany, isSponsor: e.target.checked})} className="w-5 h-5 accent-emerald-500" />
-                  <div>
-                    <div className="font-bold text-emerald-400">شركة راعية (Sponsor)</div>
-                    <div className="text-sm text-gray-400">تظهر الشركة في قسم الرعاة كأول الشركات وبحجم كبير (3 أعمدة)</div>
-                  </div>
-                </label>
-                
-                <label className="flex-1 flex items-center gap-3 p-4 bg-white/5 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                  <input type="checkbox" checked={editingCompany.isFeatured} onChange={e => setEditingCompany({...editingCompany, isFeatured: e.target.checked})} className="w-5 h-5 accent-purple-500" />
-                  <div>
-                    <div className="font-bold text-purple-400">شركة مميزة (Featured)</div>
-                    <div className="text-sm text-gray-400">تظهر الشركة تحت الشركات الراعية وبحجم كبير أيضاً (3 أعمدة)</div>
-                  </div>
-                </label>
               </div>
 
               <div className="md:col-span-2 flex items-center gap-3 mt-6">

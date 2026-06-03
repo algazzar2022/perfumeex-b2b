@@ -126,7 +126,6 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
                       <div>
                         <div className="font-bold flex items-center gap-2">
                           {product.nameAr}
-                          {product.isFeatured && <span className="bg-purple-500/20 text-purple-400 text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1"><Star size={10} className="fill-purple-400"/> مميز</span>}
                         </div>
                         <div className="text-xs text-gray-400 mt-1">
                           {product.nameEn} • الترتيب: {product.order || 0}
@@ -206,18 +205,6 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
               </div>
 
               <div>
-                <label className="flex items-center gap-3 p-4 bg-white/5 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
-                  <input 
-                    type="checkbox" 
-                    checked={editingProduct.isFeatured} 
-                    onChange={e => setEditingProduct({...editingProduct, isFeatured: e.target.checked})} 
-                    className="w-5 h-5 accent-purple-500" 
-                  />
-                  <div>
-                    <div className="font-bold text-purple-400">منتج مميز (Featured)</div>
-                    <div className="text-sm text-gray-400">يظهر المنتج في بداية صفحة المنتجات بشكل مميز</div>
-                  </div>
-                </label>
               </div>
 
               <div className="flex items-center gap-3 mt-8">
