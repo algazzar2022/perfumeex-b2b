@@ -31,7 +31,7 @@ export default async function EventsPage({ params }: { params: Promise<{ locale:
           <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-500 pb-2">
             {isAr ? 'الفعاليات والأحداث' : 'Events & Exhibitions'}
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mt-6">
+          <p className="text-lg md:text-xl text-gray-400 max-w-4xl mx-auto mt-6">
             {isAr ? 'انضم إلى أهم الفعاليات والمعارض في عالم العطور والتغليف وتواصل مع صناع القرار.' : 'Join the most important events and exhibitions in the perfume world and connect with decision makers.'}
           </p>
         </div>
