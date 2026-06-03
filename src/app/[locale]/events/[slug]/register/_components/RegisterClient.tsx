@@ -22,9 +22,12 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
     experienceYears: ''
   });
 
+  const [errorMessage, setErrorMessage] = useState('');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage('');
     
     try {
       const response = await submitEventRegistration({
@@ -38,7 +41,7 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
       });
 
       if (response && response.error === 'already_registered') {
-        alert(isAr ? 'هذا الرقم مسجل بالفعل في هذه الفعالية!' : 'This phone number is already registered for this event!');
+        setErrorMessage(isAr ? 'هذا الرقم مسجل بالفعل في هذه الفعالية!' : 'This phone number is already registered for this event!');
         return;
       }
 
@@ -47,7 +50,7 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
         router.push(`/${isAr ? 'ar' : 'en'}/events`);
       }, 3000);
     } catch (error) {
-      alert(isAr ? 'حدث خطأ. يرجى المحاولة مرة أخرى.' : 'An error occurred. Please try again.');
+      setErrorMessage(isAr ? 'حدث خطأ. يرجى المحاولة مرة أخرى.' : 'An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -101,6 +104,14 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
       </div>
 
       <div className="p-8">
+        {errorMessage && (
+          <div className="mb-6 bg-red-500/10 border border-red-500/50 text-red-500 p-4 rounded-xl flex items-center gap-3">
+            <div className="p-2 bg-red-500/20 rounded-full">
+              <span className="font-bold">!</span>
+            </div>
+            <p className="font-bold">{errorMessage}</p>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
