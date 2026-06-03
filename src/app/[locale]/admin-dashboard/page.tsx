@@ -1,7 +1,8 @@
 import { Building2, Tags, PackageSearch, Star } from 'lucide-react';
 import Link from 'next/link';
 
-export default async function AdminHome({ params: { locale } }: { params: { locale: string } }) {
+export default async function AdminHome(props: { params: Promise<{ locale: string }> }) {
+  const { locale } = await props.params;
   const stats = [
     { name: 'الشركات', icon: Building2, href: `/${locale}/admin-dashboard/companies`, color: 'from-blue-500 to-cyan-500' },
     { name: 'الأقسام', icon: Tags, href: `/${locale}/admin-dashboard/categories`, color: 'from-purple-500 to-pink-500' },

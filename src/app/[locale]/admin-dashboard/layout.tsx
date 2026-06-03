@@ -8,13 +8,11 @@ export const metadata = {
   description: "Admin dashboard for PerfumeEx B2B marketplace.",
 };
 
-export default async function AdminLayout({
-  children,
-  params: { locale }
-}: {
+export default async function AdminLayout(props: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await props.params;
   const session = await getServerSession(authOptions);
 
   if (!session || (session.user as any)?.role !== 'SUPER_ADMIN') {
