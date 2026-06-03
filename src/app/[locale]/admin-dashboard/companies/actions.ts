@@ -73,6 +73,7 @@ export async function updateCompany(
     facebook?: string;
     twitter?: string;
     isFeatured?: boolean;
+    isSponsor?: boolean;
     order?: number;
   }
 ) {

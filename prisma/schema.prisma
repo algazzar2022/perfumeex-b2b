@@ -60,6 +60,7 @@ model Company {
   
   isVerified  Boolean  @default(false)
   isFeatured  Boolean  @default(false)
+  isSponsor   Boolean  @default(false)
   status      CompanyStatus @default(PENDING)
   
   profileViews  Int @default(0)
