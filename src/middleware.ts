@@ -5,7 +5,10 @@ export default createMiddleware({
   locales: ['en', 'ar'],
 
   // Used when no locale matches
-  defaultLocale: 'en'
+  defaultLocale: 'ar',
+  
+  // Disable locale detection based on user preferences so they always get Arabic first
+  localeDetection: false
 });
 
 export const config = {
