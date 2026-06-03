@@ -179,7 +179,7 @@ export default function AboutUsClient({ content, isAr }: { content: any, isAr: b
                 <motion.div 
                   whileHover={{ scale: 1.02, rotate: 1 }}
                   transition={{ type: "spring", stiffness: 300 }}
-                  className="relative h-[400px] lg:h-[600px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
+                  className="relative aspect-square w-full rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
                 >
                   <Image 
                     src={data.story?.image || "https://images.unsplash.com/photo-1615486171448-4fd677e20300?q=80&w=2070&auto=format&fit=crop"} 
