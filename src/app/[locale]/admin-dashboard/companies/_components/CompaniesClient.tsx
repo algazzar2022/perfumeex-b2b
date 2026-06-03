@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { updateCompanyStatus, deleteCompany, updateCompanyPassword, updateCompany } from '../actions';
-import { Edit2, Trash2, CheckCircle, XCircle, Key, Loader2, Search, Filter } from 'lucide-react';
+import { Edit2, Trash2, CheckCircle, XCircle, Key, Loader2, Search, Filter, UploadCloud } from 'lucide-react';
 
 export default function CompaniesClient({ initialCompanies }: { initialCompanies: any[] }) {
   const [companies, setCompanies] = useState(initialCompanies);
@@ -43,6 +43,23 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
       setPasswordModal(null);
       setNewPassword('');
     });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'logo' | 'coverImage') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 4 * 1024 * 1024) {
+      alert("حجم الصورة يجب أن يكون أقل من 4 ميجابايت");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Str = event.target?.result as string;
+      setEditingCompany((prev: any) => ({ ...prev, [field]: base64Str }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveCompany = async (e: React.FormEvent) => {
@@ -206,14 +223,53 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                 <textarea rows={3} value={editingCompany.descriptionEn || ''} onChange={e => setEditingCompany({...editingCompany, descriptionEn: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
               </div>
 
-              {/* Media URLs */}
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">رابط اللوجو</label>
-                <input type="text" value={editingCompany.logo || ''} onChange={e => setEditingCompany({...editingCompany, logo: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">رابط الغلاف (Cover)</label>
-                <input type="text" value={editingCompany.coverImage || ''} onChange={e => setEditingCompany({...editingCompany, coverImage: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+              {/* Media Uploads */}
+              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">شعار وغلاف الشركة</h4></div>
+              
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Logo Upload */}
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">لوجو الشركة</label>
+                  <div className="flex items-center gap-4">
+                    {editingCompany.logo ? (
+                      <img src={editingCompany.logo} alt="Logo" className="w-16 h-16 rounded-xl object-cover bg-white/10" />
+                    ) : (
+                      <div className="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-500">لا يوجد</div>
+                    )}
+                    <label className="flex-1 border border-dashed border-white/20 rounded-xl p-4 flex flex-col items-center justify-center bg-black/50 hover:bg-white/5 cursor-pointer transition-colors group">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={(e) => handleImageUpload(e, 'logo')} 
+                      />
+                      <UploadCloud className="w-5 h-5 text-gray-400 group-hover:text-emerald-400 mb-1 transition-colors" />
+                      <span className="text-xs text-gray-400">تغيير اللوجو</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Cover Upload */}
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">غلاف الشركة (Cover)</label>
+                  <div className="flex items-center gap-4">
+                    {editingCompany.coverImage ? (
+                      <img src={editingCompany.coverImage} alt="Cover" className="w-24 h-16 rounded-xl object-cover bg-white/10" />
+                    ) : (
+                      <div className="w-24 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-500">لا يوجد</div>
+                    )}
+                    <label className="flex-1 border border-dashed border-white/20 rounded-xl p-4 flex flex-col items-center justify-center bg-black/50 hover:bg-white/5 cursor-pointer transition-colors group">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={(e) => handleImageUpload(e, 'coverImage')} 
+                      />
+                      <UploadCloud className="w-5 h-5 text-gray-400 group-hover:text-emerald-400 mb-1 transition-colors" />
+                      <span className="text-xs text-gray-400">تغيير الغلاف</span>
+                    </label>
+                  </div>
+                </div>
               </div>
 
               {/* Contact */}
