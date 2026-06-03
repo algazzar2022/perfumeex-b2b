@@ -29,6 +29,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
   const [formData, setFormData] = useState({
     titleAr: '',
     titleEn: '',
+    slug: '',
     image: '',
     date: '',
     locationAr: '',
@@ -40,12 +41,13 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const handleOpenModal = (event?: Event) => {
+  const handleOpenModal = (event?: Event & { slug?: string }) => {
     if (event) {
       setEditingEvent(event);
       setFormData({
         titleAr: event.titleAr,
         titleEn: event.titleEn,
+        slug: event.slug || '',
         image: event.image,
         date: new Date(event.date).toISOString().slice(0, 16), // Format for datetime-local input
         locationAr: event.locationAr,
@@ -56,6 +58,7 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
       setFormData({
         titleAr: '',
         titleEn: '',
+        slug: '',
         image: '',
         date: '',
         locationAr: '',
@@ -278,6 +281,19 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
                       className="w-full bg-[#111] border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">الرابط المخصص (Slug - إنجليزي بدون مسافات)</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.slug}
+                    onChange={e => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})}
+                    className="w-full bg-[#111] border border-white/10 rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500"
+                    placeholder="مثال: alexandria-bride-event"
+                    dir="ltr"
+                  />
                 </div>
 
                 <div>

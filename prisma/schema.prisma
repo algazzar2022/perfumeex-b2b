@@ -244,6 +244,7 @@ model Setting {
 
 model Event {
   id          String   @id @default(cuid())
+  slug        String   @unique @default(cuid())
   titleAr     String
   titleEn     String
   image       String   @db.LongText

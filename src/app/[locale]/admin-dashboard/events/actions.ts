@@ -29,6 +29,7 @@ export async function getEvents() {
 export async function createEvent(data: {
   titleAr: string;
   titleEn: string;
+  slug: string;
   image: string;
   date: Date;
   locationAr: string;
@@ -46,6 +47,7 @@ export async function createEvent(data: {
 export async function updateEvent(id: string, data: Partial<{
   titleAr: string;
   titleEn: string;
+  slug: string;
   image: string;
   date: Date;
   locationAr: string;

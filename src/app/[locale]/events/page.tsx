@@ -96,7 +96,7 @@ export default async function EventsPage({ params }: { params: Promise<{ locale:
                   </div>
 
                   <Link 
-                    href={`/${resolvedParams.locale}/events/${event.id}/register`}
+                    href={`/${resolvedParams.locale}/events/${event.slug}/register`}
                     className="block w-full py-4 rounded-xl font-bold text-center text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all shadow-lg hover:shadow-emerald-500/25"
                   >
                     {isAr ? 'سجل حضورك الآن' : 'Register Now'}
