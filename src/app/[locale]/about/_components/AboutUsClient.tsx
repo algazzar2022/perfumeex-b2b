@@ -78,7 +78,7 @@ export default function AboutUsClient({ content, isAr }: { content: any, isAr: b
         {/* Hero Section */}
         <motion.div 
           style={{ opacity: heroOpacity, scale: heroScale }}
-          className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 mb-24 relative"
+          className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 mb-24 relative pt-12"
         >
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -106,10 +106,10 @@ export default function AboutUsClient({ content, isAr }: { content: any, isAr: b
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 1 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            className="mt-24 flex flex-col items-center gap-2"
           >
             <span className="text-sm text-gray-500 uppercase tracking-widest">{isAr ? 'اكتشف المزيد' : 'Discover More'}</span>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-emerald-500 to-transparent" />
+            <div className="w-[1px] h-16 bg-gradient-to-b from-emerald-500 to-transparent" />
           </motion.div>
         </motion.div>
 
