@@ -192,8 +192,14 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
 
       {/* Edit Company Modal */}
       {editingCompany && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+          onClick={() => setEditingCompany(null)}
+        >
+          <div 
+            className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="text-xl font-bold mb-6">تعديل بيانات: {editingCompany.nameAr}</h3>
             <form onSubmit={handleSaveCompany} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Basic Info */}
@@ -390,8 +396,14 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
 
       {/* Change Password Modal */}
       {passwordModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-sm">
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+          onClick={() => setPasswordModal(null)}
+        >
+          <div 
+            className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="text-xl font-bold mb-2">تغيير كلمة المرور</h3>
             <p className="text-sm text-gray-400 mb-6">تغيير الباسورد لحساب: {passwordModal.user.email}</p>
             
