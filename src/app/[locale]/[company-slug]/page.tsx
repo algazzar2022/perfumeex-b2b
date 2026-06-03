@@ -14,7 +14,9 @@ export default async function CompanyProfilePage({
       slug: resolvedParams["company-slug"],
     },
     include: {
-      products: true,
+      products: {
+        orderBy: { createdAt: 'desc' }
+      },
       branches: true,
       galleries: true,
     },
@@ -22,6 +24,18 @@ export default async function CompanyProfilePage({
 
   if (!company) {
     return notFound();
+  }
+
+  // Sort products: 1 first, 2 second. If 0, push to bottom.
+  if (company.products && company.products.length > 0) {
+    company.products.sort((a, b) => {
+      const orderA = a.order && a.order > 0 ? a.order : 999999;
+      const orderB = b.order && b.order > 0 ? b.order : 999999;
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      return 0;
+    });
   }
 
   // Record a page view
