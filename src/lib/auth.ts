@@ -68,7 +68,7 @@ export const authOptions: NextAuthOptions = {
 
       // Always fetch company info if it's a company and we don't have it yet, 
       // or if we explicitly want to update it.
-      if (token.role === "COMPANY" && !token.companySlug) {
+      if (token.role === "COMPANY_OWNER" && !token.companySlug) {
         const company = await prisma.company.findUnique({
           where: { userId: token.id as string },
           select: { slug: true, logo: true, nameAr: true }

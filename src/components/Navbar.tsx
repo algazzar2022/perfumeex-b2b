@@ -179,7 +179,7 @@ export default function Navbar() {
               </Link>
 
               {/* Company Logo Link */}
-              {(session?.user as any)?.role === "COMPANY" && (session?.user as any)?.companySlug && (
+              {(session?.user as any)?.role === "COMPANY_OWNER" && (session?.user as any)?.companySlug && (
                 <Link
                   href={`/${locale}/${(session?.user as any).companySlug}`}
                   className="w-10 h-10 rounded-full border border-white/20 overflow-hidden relative group hover:border-emerald-500 transition-colors shadow-lg"
@@ -282,7 +282,7 @@ export default function Navbar() {
                   </Link>
                   
                   {/* Mobile Company Logo Link */}
-                  {(session?.user as any)?.role === "COMPANY" && (session?.user as any)?.companySlug && (
+                  {(session?.user as any)?.role === "COMPANY_OWNER" && (session?.user as any)?.companySlug && (
                     <Link
                       href={`/${locale}/${(session?.user as any).companySlug}`}
                       onClick={() => setMobileMenuOpen(false)}
