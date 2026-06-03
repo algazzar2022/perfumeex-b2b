@@ -232,7 +232,8 @@ export default function AboutClient({ initialContent }: { initialContent: any })
           </div>
           <div className="space-y-4">
             {data.values.map((val: any, idx: number) => (
-              <div key={idx} className="bg-[#0a0a0a] p-4 rounded-xl border border-white/5 relative">
+              <div key={idx} className="bg-[#0a0a0a] p-4 pt-12 rounded-xl border border-white/5 relative">
+                <button onClick={() => removeValue(idx)} className="absolute top-2 left-2 text-red-400 opacity-50 hover:opacity-100 bg-red-500/10 rounded-lg p-2 transition-all"><Trash2 size={18}/></button>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <input placeholder="العنوان بالعربية" value={val.titleAr} onChange={e => updateValue(idx, 'titleAr', e.target.value)} className="bg-transparent border-b border-white/20 px-2 py-1 focus:border-emerald-500 outline-none w-full" />
                   <input placeholder="العنوان بالإنجليزية" value={val.titleEn} onChange={e => updateValue(idx, 'titleEn', e.target.value)} className="bg-transparent border-b border-white/20 px-2 py-1 focus:border-emerald-500 outline-none w-full" />
@@ -241,7 +242,6 @@ export default function AboutClient({ initialContent }: { initialContent: any })
                   <textarea placeholder="الوصف بالعربية" value={val.descAr} onChange={e => updateValue(idx, 'descAr', e.target.value)} className="bg-transparent border-b border-white/20 px-2 py-1 focus:border-emerald-500 outline-none w-full h-20" />
                   <textarea placeholder="الوصف بالإنجليزية" value={val.descEn} onChange={e => updateValue(idx, 'descEn', e.target.value)} className="bg-transparent border-b border-white/20 px-2 py-1 focus:border-emerald-500 outline-none w-full h-20" />
                 </div>
-                <button onClick={() => removeValue(idx)} className="absolute top-4 left-4 text-red-400 opacity-50 hover:opacity-100 p-2 rtl:left-auto rtl:right-4"><Trash2 size={18}/></button>
               </div>
             ))}
           </div>
