@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { EventRegistration } from '@prisma/client';
 import { FileText, Search, Download, Trash2, Edit, X, Loader2 } from 'lucide-react';
-import { deleteRegistration, updateRegistration } from '../actions';
+import { deleteRegistration, updateRegistration } from '../../actions';
 import { useRouter } from 'next/navigation';
 import * as XLSX from 'xlsx';
 
