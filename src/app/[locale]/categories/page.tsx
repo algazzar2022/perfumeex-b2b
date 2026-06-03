@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from 'react';
 
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
@@ -12,16 +13,48 @@ export default function CategoriesPage() {
   const locale = params.locale as string;
   const isAr = locale === 'ar';
   
-  const categories = [
-    { id: "perfumeClones", name: t('categories.items.perfumeClones'), icon: <Droplet strokeWidth={1.5} className="w-8 h-8" />, count: 120 },
-    { id: "readyPerfumes", name: t('categories.items.readyPerfumes'), icon: <Star strokeWidth={1.5} className="w-8 h-8" />, count: 450 },
-    { id: "glass", name: t('categories.items.glass'), icon: <MapPin strokeWidth={1.5} className="w-8 h-8" />, count: 150 },
-    { id: "bakhoor", name: t('categories.items.bakhoor'), icon: <TrendingUp strokeWidth={1.5} className="w-8 h-8" />, count: 85 },
-    { id: "airFresheners", name: t('categories.items.airFresheners'), icon: <Sparkles strokeWidth={1.5} className="w-8 h-8" />, count: 210 },
-    { id: "packaging", name: t('categories.items.packaging'), icon: <Building2 strokeWidth={1.5} className="w-8 h-8" />, count: 320 },
-    { id: "bottlesAndEmpties", name: t('categories.items.bottlesAndEmpties'), icon: <Package strokeWidth={1.5} className="w-8 h-8" />, count: 280 },
-    { id: "others", name: t('categories.items.others'), icon: <MoreHorizontal strokeWidth={1.5} className="w-8 h-8" />, count: 50 },
-  ];
+  const [dbCategories, setDbCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(setDbCategories)
+      .catch(console.error);
+  }, []);
+
+  const getIconForCategory = (slug: string) => {
+    switch (slug) {
+      case 'perfumeClones': return <Droplet strokeWidth={1.5} className="w-8 h-8" />;
+      case 'readyPerfumes': return <Star strokeWidth={1.5} className="w-8 h-8" />;
+      case 'glass': return <MapPin strokeWidth={1.5} className="w-8 h-8" />;
+      case 'bakhoor': return <TrendingUp strokeWidth={1.5} className="w-8 h-8" />;
+      case 'airFresheners': return <Sparkles strokeWidth={1.5} className="w-8 h-8" />;
+      case 'packaging': return <Building2 strokeWidth={1.5} className="w-8 h-8" />;
+      case 'bottlesAndEmpties': return <Package strokeWidth={1.5} className="w-8 h-8" />;
+      default: return <MoreHorizontal strokeWidth={1.5} className="w-8 h-8" />;
+    }
+  };
+
+  const categories = dbCategories.map(cat => ({
+    id: cat.slug,
+    name: isAr ? cat.nameAr : cat.nameEn,
+    icon: getIconForCategory(cat.slug),
+    count: cat.count || 0
+  }));
+
+  // Fallback while loading
+  if (categories.length === 0) {
+    categories.push(
+      { id: "perfumeClones", name: t('categories.items.perfumeClones'), icon: <Droplet strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
+      { id: "readyPerfumes", name: t('categories.items.readyPerfumes'), icon: <Star strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
+      { id: "glass", name: t('categories.items.glass'), icon: <MapPin strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
+      { id: "bakhoor", name: t('categories.items.bakhoor'), icon: <TrendingUp strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
+      { id: "airFresheners", name: t('categories.items.airFresheners'), icon: <Sparkles strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
+      { id: "packaging", name: t('categories.items.packaging'), icon: <Building2 strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
+      { id: "bottlesAndEmpties", name: t('categories.items.bottlesAndEmpties'), icon: <Package strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
+      { id: "others", name: t('categories.items.others'), icon: <MoreHorizontal strokeWidth={1.5} className="w-8 h-8" />, count: 0 }
+    );
+  }
 
   return (
     <main className="min-h-screen bg-black text-white pt-32 pb-20 font-cairo selection:bg-emerald-500/30">
