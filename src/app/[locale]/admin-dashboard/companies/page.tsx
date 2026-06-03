@@ -1,7 +1,12 @@
-export default function Admincompanies() {
+import { getCompanies } from './actions';
+import CompaniesClient from './_components/CompaniesClient';
+
+export default async function AdminCompanies() {
+  const companies = await getCompanies();
+
   return (
-    <div className="min-h-screen pt-24 px-4 flex items-center justify-center bg-black text-white">
-      <h1 className="text-4xl font-bold">Admin companies</h1>
+    <div>
+      <CompaniesClient initialCompanies={companies} />
     </div>
   );
 }
