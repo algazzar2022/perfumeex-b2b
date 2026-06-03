@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import { CompanyStatus } from '@prisma/client';
 
 export async function getCompanies() {
-  return await prisma.company.findMany({
+  const companies = await prisma.company.findMany({
     include: {
       user: {
         select: {
@@ -15,10 +15,16 @@ export async function getCompanies() {
         }
       }
     },
-    orderBy: [
-      { order: 'desc' },
-      { createdAt: 'desc' }
-    ]
+    orderBy: { createdAt: 'desc' }
+  });
+
+  return companies.sort((a, b) => {
+    const orderA = a.order && a.order > 0 ? a.order : 999999;
+    const orderB = b.order && b.order > 0 ? b.order : 999999;
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+    return 0;
   });
 }
 

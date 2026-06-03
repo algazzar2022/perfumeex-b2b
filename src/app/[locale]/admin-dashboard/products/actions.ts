@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { ProductStatus } from "@prisma/client";
 
 export async function getProducts() {
-  return await prisma.product.findMany({
+  const products = await prisma.product.findMany({
     include: {
       company: {
         select: {
@@ -14,10 +14,16 @@ export async function getProducts() {
         }
       }
     },
-    orderBy: [
-      { order: 'desc' },
-      { createdAt: 'desc' }
-    ]
+    orderBy: { createdAt: 'desc' }
+  });
+
+  return products.sort((a, b) => {
+    const orderA = a.order && a.order > 0 ? a.order : 999999;
+    const orderB = b.order && b.order > 0 ? b.order : 999999;
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+    return 0;
   });
 }
 

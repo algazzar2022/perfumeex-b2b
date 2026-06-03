@@ -195,7 +195,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
             <form onSubmit={handleSaveProduct} className="space-y-6">
               
               <div>
-                <label className="block text-sm text-gray-400 mb-1">ترتيب الظهور (أرقام أكبر = ظهور أولاً)</label>
+                <label className="block text-sm text-gray-400 mb-1">ترتيب الظهور (رقم 1 يظهر أولاً، والافتراضي 0 يظهر في النهاية)</label>
                 <input 
                   type="number" 
                   value={editingProduct.order || 0} 
