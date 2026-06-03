@@ -15,6 +15,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState<any[]>([]);
+  const [companyLogo, setCompanyLogo] = useState<string | null>(null);
   const pathname = usePathname();
   const t = useTranslations("Navbar");
   const { data: session, status } = useSession();
@@ -31,8 +32,6 @@ export default function Navbar() {
             const isSystemRead = localStorage.getItem(`systemMessageRead_${session?.user?.id}`) === 'true';
             if (data.messages) {
               const unreadDbMessages = data.messages.filter((m: any) => !m.isRead && m.senderId !== data.companyId);
-              // Provide an array of unread items. Since system message is not in DB, 
-              // we can just add a dummy object if it's unread so the badge count is correct.
               const items = isSystemRead ? unreadDbMessages : [{ id: 1, isSystem: true }, ...unreadDbMessages];
               setUnreadMessages(items);
             } else {
@@ -40,6 +39,16 @@ export default function Navbar() {
             }
           })
           .catch(console.error);
+
+        // Fetch company logo if it's a company
+        if ((session?.user as any)?.role === "COMPANY_OWNER") {
+          fetch('/api/company/profile')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+              if (data?.logo) setCompanyLogo(data.logo);
+            })
+            .catch(console.error);
+        }
       }
     };
 
@@ -185,9 +194,9 @@ export default function Navbar() {
                   className="w-10 h-10 rounded-full border border-white/20 overflow-hidden relative group hover:border-emerald-500 transition-colors shadow-lg"
                   title={(session?.user as any).companyName || "Profile"}
                 >
-                  {(session?.user as any).companyLogo ? (
+                  {companyLogo ? (
                     <Image 
-                      src={(session?.user as any).companyLogo} 
+                      src={companyLogo} 
                       alt="Company Logo" 
                       fill 
                       className="object-cover group-hover:scale-110 transition-transform duration-300" 
@@ -289,8 +298,8 @@ export default function Navbar() {
                       className="flex items-center justify-center gap-3 text-lg font-bold text-emerald-400 border border-emerald-500/20 rounded-2xl py-4 hover:bg-emerald-500/10 transition-colors"
                     >
                       <div className="w-8 h-8 rounded-full overflow-hidden relative border border-emerald-500/30">
-                        {(session?.user as any).companyLogo ? (
-                          <Image src={(session?.user as any).companyLogo} alt="Logo" fill className="object-cover" />
+                        {companyLogo ? (
+                          <Image src={companyLogo} alt="Logo" fill className="object-cover" />
                         ) : (
                           <div className="w-full h-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">
                             {((session?.user as any).companyName || "C")[0]}

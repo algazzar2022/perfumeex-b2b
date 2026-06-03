@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
         if (user.role === "COMPANY_OWNER") {
           const company = await prisma.company.findUnique({
             where: { userId: user.id },
-            select: { slug: true, logo: true, nameAr: true }
+            select: { slug: true, nameAr: true }
           });
           if (company) {
             companyData = company;
@@ -62,7 +62,6 @@ export const authOptions: NextAuthOptions = {
         return {
           ...user,
           companySlug: companyData?.slug,
-          companyLogo: companyData?.logo,
           companyName: companyData?.nameAr
         };
       }
@@ -84,7 +83,6 @@ export const authOptions: NextAuthOptions = {
         
         if ((user as any).companySlug) {
           token.companySlug = (user as any).companySlug;
-          token.companyLogo = (user as any).companyLogo;
           token.companyName = (user as any).companyName;
         }
       }
@@ -96,7 +94,6 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).id = token.id;
         if (token.companySlug) {
           (session.user as any).companySlug = token.companySlug;
-          (session.user as any).companyLogo = token.companyLogo;
           (session.user as any).companyName = token.companyName;
         }
       }
