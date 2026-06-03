@@ -52,9 +52,25 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
         nameAr: editingCompany.nameAr,
         nameEn: editingCompany.nameEn,
         slug: editingCompany.slug,
+        descriptionAr: editingCompany.descriptionAr,
+        descriptionEn: editingCompany.descriptionEn,
+        logo: editingCompany.logo,
+        coverImage: editingCompany.coverImage,
+        category: editingCompany.category,
+        countryAr: editingCompany.countryAr,
+        countryEn: editingCompany.countryEn,
+        governorateAr: editingCompany.governorateAr,
+        governorateEn: editingCompany.governorateEn,
+        cityAr: editingCompany.cityAr,
+        cityEn: editingCompany.cityEn,
+        addressAr: editingCompany.addressAr,
+        addressEn: editingCompany.addressEn,
         email: editingCompany.email,
         whatsapp: editingCompany.whatsapp,
         website: editingCompany.website,
+        facebook: editingCompany.facebook,
+        instagram: editingCompany.instagram,
+        twitter: editingCompany.twitter,
         isFeatured: editingCompany.isFeatured
       });
       setCompanies(companies.map(c => c.id === editingCompany.id ? editingCompany : c));
@@ -163,6 +179,9 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
           <div className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-xl font-bold mb-6">تعديل بيانات: {editingCompany.nameAr}</h3>
             <form onSubmit={handleSaveCompany} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Basic Info */}
+              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">البيانات الأساسية</h4></div>
+              
               <div>
                 <label className="block text-sm text-gray-400 mb-1">الاسم بالعربية</label>
                 <input type="text" value={editingCompany.nameAr} onChange={e => setEditingCompany({...editingCompany, nameAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
@@ -171,10 +190,34 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                 <label className="block text-sm text-gray-400 mb-1">الاسم بالإنجليزية</label>
                 <input type="text" value={editingCompany.nameEn} onChange={e => setEditingCompany({...editingCompany, nameEn: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
               </div>
-              <div>
+              <div className="md:col-span-2">
                 <label className="block text-sm text-gray-400 mb-1">رابط الشركة (Slug - إنجليزي فقط)</label>
                 <input type="text" value={editingCompany.slug} onChange={e => setEditingCompany({...editingCompany, slug: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
               </div>
+
+              {/* Descriptions */}
+              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">الوصف والروابط</h4></div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">وصف الشركة (عربي)</label>
+                <textarea rows={3} value={editingCompany.descriptionAr || ''} onChange={e => setEditingCompany({...editingCompany, descriptionAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">وصف الشركة (إنجليزي)</label>
+                <textarea rows={3} value={editingCompany.descriptionEn || ''} onChange={e => setEditingCompany({...editingCompany, descriptionEn: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+              </div>
+
+              {/* Media URLs */}
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">رابط اللوجو</label>
+                <input type="text" value={editingCompany.logo || ''} onChange={e => setEditingCompany({...editingCompany, logo: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">رابط الغلاف (Cover)</label>
+                <input type="text" value={editingCompany.coverImage || ''} onChange={e => setEditingCompany({...editingCompany, coverImage: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+              </div>
+
+              {/* Contact */}
+              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">بيانات التواصل</h4></div>
               <div>
                 <label className="block text-sm text-gray-400 mb-1">البريد الإلكتروني للشركة</label>
                 <input type="email" value={editingCompany.email || ''} onChange={e => setEditingCompany({...editingCompany, email: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
@@ -187,12 +230,50 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                 <label className="block text-sm text-gray-400 mb-1">الموقع الإلكتروني</label>
                 <input type="text" value={editingCompany.website || ''} onChange={e => setEditingCompany({...editingCompany, website: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
               </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">القسم</label>
+                <input type="text" value={editingCompany.category || ''} onChange={e => setEditingCompany({...editingCompany, category: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
+              </div>
+
+              {/* Location */}
+              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">الموقع الجغرافي</h4></div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">الدولة (عربي)</label>
+                <input type="text" value={editingCompany.countryAr || ''} onChange={e => setEditingCompany({...editingCompany, countryAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">المحافظة (عربي)</label>
+                <input type="text" value={editingCompany.governorateAr || ''} onChange={e => setEditingCompany({...editingCompany, governorateAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">المدينة (عربي)</label>
+                <input type="text" value={editingCompany.cityAr || ''} onChange={e => setEditingCompany({...editingCompany, cityAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">العنوان (عربي)</label>
+                <input type="text" value={editingCompany.addressAr || ''} onChange={e => setEditingCompany({...editingCompany, addressAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
+              </div>
+
+              {/* Socials */}
+              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">منصات التواصل</h4></div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">فيسبوك</label>
+                <input type="text" value={editingCompany.facebook || ''} onChange={e => setEditingCompany({...editingCompany, facebook: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">انستجرام</label>
+                <input type="text" value={editingCompany.instagram || ''} onChange={e => setEditingCompany({...editingCompany, instagram: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">تويتر (X)</label>
+                <input type="text" value={editingCompany.twitter || ''} onChange={e => setEditingCompany({...editingCompany, twitter: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+              </div>
               
               <div className="md:col-span-2 pt-4">
-                <label className="flex items-center gap-3 p-4 bg-white/5 rounded-xl cursor-pointer">
+                <label className="flex items-center gap-3 p-4 bg-white/5 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
                   <input type="checkbox" checked={editingCompany.isFeatured} onChange={e => setEditingCompany({...editingCompany, isFeatured: e.target.checked})} className="w-5 h-5 accent-purple-500" />
                   <div>
-                    <div className="font-bold">شركة مميزة</div>
+                    <div className="font-bold">شركة مميزة (Featured)</div>
                     <div className="text-sm text-gray-400">تظهر الشركة بشكل مميز في الصفحة الرئيسية وأعلى نتائج البحث</div>
                   </div>
                 </label>

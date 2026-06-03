@@ -50,9 +50,25 @@ export async function updateCompany(
     nameAr?: string; 
     nameEn?: string; 
     slug?: string; 
+    descriptionAr?: string;
+    descriptionEn?: string;
+    logo?: string;
+    coverImage?: string;
+    category?: string;
+    countryAr?: string;
+    countryEn?: string;
+    governorateAr?: string;
+    governorateEn?: string;
+    cityAr?: string;
+    cityEn?: string;
+    addressAr?: string;
+    addressEn?: string;
     whatsapp?: string; 
     email?: string; 
     website?: string;
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
     isFeatured?: boolean;
   }
 ) {

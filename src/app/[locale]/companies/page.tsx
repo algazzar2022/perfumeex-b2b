@@ -10,10 +10,13 @@ export default async function CompaniesPage({
   
   // Fetch all approved companies
   const companies = await prisma.company.findMany({
+    where: {
+      status: 'APPROVED'
+    },
     orderBy: {
       createdAt: 'desc'
     },
-    take: 50 // Limit to avoid massive payloads, we can add pagination later
+    take: 50
   });
 
   return (

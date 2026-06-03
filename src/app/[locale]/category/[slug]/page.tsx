@@ -12,7 +12,11 @@ export default async function CategoryPage({
 
   const products = await prisma.product.findMany({
     where: {
-      categoryId: slug
+      categoryId: slug,
+      status: 'APPROVED',
+      company: {
+        status: 'APPROVED'
+      }
     },
     include: {
       company: {

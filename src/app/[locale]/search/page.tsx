@@ -17,7 +17,7 @@ export default async function SearchPage({
   let companies: any[] = [];
 
   if (query.trim() !== "" || category.trim() !== "" || location.trim() !== "") {
-    const andConditions: any[] = [];
+    const andConditions: any[] = [{ status: 'APPROVED' }];
 
     if (query.trim() !== "") {
       andConditions.push({
