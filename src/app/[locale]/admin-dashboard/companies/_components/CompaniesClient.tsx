@@ -222,9 +222,15 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                 <label className="block text-sm text-gray-400 mb-1">الاسم بالإنجليزية</label>
                 <input type="text" value={editingCompany.nameEn} onChange={e => setEditingCompany({...editingCompany, nameEn: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
               </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm text-gray-400 mb-1">رابط الشركة (Slug - إنجليزي فقط)</label>
-                <input type="text" value={editingCompany.slug} onChange={e => setEditingCompany({...editingCompany, slug: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">رابط الشركة (Slug - إنجليزي فقط)</label>
+                  <input type="text" value={editingCompany.slug} onChange={e => setEditingCompany({...editingCompany, slug: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">ترتيب الظهور (0 = الافتراضي، أرقام أكبر = ظهور أولاً)</label>
+                  <input type="number" value={editingCompany.order || 0} onChange={e => setEditingCompany({...editingCompany, order: parseInt(e.target.value) || 0})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+                </div>
               </div>
 
               {/* Descriptions */}

@@ -15,7 +15,10 @@ export async function getCompanies() {
         }
       }
     },
-    orderBy: { createdAt: 'desc' }
+    orderBy: [
+      { order: 'desc' },
+      { createdAt: 'desc' }
+    ]
   });
 }
 
@@ -70,6 +73,7 @@ export async function updateCompany(
     facebook?: string;
     twitter?: string;
     isFeatured?: boolean;
+    order?: number;
   }
 ) {
   await prisma.company.update({
@@ -77,4 +81,17 @@ export async function updateCompany(
     data
   });
   revalidatePath('/[locale]/admin-dashboard/companies', 'page');
+}
+
+export async function updateCompaniesOrder(items: { id: string, order: number }[]) {
+  await prisma.$transaction(
+    items.map(item => 
+      prisma.company.update({
+        where: { id: item.id },
+        data: { order: item.order }
+      })
+    )
+  );
+  revalidatePath('/[locale]/admin-dashboard/companies', 'page');
+  revalidatePath('/[locale]/companies', 'page');
 }

@@ -1,7 +1,12 @@
-export default function Adminsponsors() {
+import { getSponsors } from './actions';
+import SponsorsClient from './_components/SponsorsClient';
+
+export default async function AdminSponsors() {
+  const sponsors = await getSponsors();
+
   return (
-    <div className="min-h-screen pt-24 px-4 flex items-center justify-center bg-black text-white">
-      <h1 className="text-4xl font-bold">Admin sponsors</h1>
+    <div>
+      <SponsorsClient initialSponsors={sponsors} />
     </div>
   );
 }

@@ -9,39 +9,9 @@ import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from "next-auth/react";
 
-const sponsorLogos = [
-  "AL Madinah AL Munawwarah.png",
-  "Aknan.png",
-  "Al-Mawardi.png",
-  "Al-Rihani.png",
-  "Al-Safa.png",
-  "French.png",
-  "Halim.png",
-  "Hamed.png",
-  "Hashim.png",
-  "Khader Group.png",
-  "Sea of ​​Perfumes.png",
-  "abketko.png",
-  "afaq.png",
-  "alfaroq.png",
-  "alharamayn.png",
-  "almasa alzahbeya.png",
-  "alsharkisii.png",
-  "bet malke.png",
-  "diamond.png",
-  "eid.png",
-  "euro.png",
-  "motawea.png",
-  "rahiq.png",
-  "sabarah.png",
-  "teba.png",
-  "twins.png",
-  "vegas.png",
-  "zamany.png"
-];
-
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [dbSponsors, setDbSponsors] = useState<any[]>([]);
   const t = useTranslations('Index');
   const router = useRouter();
   const pathname = usePathname();
@@ -73,6 +43,11 @@ export default function Home() {
     fetch('/api/categories')
       .then(res => res.json())
       .then(data => setDbCategories(data))
+      .catch(console.error);
+      
+    fetch('/api/sponsors')
+      .then(res => res.json())
+      .then(data => setDbSponsors(data))
       .catch(console.error);
   }, []);
 
@@ -260,11 +235,11 @@ export default function Home() {
             >
               {[...Array(2)].map((_, arrayIndex) => (
                 <div key={arrayIndex} className="flex items-center gap-12 md:gap-20">
-                  {sponsorLogos.map((logo, i) => (
+                  {dbSponsors.map((sponsor, i) => (
                     <div key={`${arrayIndex}-${i}`} className="w-24 md:w-32 h-16 relative shrink-0">
                       <Image
-                        src={`/sponsor-logos/${logo}`}
-                        alt={`Sponsor ${logo.split('.')[0]}`}
+                        src={sponsor.logo}
+                        alt={`Sponsor ${sponsor.nameEn}`}
                         fill
                         unoptimized
                         className="object-contain"

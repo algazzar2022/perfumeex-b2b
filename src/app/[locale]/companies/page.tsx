@@ -13,9 +13,10 @@ export default async function CompaniesPage({
     where: {
       status: 'APPROVED'
     },
-    orderBy: {
-      createdAt: 'desc'
-    },
+    orderBy: [
+      { order: 'desc' },
+      { createdAt: 'desc' }
+    ],
     take: 50
   });
 

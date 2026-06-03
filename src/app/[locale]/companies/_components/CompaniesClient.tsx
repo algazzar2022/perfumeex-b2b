@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 
 export default function CompaniesClient({ initialCompanies, locale }: { initialCompanies: any[], locale: string }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [gridLayout, setGridLayout] = useState<3 | 5>(3);
   const t = useTranslations("CompaniesDirectory");
   const catT = useTranslations("Dashboard.companyProfile.general.categoryOptions");
 
@@ -57,6 +58,29 @@ export default function CompaniesClient({ initialCompanies, locale }: { initialC
               />
             </div>
           </div>
+          
+          <div className="flex items-center gap-2 bg-zinc-900/80 backdrop-blur-xl border border-white/10 rounded-2xl p-2">
+            <button
+              onClick={() => setGridLayout(3)}
+              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                gridLayout === 3 
+                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]' 
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {isAr ? '3 أعمدة' : '3 Columns'}
+            </button>
+            <button
+              onClick={() => setGridLayout(5)}
+              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                gridLayout === 5 
+                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]' 
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {isAr ? '5 أعمدة' : '5 Columns'}
+            </button>
+          </div>
         </div>
 
         {filteredCompanies.length === 0 ? (
@@ -65,7 +89,11 @@ export default function CompaniesClient({ initialCompanies, locale }: { initialC
             <h3 className="text-xl font-bold text-white mb-2">{t("noCompanies")}</h3>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className={`grid gap-6 ${
+            gridLayout === 3 
+              ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
+              : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5'
+          }`}>
             {filteredCompanies.map((company, idx) => {
               const name = isAr ? company.nameAr : company.nameEn;
               const desc = isAr ? company.descriptionAr : company.descriptionEn;
