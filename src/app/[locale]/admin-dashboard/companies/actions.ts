@@ -102,3 +102,63 @@ export async function updateCompaniesOrder(items: { id: string, order: number }[
   revalidatePath('/[locale]/admin-dashboard/companies', 'page');
   revalidatePath('/[locale]/companies', 'page');
 }
+
+export async function createCompany(data: any) {
+  const existingUser = await prisma.user.findUnique({ where: { email: data.email } });
+  if (existingUser) {
+    throw new Error('البريد الإلكتروني مسجل بالفعل');
+  }
+  const existingSlug = await prisma.company.findUnique({ where: { slug: data.slug } });
+  if (existingSlug) {
+    throw new Error('رابط الشركة مستخدم بالفعل');
+  }
+
+  const hashedPassword = await bcrypt.hash(data.password, 10);
+
+  const newUser = await prisma.user.create({
+    data: {
+      email: data.email,
+      name: data.nameAr,
+      password: hashedPassword,
+      role: 'COMPANY_OWNER'
+    }
+  });
+
+  const newCompany = await prisma.company.create({
+    data: {
+      userId: newUser.id,
+      nameAr: data.nameAr,
+      nameEn: data.nameEn || data.nameAr,
+      slug: data.slug,
+      email: data.email,
+      status: 'APPROVED',
+      order: data.order || 0,
+      descriptionAr: data.descriptionAr,
+      descriptionEn: data.descriptionEn,
+      logo: data.logo,
+      coverImage: data.coverImage,
+      category: data.category,
+      whatsapp: data.whatsapp,
+      website: data.website,
+      countryAr: data.countryAr,
+      governorateAr: data.governorateAr,
+      cityAr: data.cityAr,
+      addressAr: data.addressAr,
+      facebook: data.facebook,
+      instagram: data.instagram,
+      twitter: data.twitter,
+    },
+    include: {
+      user: {
+        select: {
+          email: true,
+          name: true,
+        }
+      }
+    }
+  });
+
+  revalidatePath('/[locale]/admin-dashboard/companies', 'page');
+  revalidatePath('/[locale]/companies', 'page');
+  return newCompany;
+}

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
-import { updateCompanyStatus, deleteCompany, updateCompanyPassword, updateCompany } from '../actions';
-import { Edit2, Trash2, CheckCircle, XCircle, Key, Loader2, Search, Filter, UploadCloud } from 'lucide-react';
+import { updateCompanyStatus, deleteCompany, updateCompanyPassword, updateCompany, createCompany } from '../actions';
+import { Edit2, Trash2, CheckCircle, XCircle, Key, Loader2, Search, Filter, UploadCloud, Plus } from 'lucide-react';
 
 export default function CompaniesClient({ initialCompanies }: { initialCompanies: any[] }) {
   const [companies, setCompanies] = useState(initialCompanies);
@@ -13,6 +13,16 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
   const [editingCompany, setEditingCompany] = useState<any | null>(null);
   const [passwordModal, setPasswordModal] = useState<any | null>(null);
   const [newPassword, setNewPassword] = useState('');
+  
+  // Custom Toast State
+  const [toastMessage, setToastMessage] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToastMessage({ message, type });
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
   
   const [dbCategories, setDbCategories] = useState<any[]>([]);
 
@@ -73,55 +83,89 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
 
   const handleSaveCompany = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!editingCompany.nameAr || !editingCompany.email || !editingCompany.slug || (!editingCompany.id && !editingCompany.password)) {
+      showToast("يرجى إدخال البيانات الأساسية (الاسم، البريد، الرابط، وكلمة المرور للشركات الجديدة)", 'error');
+      return;
+    }
+
     startTransition(async () => {
-      await updateCompany(editingCompany.id, {
-        nameAr: editingCompany.nameAr,
-        nameEn: editingCompany.nameEn,
-        slug: editingCompany.slug,
-        descriptionAr: editingCompany.descriptionAr,
-        descriptionEn: editingCompany.descriptionEn,
-        logo: editingCompany.logo,
-        coverImage: editingCompany.coverImage,
-        category: editingCompany.category,
-        countryAr: editingCompany.countryAr,
-        countryEn: editingCompany.countryEn,
-        governorateAr: editingCompany.governorateAr,
-        governorateEn: editingCompany.governorateEn,
-        cityAr: editingCompany.cityAr,
-        cityEn: editingCompany.cityEn,
-        addressAr: editingCompany.addressAr,
-        addressEn: editingCompany.addressEn,
-        email: editingCompany.email,
-        whatsapp: editingCompany.whatsapp,
-        website: editingCompany.website,
-        facebook: editingCompany.facebook,
-        instagram: editingCompany.instagram,
-        twitter: editingCompany.twitter,
-        isFeatured: editingCompany.isFeatured,
-        isSponsor: editingCompany.isSponsor,
-        order: editingCompany.order
-      });
-      setCompanies(companies.map(c => c.id === editingCompany.id ? editingCompany : c));
-      setEditingCompany(null);
+      try {
+        if (editingCompany.id) {
+          await updateCompany(editingCompany.id, {
+            nameAr: editingCompany.nameAr,
+            nameEn: editingCompany.nameEn,
+            slug: editingCompany.slug,
+            descriptionAr: editingCompany.descriptionAr,
+            descriptionEn: editingCompany.descriptionEn,
+            logo: editingCompany.logo,
+            coverImage: editingCompany.coverImage,
+            category: editingCompany.category,
+            countryAr: editingCompany.countryAr,
+            countryEn: editingCompany.countryEn,
+            governorateAr: editingCompany.governorateAr,
+            governorateEn: editingCompany.governorateEn,
+            cityAr: editingCompany.cityAr,
+            cityEn: editingCompany.cityEn,
+            addressAr: editingCompany.addressAr,
+            addressEn: editingCompany.addressEn,
+            email: editingCompany.email,
+            whatsapp: editingCompany.whatsapp,
+            website: editingCompany.website,
+            facebook: editingCompany.facebook,
+            instagram: editingCompany.instagram,
+            twitter: editingCompany.twitter,
+            isFeatured: editingCompany.isFeatured,
+            isSponsor: editingCompany.isSponsor,
+            order: editingCompany.order
+          });
+          setCompanies(companies.map(c => c.id === editingCompany.id ? editingCompany : c));
+          showToast("تم تحديث بيانات الشركة بنجاح", 'success');
+        } else {
+          const newCompany = await createCompany({
+            ...editingCompany
+          });
+          setCompanies([newCompany, ...companies]);
+          showToast("تم إضافة الشركة الجديدة بنجاح", 'success');
+        }
+        setEditingCompany(null);
+      } catch (error: any) {
+        showToast(error.message || "حدث خطأ غير متوقع", 'error');
+      }
     });
   };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#111] p-6 rounded-2xl border border-white/10">
-        <div>
-          <h2 className="text-2xl font-bold mb-1">إدارة الشركات</h2>
-          <p className="text-gray-400 text-sm">عرض وتعديل والتحكم في ظهور الشركات المسجلة</p>
+        <div className="flex items-center gap-4 justify-between w-full md:w-auto">
+          <div>
+            <h2 className="text-2xl font-bold mb-1">إدارة الشركات</h2>
+            <p className="text-gray-400 text-sm">عرض وتعديل والتحكم في ظهور الشركات المسجلة</p>
+          </div>
+          <button 
+            onClick={() => setEditingCompany({ id: '', nameAr: '', nameEn: '', slug: '', email: '', password: '', order: 0, status: 'APPROVED' })}
+            className="md:hidden bg-emerald-500 text-black px-4 py-2 rounded-xl font-bold flex items-center gap-2"
+          >
+            <Plus size={20} /> إضافة
+          </button>
         </div>
-        <div className="relative w-full md:w-auto">
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="relative flex-1 md:w-80">
           <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
           <input 
             type="text" 
             placeholder="بحث بالاسم أو البريد..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-80 bg-black/50 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:border-purple-500"
+            className="w-full bg-black/50 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:border-purple-500"
           />
+        </div>
+        <button 
+          onClick={() => setEditingCompany({ id: '', nameAr: '', nameEn: '', slug: '', email: '', password: '', order: 0, status: 'APPROVED' })}
+          className="hidden md:flex bg-emerald-500 text-black px-6 py-3 rounded-xl font-bold items-center gap-2 hover:bg-emerald-400 transition-colors shrink-0"
+        >
+          <Plus size={20} /> إضافة شركة جديدة
+        </button>
         </div>
       </div>
 
@@ -215,7 +259,7 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
             className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-xl font-bold mb-6">تعديل بيانات: {editingCompany.nameAr}</h3>
+            <h3 className="text-xl font-bold mb-6">{editingCompany.id ? `تعديل بيانات: ${editingCompany.nameAr}` : 'إضافة شركة جديدة'}</h3>
             <form onSubmit={handleSaveCompany} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Basic Info */}
               <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">البيانات الأساسية</h4></div>
@@ -300,11 +344,17 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
               </div>
 
               {/* Contact */}
-              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">بيانات التواصل</h4></div>
+              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">بيانات التواصل والحساب</h4></div>
               <div>
                 <label className="block text-sm text-gray-400 mb-1">البريد الإلكتروني للشركة</label>
-                <input type="email" value={editingCompany.email || ''} onChange={e => setEditingCompany({...editingCompany, email: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
+                <input type="email" value={editingCompany.email || ''} onChange={e => setEditingCompany({...editingCompany, email: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" disabled={!!editingCompany.id} />
               </div>
+              {!editingCompany.id && (
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">كلمة المرور (للدخول للوحة التحكم)</label>
+                  <input type="text" value={editingCompany.password || ''} onChange={e => setEditingCompany({...editingCompany, password: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" placeholder="******" />
+                </div>
+              )}
               <div>
                 <label className="block text-sm text-gray-400 mb-1">رقم الواتساب</label>
                 <input type="text" value={editingCompany.whatsapp || ''} onChange={e => setEditingCompany({...editingCompany, whatsapp: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
@@ -431,6 +481,18 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[200] animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className={`px-6 py-3 rounded-full shadow-2xl flex items-center gap-2 font-bold text-sm ${
+            toastMessage.type === 'success' ? 'bg-emerald-500 text-black' : 'bg-red-500 text-white'
+          }`}>
+            {toastMessage.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+            {toastMessage.message}
           </div>
         </div>
       )}
