@@ -64,31 +64,33 @@ export default function RegisterClient({ event, isAr }: { event: Event, isAr: bo
 
   return (
     <div className="bg-[#111] border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
-      <div className="relative h-[250px] md:h-[300px] w-full">
-        <Image 
-          src={event.image} 
-          alt={isAr ? event.titleAr : event.titleEn} 
-          fill 
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-[#111]/80 to-transparent" />
+      <div className="relative w-full flex flex-col justify-end min-h-[350px] md:min-h-[400px]">
+        <div className="absolute inset-0">
+          <Image 
+            src={event.image} 
+            alt={isAr ? event.titleAr : event.titleEn} 
+            fill 
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-[#111]/90 to-black/40" />
+        </div>
         
-        <div className="absolute inset-0 p-8 flex flex-col justify-end">
-          <div className="bg-emerald-500/20 text-emerald-400 w-fit px-4 py-1.5 rounded-full text-sm font-bold mb-4 border border-emerald-500/20 backdrop-blur-md shadow-lg">
+        <div className="relative z-10 p-6 md:p-8 pt-32">
+          <div className="bg-emerald-500/20 text-emerald-400 w-fit px-4 py-1.5 rounded-full text-xs md:text-sm font-bold mb-4 border border-emerald-500/20 backdrop-blur-md shadow-lg">
             {isAr ? 'تسجيل حضور' : 'Event Registration'}
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-white drop-shadow-lg">
+          <h1 className="text-2xl md:text-4xl font-bold mb-6 text-white drop-shadow-lg leading-snug">
             {isAr ? event.titleAr : event.titleEn}
           </h1>
           
-          <div className="flex flex-col sm:flex-row gap-4 text-gray-200">
-            <div className="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-xl backdrop-blur-md border border-white/10 shadow-lg">
-              <Calendar size={20} className="text-emerald-400 drop-shadow-md" />
-              <span className="font-bold tracking-wide">{new Date(event.date).toLocaleString(isAr ? 'ar-EG' : 'en-US', { dateStyle: 'long', timeStyle: 'short' })}</span>
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 text-gray-200">
+            <div className="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-xl backdrop-blur-md border border-white/10 shadow-lg flex-1">
+              <Calendar size={20} className="text-emerald-400 drop-shadow-md shrink-0" />
+              <span className="font-bold tracking-wide text-sm md:text-base">{new Date(event.date).toLocaleString(isAr ? 'ar-EG' : 'en-US', { dateStyle: 'long', timeStyle: 'short' })}</span>
             </div>
-            <div className="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-xl backdrop-blur-md border border-white/10 shadow-lg">
-              <MapPin size={20} className="text-emerald-400 drop-shadow-md" />
-              <span className="font-bold tracking-wide">{isAr ? event.locationAr : event.locationEn}</span>
+            <div className="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-xl backdrop-blur-md border border-white/10 shadow-lg flex-1">
+              <MapPin size={20} className="text-emerald-400 drop-shadow-md shrink-0" />
+              <span className="font-bold tracking-wide text-sm md:text-base">{isAr ? event.locationAr : event.locationEn}</span>
             </div>
           </div>
         </div>
