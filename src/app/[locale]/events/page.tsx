@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { Calendar, MapPin, Users } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 
-export default async function EventsPage({ params }: { params: { locale: string } }) {
-  const isAr = params.locale === 'ar';
+export default async function EventsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const resolvedParams = await params;
+  const isAr = resolvedParams.locale === 'ar';
   
   const events = await prisma.event.findMany({
     orderBy: { date: 'asc' },
@@ -95,7 +96,7 @@ export default async function EventsPage({ params }: { params: { locale: string 
                   </div>
 
                   <Link 
-                    href={`/${params.locale}/events/${event.id}/register`}
+                    href={`/${resolvedParams.locale}/events/${event.id}/register`}
                     className="block w-full py-4 rounded-xl font-bold text-center text-white bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 transition-all shadow-lg hover:shadow-emerald-500/25"
                   >
                     {isAr ? 'سجل حضورك الآن' : 'Register Now'}

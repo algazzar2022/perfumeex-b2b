@@ -2,8 +2,9 @@ import Navbar from '@/components/Navbar';
 import Image from 'next/image';
 import { Target, Shield, Globe2, Users2, Award, Zap } from 'lucide-react';
 
-export default function AboutPage({ params }: { params: { locale: string } }) {
-  const isAr = params.locale === 'ar';
+export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
+  const resolvedParams = await params;
+  const isAr = resolvedParams.locale === 'ar';
 
   const values = [
     {

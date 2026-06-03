@@ -4,23 +4,25 @@ import Link from 'next/link';
 import { ArrowRight, FileText } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
-export default async function EventRegistrationsPage({ params }: { params: { id: string, locale: string } }) {
+export default async function EventRegistrationsPage({ params }: { params: Promise<{ id: string, locale: string }> }) {
+  const resolvedParams = await params;
+  
   const event = await prisma.event.findUnique({
-    where: { id: params.id }
+    where: { id: resolvedParams.id }
   });
 
   if (!event) {
-    redirect(`/${params.locale}/admin-dashboard/events`);
+    redirect(`/${resolvedParams.locale}/admin-dashboard/events`);
   }
 
-  const registrations = await getEventRegistrations(params.id);
+  const registrations = await getEventRegistrations(resolvedParams.id);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-7xl mx-auto p-4 md:p-8">
         <div className="mb-8 flex items-center gap-4">
           <Link 
-            href={`/${params.locale}/admin-dashboard/events`}
+            href={`/${resolvedParams.locale}/admin-dashboard/events`}
             className="p-2 hover:bg-white/10 rounded-full transition-colors"
           >
             <ArrowRight className="rtl:rotate-180" />

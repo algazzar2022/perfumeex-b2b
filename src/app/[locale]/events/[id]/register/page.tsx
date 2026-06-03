@@ -3,11 +3,12 @@ import Navbar from '@/components/Navbar';
 import RegisterClient from './_components/RegisterClient';
 import { notFound } from 'next/navigation';
 
-export default async function EventRegistrationPage({ params }: { params: { id: string, locale: string } }) {
-  const isAr = params.locale === 'ar';
+export default async function EventRegistrationPage({ params }: { params: Promise<{ id: string, locale: string }> }) {
+  const resolvedParams = await params;
+  const isAr = resolvedParams.locale === 'ar';
   
   const event = await prisma.event.findUnique({
-    where: { id: params.id }
+    where: { id: resolvedParams.id }
   });
 
   if (!event) {
