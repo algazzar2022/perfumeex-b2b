@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { PackageSearch, Search, Filter, CheckCircle, XCircle, Trash2, Edit2, Loader2, Star } from "lucide-react";
-import { updateProductStatus, deleteProduct, updateProduct } from "../actions";
+import { PackageSearch, Search, Filter, CheckCircle, XCircle, Trash2, Edit2, Loader2, Star, Plus, UploadCloud } from "lucide-react";
+import { updateProductStatus, deleteProduct, updateProduct, createProduct } from "../actions";
 import Image from "next/image";
 
-export default function ProductsClient({ initialProducts }: { initialProducts: any[] }) {
+export default function ProductsClient({ initialProducts, companies = [] }: { initialProducts: any[], companies?: any[] }) {
   const [products, setProducts] = useState(initialProducts);
   const [searchQuery, setSearchQuery] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -53,19 +53,64 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
     });
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 4 * 1024 * 1024) {
+      alert("حجم الصورة يجب أن يكون أقل من 4 ميجابايت");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Str = event.target?.result as string;
+      setEditingProduct((prev: any) => ({ ...prev, image: base64Str }));
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingProduct) return;
+    if (!editingProduct.nameAr || !editingProduct.nameEn || !editingProduct.companyId) {
+      showToast("يرجى إدخال اسم المنتج باللغتين واختيار الشركة", "error");
+      return;
+    }
 
     startTransition(async () => {
       try {
-        await updateProduct(editingProduct.id, {
-          isFeatured: editingProduct.isFeatured,
-          order: editingProduct.order
-        });
-        setProducts(products.map(p => p.id === editingProduct.id ? editingProduct : p));
+        if (editingProduct.id) {
+          await updateProduct(editingProduct.id, {
+            nameAr: editingProduct.nameAr,
+            nameEn: editingProduct.nameEn,
+            descriptionAr: editingProduct.descriptionAr,
+            descriptionEn: editingProduct.descriptionEn,
+            price: editingProduct.price,
+            image: editingProduct.image,
+            stockStatus: editingProduct.stockStatus,
+            salesType: editingProduct.salesType,
+            companyId: editingProduct.companyId,
+            isFeatured: editingProduct.isFeatured,
+            order: editingProduct.order
+          });
+          setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...editingProduct, company: companies.find(c => c.id === editingProduct.companyId) || p.company } : p));
+          showToast("تم تحديث المنتج بنجاح", 'success');
+        } else {
+          const newProduct = await createProduct({
+            nameAr: editingProduct.nameAr,
+            nameEn: editingProduct.nameEn,
+            descriptionAr: editingProduct.descriptionAr,
+            descriptionEn: editingProduct.descriptionEn,
+            price: editingProduct.price,
+            image: editingProduct.image,
+            stockStatus: editingProduct.stockStatus,
+            salesType: editingProduct.salesType,
+            companyId: editingProduct.companyId,
+            isFeatured: editingProduct.isFeatured,
+            order: editingProduct.order
+          });
+          setProducts([newProduct, ...products]);
+          showToast("تم إضافة المنتج بنجاح", 'success');
+        }
         setEditingProduct(null);
-        showToast("تم تحديث المنتج بنجاح", 'success');
       } catch (error) {
         showToast("حدث خطأ أثناء التحديث", 'error');
       }
@@ -75,13 +120,27 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-3">
-            <PackageSearch className="w-8 h-8 text-emerald-500" />
-            إدارة المنتجات
-          </h1>
-          <p className="text-gray-400 mt-1">مراجعة المنتجات المضافة من قبل الشركات والتحكم بها</p>
+        <div className="flex items-center gap-4 justify-between w-full md:w-auto">
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-3">
+              <PackageSearch className="w-8 h-8 text-emerald-500" />
+              إدارة المنتجات
+            </h1>
+            <p className="text-gray-400 mt-1">مراجعة المنتجات المضافة من قبل الشركات والتحكم بها</p>
+          </div>
+          <button 
+            onClick={() => setEditingProduct({ id: '', nameAr: '', nameEn: '', descriptionAr: '', descriptionEn: '', price: 0, image: '', stockStatus: 'IN_STOCK', salesType: 'WHOLESALE', companyId: '', order: 0 })}
+            className="md:hidden bg-emerald-500 text-black px-4 py-2 rounded-xl font-bold flex items-center gap-2 shrink-0"
+          >
+            <Plus size={20} /> إضافة
+          </button>
         </div>
+        <button 
+          onClick={() => setEditingProduct({ id: '', nameAr: '', nameEn: '', descriptionAr: '', descriptionEn: '', price: 0, image: '', stockStatus: 'IN_STOCK', salesType: 'WHOLESALE', companyId: '', order: 0 })}
+          className="hidden md:flex bg-emerald-500 text-black px-6 py-3 rounded-xl font-bold items-center gap-2 hover:bg-emerald-400 transition-colors shrink-0"
+        >
+          <Plus size={20} /> إضافة منتج جديد
+        </button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">
@@ -158,7 +217,7 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
                         </button>
                       )}
                       <div className="w-px h-6 bg-white/10 mx-1"></div>
-                      <button onClick={() => setEditingProduct(product)} title="تعديل الترتيب والتميز" className="p-2 text-blue-400 hover:bg-blue-400/20 rounded-lg transition-colors">
+                      <button onClick={() => setEditingProduct({...product})} title="تعديل بيانات المنتج" className="p-2 text-blue-400 hover:bg-blue-400/20 rounded-lg transition-colors">
                         <Edit2 size={18} />
                       </button>
                       <button onClick={() => handleDelete(product.id)} disabled={isPending} title="حذف" className="p-2 text-red-400 hover:bg-red-400/20 rounded-lg transition-colors">
@@ -187,24 +246,89 @@ export default function ProductsClient({ initialProducts }: { initialProducts: a
           onClick={() => setEditingProduct(null)}
         >
           <div 
-            className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-lg"
+            className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-xl font-bold mb-6">إعدادات المنتج: {editingProduct.nameAr}</h3>
-            <form onSubmit={handleSaveProduct} className="space-y-6">
+            <h3 className="text-xl font-bold mb-6">{editingProduct.id ? `تعديل بيانات: ${editingProduct.nameAr}` : 'إضافة منتج جديد'}</h3>
+            <form onSubmit={handleSaveProduct} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">ترتيب الظهور (رقم 1 يظهر أولاً، والافتراضي 0 يظهر في النهاية)</label>
-                <input 
-                  type="number" 
-                  value={editingProduct.order || 0} 
-                  onChange={e => setEditingProduct({...editingProduct, order: parseInt(e.target.value) || 0})} 
-                  className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" 
-                  dir="ltr" 
-                />
+              <div className="md:col-span-2">
+                <label className="block text-sm text-gray-400 mb-1">الشركة المالكة للمنتج</label>
+                <select 
+                  value={editingProduct.companyId || ''} 
+                  onChange={e => setEditingProduct({...editingProduct, companyId: e.target.value})}
+                  className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
+                >
+                  <option value="">اختر الشركة...</option>
+                  {companies.map(c => (
+                    <option key={c.id} value={c.id}>{c.nameAr} - {c.nameEn}</option>
+                  ))}
+                </select>
               </div>
 
-              <div className="flex items-center gap-3 mt-8">
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">الاسم بالعربية</label>
+                <input type="text" value={editingProduct.nameAr || ''} onChange={e => setEditingProduct({...editingProduct, nameAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">الاسم بالإنجليزية</label>
+                <input type="text" value={editingProduct.nameEn || ''} onChange={e => setEditingProduct({...editingProduct, nameEn: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm text-gray-400 mb-1">الوصف بالعربية</label>
+                <textarea rows={3} value={editingProduct.descriptionAr || ''} onChange={e => setEditingProduct({...editingProduct, descriptionAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm text-gray-400 mb-1">الوصف بالإنجليزية</label>
+                <textarea rows={3} value={editingProduct.descriptionEn || ''} onChange={e => setEditingProduct({...editingProduct, descriptionEn: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" />
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">السعر (اختياري)</label>
+                <input type="number" value={editingProduct.price || ''} onChange={e => setEditingProduct({...editingProduct, price: parseFloat(e.target.value) || 0})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">ترتيب الظهور (رقم 1 يظهر أولاً، والافتراضي 0 يظهر في النهاية)</label>
+                <input type="number" value={editingProduct.order || 0} onChange={e => setEditingProduct({...editingProduct, order: parseInt(e.target.value) || 0})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" />
+              </div>
+
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">حالة التوفر</label>
+                  <select value={editingProduct.stockStatus || 'IN_STOCK'} onChange={e => setEditingProduct({...editingProduct, stockStatus: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white">
+                    <option value="IN_STOCK">متوفر</option>
+                    <option value="OUT_OF_STOCK">غير متوفر</option>
+                    <option value="ON_REQUEST">عند الطلب</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">نوع البيع</label>
+                  <select value={editingProduct.salesType || 'WHOLESALE'} onChange={e => setEditingProduct({...editingProduct, salesType: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white">
+                    <option value="WHOLESALE">جملة</option>
+                    <option value="RETAIL">قطاعي</option>
+                    <option value="BOTH">جملة وقطاعي</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm text-gray-400 mb-2">صورة المنتج</label>
+                <div className="flex items-center gap-4">
+                  {editingProduct.image ? (
+                    <img src={editingProduct.image} alt="Product" className="w-20 h-20 rounded-xl object-cover bg-white/10" />
+                  ) : (
+                    <div className="w-20 h-20 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-500">لا يوجد</div>
+                  )}
+                  <label className="flex-1 border border-dashed border-white/20 rounded-xl p-4 flex flex-col items-center justify-center bg-black/50 hover:bg-white/5 cursor-pointer transition-colors group">
+                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                    <UploadCloud className="w-5 h-5 text-gray-400 group-hover:text-emerald-400 mb-1 transition-colors" />
+                    <span className="text-xs text-gray-400">تغيير الصورة</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="md:col-span-2 flex items-center gap-3 mt-6">
                 <button type="submit" disabled={isPending} className="flex-1 bg-emerald-500 text-black font-bold py-3 rounded-xl hover:bg-emerald-400 flex items-center justify-center disabled:opacity-50">
                   {isPending ? <Loader2 className="animate-spin" /> : 'حفظ التعديلات'}
                 </button>

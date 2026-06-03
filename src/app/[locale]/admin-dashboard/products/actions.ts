@@ -38,6 +38,16 @@ export async function updateProductStatus(id: string, status: ProductStatus) {
 export async function updateProduct(
   id: string, 
   data: { 
+    nameAr?: string;
+    nameEn?: string;
+    descriptionAr?: string;
+    descriptionEn?: string;
+    price?: number;
+    image?: string;
+    stockStatus?: string;
+    salesType?: string;
+    companyId?: string;
+    categoryId?: string;
     isFeatured?: boolean;
     order?: number;
   }
@@ -47,6 +57,38 @@ export async function updateProduct(
     data
   });
   revalidatePath('/[locale]/admin-dashboard/products', 'page');
+}
+
+export async function createProduct(data: {
+  nameAr: string;
+  nameEn: string;
+  descriptionAr?: string;
+  descriptionEn?: string;
+  price?: number;
+  image?: string;
+  stockStatus?: string;
+  salesType?: string;
+  companyId: string;
+  categoryId?: string;
+  isFeatured?: boolean;
+  order?: number;
+}) {
+  const newProduct = await prisma.product.create({
+    data: {
+      ...data,
+      status: 'APPROVED',
+    },
+    include: {
+      company: {
+        select: {
+          nameAr: true,
+          nameEn: true,
+        }
+      }
+    }
+  });
+  revalidatePath('/[locale]/admin-dashboard/products', 'page');
+  return newProduct;
 }
 
 export async function deleteProduct(id: string) {
