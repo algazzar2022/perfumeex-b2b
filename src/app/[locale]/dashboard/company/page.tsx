@@ -38,8 +38,14 @@ export default function CompanySettingsPage() {
     catalogPdf: ""
   });
 
+  const [dbCategories, setDbCategories] = useState<any[]>([]);
+
   useEffect(() => {
     fetchCompanyData();
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(setDbCategories)
+      .catch(console.error);
   }, []);
 
   const fetchCompanyData = async () => {
@@ -216,21 +222,12 @@ export default function CompanySettingsPage() {
                   <div>
                     <label className="block text-sm font-medium text-zinc-400 mb-2">{t("general.category")}</label>
                     <div className="flex flex-wrap gap-3">
-                      {[
-                        { id: "perfumeClones", label: t("general.categoryOptions.perfumeClones") },
-                        { id: "readyPerfumes", label: t("general.categoryOptions.readyPerfumes") },
-                        { id: "glass", label: t("general.categoryOptions.glass") },
-                        { id: "bakhoor", label: t("general.categoryOptions.bakhoor") },
-                        { id: "airFresheners", label: t("general.categoryOptions.airFresheners") },
-                        { id: "packaging", label: t("general.categoryOptions.packaging") },
-                        { id: "bottlesAndEmpties", label: t("general.categoryOptions.bottlesAndEmpties") },
-                        { id: "others", label: t("general.categoryOptions.others") }
-                      ].map(cat => {
+                      {dbCategories.map(cat => {
                         const selectedCategories = formData.category ? formData.category.split(',') : [];
-                        const isSelected = selectedCategories.includes(cat.id);
+                        const isSelected = selectedCategories.includes(cat.slug);
                         return (
                           <label 
-                            key={cat.id} 
+                            key={cat.slug} 
                             className={`flex items-center gap-2 px-4 py-2.5 rounded-full border cursor-pointer transition-all ${
                               isSelected 
                               ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.1)]' 
@@ -244,14 +241,14 @@ export default function CompanySettingsPage() {
                               onChange={() => {
                                 let newCats = [...selectedCategories];
                                 if (isSelected) {
-                                  newCats = newCats.filter(c => c !== cat.id);
+                                  newCats = newCats.filter(c => c !== cat.slug);
                                 } else {
-                                  newCats.push(cat.id);
+                                  newCats.push(cat.slug);
                                 }
                                 setFormData({...formData, category: newCats.join(',')});
                               }} 
                             />
-                            {cat.label}
+                            {isAr ? cat.nameAr : cat.nameEn}
                           </label>
                         );
                       })}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { updateCompanyStatus, deleteCompany, updateCompanyPassword, updateCompany } from '../actions';
 import { Edit2, Trash2, CheckCircle, XCircle, Key, Loader2, Search, Filter, UploadCloud } from 'lucide-react';
 
@@ -13,6 +13,15 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
   const [editingCompany, setEditingCompany] = useState<any | null>(null);
   const [passwordModal, setPasswordModal] = useState<any | null>(null);
   const [newPassword, setNewPassword] = useState('');
+  
+  const [dbCategories, setDbCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(data => setDbCategories(data))
+      .catch(console.error);
+  }, []);
 
   const filteredCompanies = companies.filter(c => 
     c.nameAr.includes(search) || 
@@ -295,21 +304,12 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
               <div className="md:col-span-2">
                 <label className="block text-sm text-gray-400 mb-2">أقسام الشركة (التصنيفات)</label>
                 <div className="flex flex-wrap gap-3">
-                  {[
-                    { id: "perfumeClones", label: "زيوت العطور" },
-                    { id: "readyPerfumes", label: "العطور الجاهزة" },
-                    { id: "glass", label: "الزجاج" },
-                    { id: "bakhoor", label: "البخور والعود" },
-                    { id: "airFresheners", label: "المعطرات" },
-                    { id: "packaging", label: "التعبئة والتغليف" },
-                    { id: "bottlesAndEmpties", label: "الزجاجات والفوارغ" },
-                    { id: "others", label: "أخرى" }
-                  ].map(cat => {
+                  {dbCategories.map(cat => {
                     const selectedCategories = editingCompany.category ? editingCompany.category.split(',') : [];
-                    const isSelected = selectedCategories.includes(cat.id);
+                    const isSelected = selectedCategories.includes(cat.slug);
                     return (
                       <label 
-                        key={cat.id} 
+                        key={cat.slug} 
                         className={`flex items-center gap-2 px-4 py-2.5 rounded-full border cursor-pointer transition-all ${
                           isSelected 
                           ? 'bg-purple-500/10 border-purple-500/50 text-purple-400' 
@@ -323,14 +323,14 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                           onChange={() => {
                             let newCats = [...selectedCategories];
                             if (isSelected) {
-                              newCats = newCats.filter((c: string) => c !== cat.id);
+                              newCats = newCats.filter((c: string) => c !== cat.slug);
                             } else {
-                              newCats.push(cat.id);
+                              newCats.push(cat.slug);
                             }
                             setEditingCompany({...editingCompany, category: newCats.join(',')});
                           }} 
                         />
-                        <span className="text-sm font-bold">{cat.label}</span>
+                        <span className="text-sm font-bold">{cat.nameAr}</span>
                       </label>
                     );
                   })}
