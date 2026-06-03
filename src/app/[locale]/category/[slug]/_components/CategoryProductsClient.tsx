@@ -70,36 +70,10 @@ export default function CategoryProductsClient({
             <p className="text-zinc-500">{isAr ? "لم يتم إضافة منتجات في هذا التصنيف بعد." : "No products have been added to this category yet."}</p>
           </div>
         ) : (
-          <div className="space-y-16">
-            {featuredProducts.length > 0 && (
-              <div>
-                <h2 className="text-3xl font-bold text-purple-400 mb-8 flex items-center gap-3">
-                  <Star className="w-8 h-8 fill-purple-400" />
-                  {isAr ? 'منتجات مميزة' : 'Featured Products'}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {featuredProducts.map((product, idx) => (
-                    <ProductCard key={product.id} product={product} idx={idx} isAr={isAr} locale={locale} setSelectedProduct={setSelectedProduct} isFeatured />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {regularProducts.length > 0 && (
-              <div>
-                {featuredProducts.length > 0 && (
-                  <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                    <Box className="w-6 h-6 text-emerald-400" />
-                    {isAr ? 'جميع المنتجات' : 'All Products'}
-                  </h2>
-                )}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {regularProducts.map((product, idx) => (
-                    <ProductCard key={product.id} product={product} idx={idx} isAr={isAr} locale={locale} setSelectedProduct={setSelectedProduct} />
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {initialProducts.map((product, idx) => (
+              <ProductCard key={product.id} product={product} idx={idx} isAr={isAr} locale={locale} setSelectedProduct={setSelectedProduct} />
+            ))}
           </div>
         )}
       </div>
