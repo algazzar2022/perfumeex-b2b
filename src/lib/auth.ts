@@ -66,17 +66,21 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
       }
 
-      // Always fetch company info if it's a company and we don't have it yet, 
-      // or if we explicitly want to update it.
-      if (token.role === "COMPANY_OWNER" && !token.companySlug) {
-        const company = await prisma.company.findUnique({
-          where: { userId: token.id as string },
-          select: { slug: true, logo: true, nameAr: true }
-        });
-        if (company) {
-          token.companySlug = company.slug;
-          token.companyLogo = company.logo;
-          token.companyName = company.nameAr;
+      // Fetch company info if it's a company and we haven't checked yet
+      if (token.role === "COMPANY_OWNER" && !token.companyChecked) {
+        token.companyChecked = true; // Prevents infinite DB queries
+        try {
+          const company = await prisma.company.findUnique({
+            where: { userId: token.id as string },
+            select: { slug: true, logo: true, nameAr: true }
+          });
+          if (company) {
+            token.companySlug = company.slug;
+            token.companyLogo = company.logo;
+            token.companyName = company.nameAr;
+          }
+        } catch (error) {
+          console.error("Error fetching company for JWT:", error);
         }
       }
       
