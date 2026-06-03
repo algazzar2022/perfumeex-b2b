@@ -150,8 +150,36 @@ export default function AboutClient({ initialContent }: { initialContent: any })
             </div>
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">رابط الصورة (URL)</label>
-            <input value={data.story?.image || ''} onChange={e => updateStory('image', e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-2 focus:border-emerald-500 outline-none" dir="ltr" />
+            <label className="block text-sm text-gray-400 mb-2">الصورة المرفقة</label>
+            <div className="flex items-center gap-4">
+              {data.story?.image && (
+                <div className="relative w-32 h-32 rounded-lg overflow-hidden border border-white/10 shrink-0">
+                  <img src={data.story.image} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="flex-1">
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      if (file.size > 2 * 1024 * 1024) {
+                        showToast('حجم الصورة يجب أن لا يتعدى 2 ميجابايت', 'error');
+                        return;
+                      }
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        updateStory('image', reader.result as string);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }} 
+                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-2 focus:border-emerald-500 outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-500/10 file:text-emerald-400 hover:file:bg-emerald-500/20" 
+                />
+                <p className="text-sm text-gray-500 mt-2">يمكنك رفع صورة من جهازك مباشرة (الحد الأقصى 2 ميجا)</p>
+              </div>
+            </div>
           </div>
         </div>
 

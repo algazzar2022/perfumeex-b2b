@@ -238,7 +238,7 @@ model Message {
 model Setting {
   id          String   @id @default(cuid())
   key         String   @unique
-  value       String
+  value       String   @db.LongText
   updatedAt   DateTime @updatedAt
 }
 
