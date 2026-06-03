@@ -286,9 +286,49 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                 <label className="block text-sm text-gray-400 mb-1">الموقع الإلكتروني</label>
                 <input type="text" value={editingCompany.website || ''} onChange={e => setEditingCompany({...editingCompany, website: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
               </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">القسم</label>
-                <input type="text" value={editingCompany.category || ''} onChange={e => setEditingCompany({...editingCompany, category: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
+              <div className="md:col-span-2">
+                <label className="block text-sm text-gray-400 mb-2">أقسام الشركة (التصنيفات)</label>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { id: "perfumeClones", label: "زيوت العطور" },
+                    { id: "readyPerfumes", label: "العطور الجاهزة" },
+                    { id: "glass", label: "الزجاج" },
+                    { id: "bakhoor", label: "البخور والعود" },
+                    { id: "airFresheners", label: "المعطرات" },
+                    { id: "packaging", label: "التعبئة والتغليف" },
+                    { id: "bottlesAndEmpties", label: "الزجاجات والفوارغ" },
+                    { id: "others", label: "أخرى" }
+                  ].map(cat => {
+                    const selectedCategories = editingCompany.category ? editingCompany.category.split(',') : [];
+                    const isSelected = selectedCategories.includes(cat.id);
+                    return (
+                      <label 
+                        key={cat.id} 
+                        className={`flex items-center gap-2 px-4 py-2.5 rounded-full border cursor-pointer transition-all ${
+                          isSelected 
+                          ? 'bg-purple-500/10 border-purple-500/50 text-purple-400' 
+                          : 'bg-[#111] border-white/10 text-gray-400 hover:border-white/20 hover:text-white'
+                        }`}
+                      >
+                        <input 
+                          type="checkbox" 
+                          className="hidden" 
+                          checked={isSelected} 
+                          onChange={() => {
+                            let newCats = [...selectedCategories];
+                            if (isSelected) {
+                              newCats = newCats.filter((c: string) => c !== cat.id);
+                            } else {
+                              newCats.push(cat.id);
+                            }
+                            setEditingCompany({...editingCompany, category: newCats.join(',')});
+                          }} 
+                        />
+                        <span className="text-sm font-bold">{cat.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Location */}
