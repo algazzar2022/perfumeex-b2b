@@ -80,3 +80,28 @@ export async function getEventRegistrations(eventId: string) {
   });
   return registrations;
 }
+
+export async function deleteRegistration(id: string) {
+  await checkAdmin();
+  await prisma.eventRegistration.delete({
+    where: { id }
+  });
+  revalidatePath('/[locale]/admin-dashboard/events/[id]');
+}
+
+export async function updateRegistration(id: string, data: {
+  name: string;
+  brandName: string;
+  location: string;
+  phone: string;
+  whatsapp: string;
+  experienceYears: number;
+}) {
+  await checkAdmin();
+  const reg = await prisma.eventRegistration.update({
+    where: { id },
+    data
+  });
+  revalidatePath('/[locale]/admin-dashboard/events/[id]');
+  return reg;
+}

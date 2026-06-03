@@ -1,8 +1,9 @@
 import { getEventRegistrations } from '../actions';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
-import { ArrowRight, FileText } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { redirect } from 'next/navigation';
+import RegistrationsClient from './_components/RegistrationsClient';
 
 export default async function EventRegistrationsPage({ params }: { params: Promise<{ id: string, locale: string }> }) {
   const resolvedParams = await params;
@@ -33,43 +34,7 @@ export default async function EventRegistrationsPage({ params }: { params: Promi
           </div>
         </div>
 
-        <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden shadow-xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-right border-collapse">
-              <thead>
-                <tr className="text-right text-gray-400 bg-[#1a1a1a]">
-                  <th className="p-4 font-medium">الاسم</th>
-                  <th className="p-4 font-medium">البراند</th>
-                  <th className="p-4 font-medium">المكان</th>
-                  <th className="p-4 font-medium">رقم الهاتف</th>
-                  <th className="p-4 font-medium">واتساب</th>
-                  <th className="p-4 font-medium">سنوات الخبرة</th>
-                  <th className="p-4 font-medium">تاريخ التسجيل</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {registrations.map((reg) => (
-                  <tr key={reg.id} className="hover:bg-white/5 transition-colors">
-                    <td className="p-4 font-medium text-emerald-400">{reg.name}</td>
-                    <td className="p-4 text-blue-300">{reg.brandName}</td>
-                    <td className="p-4">{reg.location}</td>
-                    <td className="p-4">{reg.phone}</td>
-                    <td className="p-4">{reg.whatsapp}</td>
-                    <td className="p-4 font-medium text-orange-400">{reg.experienceYears}</td>
-                    <td className="p-4 text-sm text-gray-400">{new Date(reg.createdAt).toLocaleDateString('ar-EG')}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          
-          {registrations.length === 0 && (
-            <div className="p-12 text-center text-gray-500">
-              <FileText size={48} className="mx-auto mb-4 opacity-50" />
-              <p className="text-lg">لا يوجد أي مسجلين في هذه الفعالية حتى الآن</p>
-            </div>
-          )}
-        </div>
+        <RegistrationsClient initialRegistrations={registrations} />
       </div>
     </div>
   );
