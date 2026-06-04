@@ -15,7 +15,8 @@ import {
   LogOut,
   Calendar,
   MessageSquare,
-  Bell
+  Bell,
+  Info
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
