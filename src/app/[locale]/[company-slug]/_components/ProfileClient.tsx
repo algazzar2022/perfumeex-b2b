@@ -373,7 +373,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
             {/* Interactive Tabs */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-              className="flex overflow-x-auto gap-2 mb-8 bg-zinc-900/50 p-2 rounded-2xl border border-white/5 backdrop-blur-xl"
+              className="flex gap-1 md:gap-2 mb-8 bg-zinc-900/50 p-1.5 md:p-2 rounded-2xl border border-white/5 backdrop-blur-xl"
             >
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -382,14 +382,14 @@ export default function ProfileClient({ company, locale }: { company: any, local
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold capitalize whitespace-nowrap transition-all duration-300 ${
+                    className={`flex-1 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-1 md:px-6 py-2.5 md:py-3.5 rounded-xl text-[10px] sm:text-xs md:text-sm font-bold capitalize transition-all duration-300 ${
                       isActive 
                       ? "bg-emerald-500 text-black shadow-lg" 
                       : "text-zinc-400 hover:text-white hover:bg-white/5"
                     } ${tab.id === 'branches' ? 'hidden md:flex' : ''}`}
                   >
-                    <Icon className="w-4 h-4" />
-                    {tab.label}
+                    <Icon className="w-4 h-4 md:w-4 md:h-4 mb-0.5 md:mb-0" />
+                    <span className="whitespace-nowrap text-center">{tab.label}</span>
                   </button>
                 )
               })}
