@@ -180,6 +180,7 @@ export default function DashboardLayout({
                 <Link
                   key={item.name}
                   href={href}
+                  onClick={() => setSidebarOpen(false)}
                   className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all ${
                     active 
                     ? "bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20" 

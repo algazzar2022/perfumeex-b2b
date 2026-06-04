@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Search, MessageSquare, Trash2, Reply, Star, Info, Loader2, CheckCircle2 } from "lucide-react";
+import { Search, MessageSquare, Trash2, Reply, Star, Info, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
@@ -18,6 +18,7 @@ export default function MessagesPage() {
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [showListOnMobile, setShowListOnMobile] = useState(true);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -121,6 +122,7 @@ export default function MessagesPage() {
 
   const handleMessageClick = async (msg: any) => {
     setActiveMessage(msg.isSystem ? 1 : msg.otherPartyId);
+    setShowListOnMobile(false);
     
     if (msg.isSystem && !systemMessageRead) {
       setSystemMessageRead(true);
@@ -212,7 +214,7 @@ export default function MessagesPage() {
       <div className="flex-1 bg-zinc-950 border border-white/5 rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
         
         {/* Messages List (Sidebar) */}
-        <div className="w-full md:w-2/5 lg:w-1/3 border-b md:border-b-0 md:ltr:border-r md:rtl:border-l border-white/5 flex flex-col bg-zinc-950/50">
+        <div className={`w-full md:w-2/5 lg:w-1/3 border-b md:border-b-0 md:ltr:border-r md:rtl:border-l border-white/5 flex flex-col bg-zinc-950/50 ${showListOnMobile ? 'flex' : 'hidden md:flex'}`}>
           
           <div className="p-4 border-b border-white/5">
             <div className="relative">
@@ -260,17 +262,22 @@ export default function MessagesPage() {
         </div>
 
         {/* Message Content Area */}
-        <div className="flex-1 flex flex-col bg-zinc-950">
+        <div className={`flex-1 flex flex-col bg-zinc-950 ${!showListOnMobile ? 'flex' : 'hidden md:flex'}`}>
           {activeMsgData ? (
             <>
               {/* Message Header */}
               <div className="p-6 border-b border-white/5 flex flex-wrap justify-between items-start gap-4">
-                <div>
-                  <h2 className="text-xl font-bold text-white mb-2">{activeMsgData.subject}</h2>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-bold text-zinc-300">{activeMsgData.sender}</span>
-                    <span className="text-zinc-600">•</span>
-                    <span className="text-emerald-500">{activeMsgData.company}</span>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setShowListOnMobile(true)} className="md:hidden p-2 -ml-2 rtl:-mr-2 rtl:ml-0 text-zinc-400 hover:text-white rounded-lg">
+                    <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+                  </button>
+                  <div>
+                    <h2 className="text-xl font-bold text-white mb-2">{activeMsgData.subject}</h2>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="font-bold text-zinc-300">{activeMsgData.sender}</span>
+                      <span className="text-zinc-600">•</span>
+                      <span className="text-emerald-500">{activeMsgData.company}</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
