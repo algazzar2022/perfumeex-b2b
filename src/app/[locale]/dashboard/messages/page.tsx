@@ -188,7 +188,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="h-[85vh] min-h-[600px] max-w-7xl mx-auto flex flex-col pb-20 md:pb-0 relative">
+    <div className="h-[calc(100dvh-130px)] md:h-[85vh] md:min-h-[600px] max-w-7xl mx-auto flex flex-col relative">
       <AnimatePresence>
         {showToast && (
           <motion.div 
@@ -227,7 +227,7 @@ export default function MessagesPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto overscroll-contain">
             {sidebarMessages.map((msg) => (
               <button
                 key={msg.id}
@@ -291,7 +291,7 @@ export default function MessagesPage() {
               </div>
 
               {/* Message Details / Body (Chat Style) */}
-              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+              <div className="flex-1 overflow-y-auto overscroll-contain p-6 flex flex-col gap-6">
                 
                 {/* Contact Info Card */}
                 <div className="bg-zinc-900/40 rounded-2xl p-4 border border-white/5 flex flex-col sm:flex-row gap-6 justify-between items-center text-sm">
