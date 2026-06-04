@@ -341,7 +341,7 @@ export default function RegisterPage() {
                             value={formData.whatsapp}
                             onChange={e => setFormData({...formData, whatsapp: e.target.value})}
                             className="w-full bg-transparent ltr:pl-9 rtl:pr-9 py-2 text-white outline-none placeholder:text-zinc-600 text-sm" 
-                            placeholder={formData.phoneType === 'EG' ? "01021797885" : "+966500000000"}
+                            placeholder={formData.phoneType === 'EG' ? "01012345678" : "+966500000000"}
                           />
                         </div>
                       </div>
