@@ -136,7 +136,7 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
             <thead>
               <tr className="text-right text-gray-400 bg-[#1a1a1a]">
                 <th className="p-4 font-medium w-16">#</th>
-                <th className="p-4 font-medium min-w-[16rem] whitespace-nowrap">الاسم</th>
+                <th className="p-4 font-medium min-w-[12rem] whitespace-nowrap">الاسم</th>
                 <th className="p-4 font-medium min-w-[12rem]">البراند</th>
                 <th className="p-4 font-medium">المكان</th>
                 <th className="p-4 font-medium">رقم الهاتف</th>
