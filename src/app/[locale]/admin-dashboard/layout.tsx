@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import Sidebar from "./_components/Sidebar";
+import { prisma } from "@/lib/prisma";
 
 export const metadata = {
   title: "PerfumeEx | Admin Dashboard",
@@ -19,9 +20,13 @@ export default async function AdminLayout(props: {
     redirect(`/${locale}/admin-login`);
   }
 
+  const unreadSupportCount = await prisma.supportTicket.count({
+    where: { isRead: false }
+  });
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col md:flex-row">
-      <Sidebar />
+      <Sidebar unreadSupportCount={unreadSupportCount} />
       
       {/* Main Content */}
       <main className="flex-1 w-full md:w-auto p-4 md:p-8 overflow-y-auto">

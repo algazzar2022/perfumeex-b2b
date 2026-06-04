@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
-export default function Sidebar() {
+export default function Sidebar({ unreadSupportCount = 0 }: { unreadSupportCount?: number }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
   const locale = useLocale();
@@ -32,7 +32,7 @@ export default function Sidebar() {
     { name: 'المنتجات', href: `/${locale}/admin-dashboard/products`, icon: PackageSearch },
     { name: 'ايفنتات', href: `/${locale}/admin-dashboard/events`, icon: Calendar },
     { name: 'صفحة من نحن', href: `/${locale}/admin-dashboard/about`, icon: Info },
-    { name: 'الدعم الفني', href: `/${locale}/admin-dashboard/support`, icon: MessageSquare },
+    { name: 'الدعم الفني', href: `/${locale}/admin-dashboard/support`, icon: MessageSquare, badge: unreadSupportCount },
   ];
 
   return (
@@ -76,7 +76,12 @@ export default function Sidebar() {
                 `}
               >
                 <item.icon size={20} />
-                <span className="font-medium">{item.name}</span>
+                <span className="font-medium flex-1">{item.name}</span>
+                {item.badge !== undefined && (
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${item.badge > 0 ? 'bg-red-500 text-white' : 'bg-zinc-800 text-zinc-400'}`}>
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}
