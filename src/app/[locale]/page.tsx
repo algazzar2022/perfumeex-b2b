@@ -355,7 +355,7 @@ export default function Home() {
               </>
             ) : (
               <>
-                <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tight">
+                <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tight leading-[1.3] md:leading-[1.4]">
                   {t('cta.title')}
                 </h2>
                 <p className="text-xl text-zinc-400 mb-14 max-w-2xl mx-auto font-light leading-relaxed">
@@ -363,12 +363,12 @@ export default function Home() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row justify-center gap-6">
-                  <button onClick={() => router.push(`/${pathname.split('/')[1] || 'en'}/auth/register`)} className="px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:bg-emerald-50 hover:scale-[1.02] transition-all duration-300">
+                  <button onClick={() => router.push(`/${pathname.split('/')[1] || 'en'}/register`)} className="px-10 py-5 bg-white text-black font-bold text-lg rounded-full hover:bg-emerald-50 hover:scale-[1.02] transition-all duration-300">
                     {t('cta.register')}
                   </button>
-                  <button className="px-10 py-5 bg-transparent text-white font-bold text-lg rounded-full border border-white/20 hover:bg-white/10 transition-all duration-300">
+                  <a href="tel:01014228118" className="px-10 py-5 bg-transparent text-white font-bold text-lg rounded-full border border-white/20 hover:bg-white/10 transition-all duration-300 text-center">
                     {t('cta.contact')}
-                  </button>
+                  </a>
                 </div>
               </>
             )}
