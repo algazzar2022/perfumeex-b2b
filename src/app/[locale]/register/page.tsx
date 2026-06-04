@@ -24,8 +24,13 @@ export default function RegisterPage() {
     password: "",
     whatsapp: "",
     category: "readyPerfumes",
+    countryId: "EG",
+    countryAr: "مصر",
+    countryEn: "Egypt",
+    governorateId: "",
     governorateAr: "",
     governorateEn: "",
+    cityId: "",
     cityAr: "",
     cityEn: "",
     logo: "",
@@ -54,29 +59,42 @@ export default function RegisterPage() {
     reader.readAsDataURL(file);
   };
 
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const cId = e.target.value;
+    const cObj = ARAB_COUNTRIES.find(c => c.id === cId);
+    setFormData(prev => ({
+      ...prev,
+      countryId: cId,
+      countryAr: cObj ? cObj.nameAr : "",
+      countryEn: cObj ? cObj.nameEn : "",
+      governorateId: "", governorateAr: "", governorateEn: "",
+      cityId: "", cityAr: "", cityEn: ""
+    }));
+  };
+
   const handleGovChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const govAr = e.target.value;
-    const govObj = GOVERNORATES.find(g => g.ar === govAr);
+    const govId = e.target.value;
+    const govList = GOVERNORATES[formData.countryId] || [];
+    const govObj = govList.find(g => g.id === govId);
     setFormData(prev => ({
       ...prev, 
-      governorateAr: govAr,
-      governorateEn: govObj ? govObj.en : "",
-      cityAr: "",
-      cityEn: ""
+      governorateId: govId,
+      governorateAr: govObj ? govObj.nameAr : "",
+      governorateEn: govObj ? govObj.nameEn : "",
+      cityId: "", cityAr: "", cityEn: ""
     }));
   };
 
   const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const cityAr = e.target.value;
-    const govObj = GOVERNORATES.find(g => g.ar === formData.governorateAr);
-    if (govObj) {
-      const cityObj = CITIES[govObj.en as keyof typeof CITIES]?.find(c => c.ar === cityAr);
-      setFormData(prev => ({
-        ...prev,
-        cityAr: cityAr,
-        cityEn: cityObj ? cityObj.en : ""
-      }));
-    }
+    const cId = e.target.value;
+    const cityList = CITIES[formData.governorateId] || [];
+    const cityObj = cityList.find(c => c.id === cId);
+    setFormData(prev => ({
+      ...prev,
+      cityId: cId,
+      cityAr: cityObj ? cityObj.nameAr : "",
+      cityEn: cityObj ? cityObj.nameEn : ""
+    }));
   };
 
   const nextStep = () => {
@@ -262,17 +280,32 @@ export default function RegisterPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "الدولة" : "Country"}</label>
+                      <select 
+                        value={formData.countryId}
+                        onChange={handleCountryChange}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none"
+                      >
+                        <option value="">{isAr ? "اختر الدولة" : "Select Country"}</option>
+                        {ARAB_COUNTRIES.map(c => (
+                          <option key={c.id} value={c.id}>{isAr ? c.nameAr : c.nameEn}</option>
+                        ))}
+                      </select>
+                    </div>
+
                     <div>
                       <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "المحافظة" : "Governorate"}</label>
                       <select 
-                        value={formData.governorateAr}
+                        value={formData.governorateId}
                         onChange={handleGovChange}
-                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none"
+                        disabled={!formData.countryId}
+                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none disabled:opacity-50"
                       >
                         <option value="">{isAr ? "اختر المحافظة" : "Select Governorate"}</option>
-                        {GOVERNORATES.map(g => (
-                          <option key={g.en} value={g.ar}>{isAr ? g.ar : g.en}</option>
+                        {(GOVERNORATES[formData.countryId] || []).map(g => (
+                          <option key={g.id} value={g.id}>{isAr ? g.nameAr : g.nameEn}</option>
                         ))}
                       </select>
                     </div>
@@ -280,14 +313,14 @@ export default function RegisterPage() {
                     <div>
                       <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "المدينة" : "City"}</label>
                       <select 
-                        value={formData.cityAr}
+                        value={formData.cityId}
                         onChange={handleCityChange}
-                        disabled={!formData.governorateAr}
+                        disabled={!formData.governorateId}
                         className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none disabled:opacity-50"
                       >
                         <option value="">{isAr ? "اختر المدينة" : "Select City"}</option>
-                        {formData.governorateAr && CITIES[GOVERNORATES.find(g => g.ar === formData.governorateAr)?.en as keyof typeof CITIES]?.map(c => (
-                          <option key={c.en} value={c.ar}>{isAr ? c.ar : c.en}</option>
+                        {(CITIES[formData.governorateId] || []).map(c => (
+                          <option key={c.id} value={c.id}>{isAr ? c.nameAr : c.nameEn}</option>
                         ))}
                       </select>
                     </div>
