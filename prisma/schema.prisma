@@ -177,7 +177,7 @@ model Sponsor {
   id          String   @id @default(cuid())
   nameAr      String
   nameEn      String
-  logo        String
+  logo        String   @db.LongText
   url         String?
   order       Int      @default(0)
   isActive    Boolean  @default(true)

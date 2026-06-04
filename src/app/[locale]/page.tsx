@@ -235,17 +235,19 @@ export default function Home() {
             >
               {[...Array(2)].map((_, arrayIndex) => (
                 <div key={arrayIndex} className="flex items-center gap-12 md:gap-20 px-6 md:px-10">
-                  {dbSponsors.map((sponsor, i) => (
-                    <div key={`${arrayIndex}-${i}`} className="w-24 md:w-32 h-16 relative shrink-0">
-                      <Image
-                        src={sponsor.logo}
-                        alt={`Sponsor ${sponsor.nameEn}`}
-                        fill
-                        unoptimized
-                        className="object-contain"
-                      />
-                    </div>
-                  ))}
+                  {[...Array(15)].flatMap((_, repeatIndex) => 
+                    dbSponsors.map((sponsor, i) => (
+                      <div key={`${arrayIndex}-${repeatIndex}-${i}`} className="w-24 md:w-32 h-16 relative shrink-0">
+                        <Image
+                          src={sponsor.logo}
+                          alt={`Sponsor ${sponsor.nameEn}`}
+                          fill
+                          unoptimized
+                          className="object-contain"
+                        />
+                      </div>
+                    ))
+                  )}
                 </div>
               ))}
             </motion.div>
