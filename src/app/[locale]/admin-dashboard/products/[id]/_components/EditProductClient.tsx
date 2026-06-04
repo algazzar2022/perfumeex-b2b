@@ -51,8 +51,8 @@ export default function EditProductClient({ initialProduct, companies }: { initi
           nameEn: editingProduct.nameEn,
           descriptionAr: editingProduct.descriptionAr,
           descriptionEn: editingProduct.descriptionEn,
-          price: editingProduct.price,
-          saleType: editingProduct.saleType,
+          price: editingProduct.price ? parseFloat(editingProduct.price) : null,
+          salesType: editingProduct.salesType || editingProduct.saleType,
           companyId: editingProduct.companyId,
           image: editingProduct.image,
           order: editingProduct.order,
@@ -165,7 +165,7 @@ export default function EditProductClient({ initialProduct, companies }: { initi
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-2">نوع البيع</label>
-            <select value={editingProduct.saleType || 'RETAIL'} onChange={e => setEditingProduct({...editingProduct, saleType: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 focus:border-emerald-500 text-white">
+            <select value={editingProduct.salesType || editingProduct.saleType || 'RETAIL'} onChange={e => setEditingProduct({...editingProduct, salesType: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 focus:border-emerald-500 text-white">
               <option value="RETAIL">تجزئة</option>
               <option value="WHOLESALE">جملة</option>
               <option value="BOTH">جملة وتجزئة</option>

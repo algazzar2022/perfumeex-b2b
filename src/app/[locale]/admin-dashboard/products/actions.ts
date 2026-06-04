@@ -42,7 +42,7 @@ export async function updateProduct(
     nameEn?: string;
     descriptionAr?: string;
     descriptionEn?: string;
-    price?: number;
+    price?: number | null;
     image?: string;
     stockStatus?: string;
     salesType?: string;
@@ -50,6 +50,7 @@ export async function updateProduct(
     categoryId?: string;
     isFeatured?: boolean;
     order?: number;
+    status?: ProductStatus;
   }
 ) {
   await prisma.product.update({
