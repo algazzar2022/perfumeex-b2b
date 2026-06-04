@@ -146,9 +146,12 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {filteredRegistrations.map((reg) => (
+              {filteredRegistrations.map((reg, index) => (
                 <tr key={reg.id} className="hover:bg-white/5 transition-colors">
-                  <td className="p-4 font-medium text-emerald-400">{reg.name}</td>
+                  <td className="p-4 font-medium text-emerald-400">
+                    <span className="text-zinc-500 ml-2 font-mono text-sm">{index + 1}-</span>
+                    {reg.name}
+                  </td>
                   <td className="p-4 text-blue-300">{reg.brandName}</td>
                   <td className="p-4">{reg.location}</td>
                   <td className="p-4" dir="ltr">{reg.phone}</td>
