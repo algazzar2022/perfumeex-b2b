@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { PackageSearch, Search, Filter, CheckCircle, XCircle, Trash2, Edit2, Loader2, Star, Plus, UploadCloud } from "lucide-react";
-import { updateProductStatus, deleteProduct, updateProduct, createProduct } from "../actions";
 import Image from "next/image";
+import Link from "next/link";
+import { PackageSearch, Search, CheckCircle, XCircle, Trash2, Edit2, Loader2, Plus, UploadCloud } from "lucide-react";
+import { updateProductStatus, deleteProduct, updateProduct, createProduct } from "../actions";
 
 export default function ProductsClient({ initialProducts, companies = [] }: { initialProducts: any[], companies?: any[] }) {
   const [products, setProducts] = useState(initialProducts);
@@ -12,6 +13,7 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [companySearchQuery, setCompanySearchQuery] = useState("");
   const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
+  const [navigatingId, setNavigatingId] = useState<string | null>(null);
   
   // Custom Toast State
   const [toastMessage, setToastMessage] = useState<{message: string, type: 'success' | 'error'} | null>(null);
@@ -84,8 +86,7 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
 
     startTransition(async () => {
       try {
-        if (editingProduct.id) {
-          await updateProduct(editingProduct.id, {
+        const newProduct = await createProduct({
             nameAr: editingProduct.nameAr,
             nameEn: editingProduct.nameEn,
             descriptionAr: editingProduct.descriptionAr,
@@ -97,29 +98,12 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
             companyId: editingProduct.companyId,
             isFeatured: editingProduct.isFeatured,
             order: editingProduct.order
-          });
-          setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...editingProduct, company: companies.find(c => c.id === editingProduct.companyId) || p.company } : p));
-          showToast("تم تحديث المنتج بنجاح", 'success');
-        } else {
-          const newProduct = await createProduct({
-            nameAr: editingProduct.nameAr,
-            nameEn: editingProduct.nameEn,
-            descriptionAr: editingProduct.descriptionAr,
-            descriptionEn: editingProduct.descriptionEn,
-            price: editingProduct.price,
-            image: editingProduct.image,
-            stockStatus: editingProduct.stockStatus,
-            salesType: editingProduct.salesType,
-            companyId: editingProduct.companyId,
-            isFeatured: editingProduct.isFeatured,
-            order: editingProduct.order
-          });
-          setProducts([newProduct, ...products]);
-          showToast("تم إضافة المنتج بنجاح", 'success');
-        }
+        });
+        setProducts([newProduct, ...products]);
+        showToast("تم إضافة المنتج بنجاح", 'success');
         setEditingProduct(null);
       } catch (error) {
-        showToast("حدث خطأ أثناء التحديث", 'error');
+        showToast("حدث خطأ أثناء الإضافة", 'error');
       }
     });
   };
@@ -224,9 +208,14 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
                         </button>
                       )}
                       <div className="w-px h-6 bg-white/10 mx-1"></div>
-                      <button onClick={() => setEditingProduct({...product})} title="تعديل بيانات المنتج" className="p-2 text-blue-400 hover:bg-blue-400/20 rounded-lg transition-colors">
-                        <Edit2 size={18} />
-                      </button>
+                      <Link 
+                        href={`/ar/admin-dashboard/products/${product.id}`}
+                        onClick={() => setNavigatingId(product.id)}
+                        title="تعديل بيانات المنتج" 
+                        className="p-2 text-blue-400 hover:bg-blue-400/20 rounded-lg transition-colors flex items-center justify-center w-[34px] h-[34px]"
+                      >
+                        {navigatingId === product.id ? <Loader2 size={18} className="animate-spin" /> : <Edit2 size={18} />}
+                      </Link>
                       <button onClick={() => handleDelete(product.id)} disabled={isPending} title="حذف" className="p-2 text-red-400 hover:bg-red-400/20 rounded-lg transition-colors">
                         <Trash2 size={18} />
                       </button>
@@ -246,7 +235,7 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
         </div>
       </div>
 
-      {/* Edit Product Modal */}
+      {/* Add Product Modal */}
       {editingProduct && (
         <div 
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
@@ -256,7 +245,7 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
             className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-xl font-bold mb-6">{editingProduct.id ? `تعديل بيانات: ${editingProduct.nameAr}` : 'إضافة منتج جديد'}</h3>
+            <h3 className="text-xl font-bold mb-6">{'إضافة منتج جديد'}</h3>
             <form onSubmit={handleSaveProduct} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
               <div className="md:col-span-2 relative">

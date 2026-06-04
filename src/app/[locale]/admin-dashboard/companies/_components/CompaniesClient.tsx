@@ -9,6 +9,7 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
   const [companies, setCompanies] = useState(initialCompanies);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState('');
+  const [navigatingId, setNavigatingId] = useState<string | null>(null);
   
   // Modals state
   const [editingCompany, setEditingCompany] = useState<any | null>(null);
@@ -231,8 +232,13 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                     <button onClick={() => setPasswordModal(company)} title="تغيير كلمة المرور" className="p-2 text-amber-400 hover:bg-amber-400/20 rounded-lg transition-colors">
                       <Key size={18} />
                     </button>
-                    <Link href={`/ar/admin-dashboard/companies/${company.id}`} title="تعديل بيانات الشركة والفروع" className="p-2 text-blue-400 hover:bg-blue-400/20 rounded-lg transition-colors block">
-                      <Edit2 size={18} />
+                    <Link 
+                      href={`/ar/admin-dashboard/companies/${company.id}`} 
+                      onClick={() => setNavigatingId(company.id)} 
+                      title="تعديل بيانات الشركة والفروع" 
+                      className="p-2 text-blue-400 hover:bg-blue-400/20 rounded-lg transition-colors flex items-center justify-center w-[34px] h-[34px]"
+                    >
+                      {navigatingId === company.id ? <Loader2 size={18} className="animate-spin" /> : <Edit2 size={18} />}
                     </Link>
                     <button onClick={() => handleDelete(company.id, company.userId)} disabled={isPending} title="حذف نهائي" className="p-2 text-gray-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors">
                       <Trash2 size={18} />
