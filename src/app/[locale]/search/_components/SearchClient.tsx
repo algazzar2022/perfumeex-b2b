@@ -79,16 +79,16 @@ export default function SearchClient({
           
           {/* Sidebar Filters */}
           <div className="w-full lg:w-1/4">
-            <div className="bg-zinc-950 border border-white/5 rounded-3xl p-6 sticky top-28">
-              <div className="flex items-center gap-2 mb-6 text-white font-bold text-lg">
-                <SlidersHorizontal className="w-5 h-5 text-emerald-500" />
+            <div className="bg-zinc-950/40 lg:bg-zinc-950 border border-white/5 rounded-3xl p-4 lg:p-6 lg:sticky lg:top-28">
+              <div className="flex items-center gap-2 mb-4 lg:mb-6 text-white font-bold text-base lg:text-lg">
+                <SlidersHorizontal className="w-4 h-4 lg:w-5 lg:h-5 text-emerald-500" />
                 {isAr ? "الفلاتر" : "Filters"}
               </div>
 
               {/* Category Filter */}
-              <div className="mb-8">
-                <h3 className="text-zinc-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "التصنيف" : "Category"}</h3>
-                <div className="space-y-3">
+              <div className="mb-6 lg:mb-8">
+                <h3 className="text-zinc-400 text-xs lg:text-sm font-bold uppercase tracking-wider mb-3 lg:mb-4">{isAr ? "التصنيف" : "Category"}</h3>
+                <div className="flex flex-row overflow-x-auto lg:flex-col gap-2 lg:gap-3 pb-2 lg:pb-0 [&::-webkit-scrollbar]:hidden">
                   {[
                     "perfumeClones", 
                     "readyPerfumes", 
@@ -101,11 +101,11 @@ export default function SearchClient({
                   ].map((catId) => {
                     const isActive = searchParams.get("category") === catId;
                     return (
-                      <label key={catId} onClick={() => applyFilter("category", catId)} className="flex items-center gap-3 group cursor-pointer">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
+                      <label key={catId} onClick={() => applyFilter("category", catId)} className={`flex items-center gap-2 lg:gap-3 group cursor-pointer shrink-0 border lg:border-transparent px-4 py-2 lg:px-0 lg:py-0 rounded-full lg:rounded-none transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/30 lg:bg-transparent' : 'bg-white/5 border-white/10 hover:border-emerald-500/30 lg:bg-transparent'}`}>
+                        <div className={`hidden lg:flex w-5 h-5 rounded border items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
                           {isActive && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
                         </div>
-                        <span className={`text-sm transition-colors ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>
+                        <span className={`text-xs lg:text-sm transition-colors whitespace-nowrap ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>
                           {t(catId as any)}
                         </span>
                       </label>
@@ -115,20 +115,20 @@ export default function SearchClient({
               </div>
 
               {/* Location Filter */}
-              <div className="mb-8">
-                <h3 className="text-zinc-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "المحافظة" : "Governorate"}</h3>
-                <div className="space-y-3 h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-800">
+              <div className="mb-2 lg:mb-8">
+                <h3 className="text-zinc-400 text-xs lg:text-sm font-bold uppercase tracking-wider mb-3 lg:mb-4">{isAr ? "المحافظة" : "Governorate"}</h3>
+                <div className="flex flex-row overflow-x-auto lg:flex-col gap-2 lg:gap-3 lg:h-64 lg:overflow-y-auto pb-2 lg:pb-0 lg:pr-2 scrollbar-thin scrollbar-thumb-zinc-800 [&::-webkit-scrollbar]:hidden lg:[&::-webkit-scrollbar]:block">
                   {(isAr 
                     ? ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الشرقية", "المنوفية", "القليوبية", "البحيرة", "الغربية", "بور سعيد", "دمياط", "الإسماعيلية", "السويس", "كفر الشيخ", "الفيوم", "بني سويف", "مطروح", "شمال سيناء", "جنوب سيناء", "المنيا", "أسيوط", "سوهاج", "قنا", "البحر الأحمر", "الأقصر", "أسوان", "الوادي الجديد"]
                     : ["Cairo", "Giza", "Alexandria", "Dakahlia", "Red Sea", "Beheira", "Fayoum", "Gharbia", "Ismailia", "Monufia", "Minya", "Qalyubia", "New Valley", "Suez", "Aswan", "Assiut", "Beni Suef", "Port Said", "Damietta", "Sharqia", "South Sinai", "Kafr El Sheikh", "Matrouh", "Luxor", "Qena", "North Sinai", "Sohag"]
                   ).map((loc) => {
                     const isActive = searchParams.get("location") === loc;
                     return (
-                      <label key={loc} onClick={() => applyFilter("location", loc)} className="flex items-center gap-3 group cursor-pointer">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
+                      <label key={loc} onClick={() => applyFilter("location", loc)} className={`flex items-center gap-2 lg:gap-3 group cursor-pointer shrink-0 border lg:border-transparent px-4 py-2 lg:px-0 lg:py-0 rounded-full lg:rounded-none transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/30 lg:bg-transparent' : 'bg-white/5 border-white/10 hover:border-emerald-500/30 lg:bg-transparent'}`}>
+                        <div className={`hidden lg:flex w-5 h-5 rounded border items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
                           {isActive && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
                         </div>
-                        <span className={`text-sm transition-colors ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>{loc}</span>
+                        <span className={`text-xs lg:text-sm transition-colors whitespace-nowrap ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>{loc}</span>
                       </label>
                     );
                   })}
