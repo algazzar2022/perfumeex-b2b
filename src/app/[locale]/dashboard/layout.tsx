@@ -16,7 +16,8 @@ import {
   Menu,
   X,
   ExternalLink,
-  Loader2
+  Loader2,
+  Bell
 } from "lucide-react";
 import LanguageSwitcher from "../../../components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
@@ -32,6 +33,7 @@ export default function DashboardLayout({
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [slug, setSlug] = useState<string | null>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("Dashboard");
@@ -68,6 +70,14 @@ export default function DashboardLayout({
             setUnreadMessages(count + (isSystemRead ? 0 : 1));
           })
           .catch(console.error);
+
+        fetch('/api/company/notifications/unread')
+          .then(res => {
+            if (res.ok) return res.json();
+            return { count: 0 };
+          })
+          .then((data: any) => setUnreadNotifications(data.count))
+          .catch(console.error);
       };
 
       fetchUnread();
@@ -98,6 +108,8 @@ export default function DashboardLayout({
     { name: t("sidebar.products"), href: "/dashboard/products", icon: <Package className="w-5 h-5" /> },
     { name: t("sidebar.mediaGallery"), href: "/dashboard/gallery", icon: <ImageIcon className="w-5 h-5" /> },
     { name: t("sidebar.messages"), href: "/dashboard/messages", icon: <MessageSquare className="w-5 h-5" />, badge: unreadMessages > 0 ? unreadMessages : null },
+    { name: locale === 'ar' ? 'الإشعارات' : 'Notifications', href: "/dashboard/notifications", icon: <Bell className="w-5 h-5" />, badge: unreadNotifications > 0 ? unreadNotifications : null },
+    { name: t("sidebar.settings"), href: "/dashboard/settings", icon: <Settings className="w-5 h-5" /> },
   ];
 
   if (slug) {

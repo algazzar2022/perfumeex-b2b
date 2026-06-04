@@ -78,6 +78,8 @@ model Company {
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
   
+  notifications    Notification[]
+
   order            Int       @default(0)
 }
 
@@ -281,4 +283,18 @@ model SupportTicket {
   message   String   @db.LongText
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  titleAr     String
+  titleEn     String
+  messageAr   String   @db.LongText
+  messageEn   String   @db.LongText
+  
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
 }
