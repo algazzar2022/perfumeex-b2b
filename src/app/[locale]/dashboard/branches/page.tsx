@@ -390,7 +390,7 @@ export default function BranchesPage() {
           ) : (
             branches.map((branch) => (
               <div key={branch.id} className="bg-zinc-950 border border-white/5 p-6 rounded-3xl hover:border-white/10 transition-colors relative group">
-                <div className="absolute top-6 ltr:right-6 rtl:left-6 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-6 ltr:right-6 rtl:left-6 flex items-center gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   <button onClick={() => handleOpenForm(branch)} className="p-2 bg-white/5 hover:bg-emerald-500/20 hover:text-emerald-400 rounded-lg text-zinc-400 transition-colors">
                     <Edit2 className="w-4 h-4" />
                   </button>

@@ -285,7 +285,7 @@ export default function Home() {
                   whileHover={{ y: -5 }}
                   className="group relative p-10 rounded-[2rem] bg-zinc-950 border border-white/5 hover:bg-zinc-900 transition-colors duration-500 cursor-pointer overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[50px] opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-700" />
                   
                   <div className="relative z-10">
                     <div className="w-16 h-16 rounded-2xl bg-black border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition-all duration-500 mb-8">
@@ -299,7 +299,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="absolute bottom-10 ltr:right-10 rtl:left-10 opacity-0 group-hover:opacity-100 ltr:group-hover:translate-x-2 rtl:group-hover:-translate-x-2 transition-all duration-500 text-emerald-500">
+                  <div className="absolute bottom-10 ltr:right-10 rtl:left-10 opacity-100 md:opacity-0 md:group-hover:opacity-100 ltr:md:group-hover:translate-x-2 rtl:md:group-hover:-translate-x-2 transition-all duration-500 text-emerald-500">
                     <ArrowRight className="w-6 h-6 rtl:rotate-180" />
                   </div>
                 </motion.div>

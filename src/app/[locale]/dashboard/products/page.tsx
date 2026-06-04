@@ -326,7 +326,7 @@ export default function ProductsManagementPage() {
                   )}
                   
                   {/* Quick Actions Overlay */}
-                  <div className="absolute top-2 ltr:right-2 rtl:left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute top-2 ltr:right-2 rtl:left-2 flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                     <button onClick={() => handleOpenForm(product)} className="w-8 h-8 rounded-lg bg-black/60 backdrop-blur-md flex items-center justify-center text-white hover:bg-emerald-500 hover:text-black transition-colors">
                       <Edit2 className="w-4 h-4" />
                     </button>
