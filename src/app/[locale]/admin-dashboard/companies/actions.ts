@@ -162,3 +162,45 @@ export async function createCompany(data: any) {
   revalidatePath('/[locale]/companies', 'page');
   return newCompany;
 }
+export async function createBranch(companyId: string, data: any) {
+  await prisma.branch.create({
+    data: {
+      ...data,
+      companyId
+    }
+  });
+  revalidatePath('/[locale]/admin-dashboard/companies/[id]', 'page');
+}
+
+export async function updateBranch(branchId: string, data: any) {
+  await prisma.branch.update({
+    where: { id: branchId },
+    data
+  });
+  revalidatePath('/[locale]/admin-dashboard/companies/[id]', 'page');
+}
+
+export async function deleteBranch(branchId: string) {
+  await prisma.branch.delete({
+    where: { id: branchId }
+  });
+  revalidatePath('/[locale]/admin-dashboard/companies/[id]', 'page');
+}
+
+export async function addGalleryImage(companyId: string, url: string, type: 'IMAGE' | 'VIDEO' = 'IMAGE') {
+  await prisma.gallery.create({
+    data: {
+      companyId,
+      url,
+      type
+    }
+  });
+  revalidatePath('/[locale]/admin-dashboard/companies/[id]', 'page');
+}
+
+export async function deleteGalleryImage(imageId: string) {
+  await prisma.gallery.delete({
+    where: { id: imageId }
+  });
+  revalidatePath('/[locale]/admin-dashboard/companies/[id]', 'page');
+}

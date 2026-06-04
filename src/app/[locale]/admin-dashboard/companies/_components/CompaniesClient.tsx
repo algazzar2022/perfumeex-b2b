@@ -3,6 +3,7 @@
 import { useState, useTransition, useEffect } from 'react';
 import { updateCompanyStatus, deleteCompany, updateCompanyPassword, updateCompany, createCompany } from '../actions';
 import { Edit2, Trash2, CheckCircle, XCircle, Key, Loader2, Search, Filter, UploadCloud, Plus } from 'lucide-react';
+import Link from 'next/link';
 
 export default function CompaniesClient({ initialCompanies }: { initialCompanies: any[] }) {
   const [companies, setCompanies] = useState(initialCompanies);
@@ -230,9 +231,9 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                     <button onClick={() => setPasswordModal(company)} title="تغيير كلمة المرور" className="p-2 text-amber-400 hover:bg-amber-400/20 rounded-lg transition-colors">
                       <Key size={18} />
                     </button>
-                    <button onClick={() => setEditingCompany({...company})} title="تعديل البيانات" className="p-2 text-blue-400 hover:bg-blue-400/20 rounded-lg transition-colors">
+                    <Link href={`/ar/admin-dashboard/companies/${company.id}`} title="تعديل بيانات الشركة والفروع" className="p-2 text-blue-400 hover:bg-blue-400/20 rounded-lg transition-colors block">
                       <Edit2 size={18} />
-                    </button>
+                    </Link>
                     <button onClick={() => handleDelete(company.id, company.userId)} disabled={isPending} title="حذف نهائي" className="p-2 text-gray-400 hover:bg-red-500 hover:text-white rounded-lg transition-colors">
                       <Trash2 size={18} />
                     </button>
