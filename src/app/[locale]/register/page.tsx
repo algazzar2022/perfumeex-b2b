@@ -284,7 +284,7 @@ export default function RegisterPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "التصنيف (يمكنك اختيار أكثر من واحد)" : "Category (Multiple allowed)"}</label>
-                      <div className="flex overflow-x-auto gap-2 pb-2 no-scrollbar">
+                      <div className="flex flex-wrap gap-2">
                         {[
                           { id: "perfumeClones", ar: "عطور محاكاه", en: "Perfume Clones" },
                           { id: "readyPerfumes", ar: "عطور جاهزة", en: "Ready Perfumes" },
@@ -308,7 +308,7 @@ export default function RegisterPage() {
                                     : [...prev.categories, cat.id]
                                 }))
                               }}
-                              className={`px-3 py-1.5 rounded-full text-xs shrink-0 font-bold border transition-colors ${isSelected ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-zinc-900 border-white/10 text-zinc-400 hover:border-white/20 hover:text-white'}`}
+                              className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-colors ${isSelected ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-zinc-900 border-white/10 text-zinc-400 hover:border-white/20 hover:text-white'}`}
                             >
                               {isAr ? cat.ar : cat.en}
                             </button>
@@ -319,11 +319,11 @@ export default function RegisterPage() {
 
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "رقم الواتساب" : "WhatsApp Number"}</label>
-                      <div className="flex flex-col sm:flex-row gap-3">
+                      <div className="flex bg-zinc-900 border border-white/10 rounded-xl focus-within:border-emerald-500 transition-colors overflow-hidden">
                         <select
                           value={formData.phoneType}
                           onChange={e => setFormData({...formData, phoneType: e.target.value, whatsapp: ""})}
-                          className="bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none w-full sm:w-48 shrink-0"
+                          className="bg-zinc-950 text-white px-3 sm:px-4 py-3 border-r border-white/10 outline-none rtl:border-l rtl:border-r-0 cursor-pointer text-sm"
                         >
                           <option value="EG">🇪🇬 {isAr ? "مصر" : "Egypt"}</option>
                           <option value="OTHER">🌍 {isAr ? "دول أخرى" : "Other"}</option>
@@ -334,7 +334,7 @@ export default function RegisterPage() {
                             type="text" dir="ltr"
                             value={formData.whatsapp}
                             onChange={e => setFormData({...formData, whatsapp: e.target.value})}
-                            className="w-full bg-zinc-900 border border-white/10 rounded-xl ltr:pl-10 rtl:pr-10 ltr:pr-4 rtl:pl-4 py-3 text-white focus:border-emerald-500 outline-none" 
+                            className="w-full bg-transparent ltr:pl-10 rtl:pr-10 ltr:pr-4 rtl:pl-4 py-3 text-white outline-none" 
                             placeholder={formData.phoneType === 'EG' ? "01021797885" : "+966500000000"}
                           />
                         </div>
