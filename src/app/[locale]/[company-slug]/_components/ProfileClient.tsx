@@ -6,7 +6,7 @@ import {
   MapPin, Star, ShieldCheck, Globe, Mail, Phone, 
   ExternalLink, Download, FileText, Package, 
   Store, Building, Calendar, Image as ImageIcon,
-  CheckCircle2, Box, ChevronRight, X, Loader2
+  CheckCircle2, Box, ChevronRight, X, Loader2, ArrowLeft
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -426,8 +426,68 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 {/* PRODUCTS */}
                 {activeTab === 'products' && (
                   <motion.div key="products" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                    
+                    {/* Mobile Inline Product Details */}
+                    {selectedProduct && (
+                      <div className="md:hidden block mb-8 bg-zinc-900/50 rounded-3xl overflow-hidden border border-white/5">
+                        <button 
+                          onClick={() => setSelectedProduct(null)} 
+                          className="w-full p-4 flex items-center justify-center gap-2 text-emerald-400 bg-emerald-500/10 border-b border-emerald-500/20 font-bold hover:bg-emerald-500/20 transition-colors"
+                        >
+                          <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+                          {isAr ? "العودة لقائمة المنتجات" : "Back to Products"}
+                        </button>
+                        
+                        <div className="w-full relative bg-white h-[300px]">
+                          <Image 
+                            src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
+                            alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
+                            fill 
+                            className="object-contain" 
+                          />
+                        </div>
+
+                        <div className="flex flex-col p-5">
+                            <div className="mb-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit">
+                              <Box className="w-3 h-3" />
+                              {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
+                            </div>
+                            
+                            <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+                              {isAr ? selectedProduct.nameAr : selectedProduct.nameEn}
+                            </h3>
+                            
+                            <div className="text-emerald-500 font-extrabold text-lg mb-4 border-b border-white/10 pb-4">
+                              {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
+                            </div>
+                            
+                            <div className="mb-6">
+                              <h4 className="text-emerald-400 uppercase tracking-wider text-xs font-bold mb-3">
+                                {isAr ? "وصف المنتج" : "Product Description"}
+                              </h4>
+                              <p className="text-white text-base leading-relaxed whitespace-pre-wrap font-medium">
+                                {isAr ? selectedProduct.descriptionAr : selectedProduct.descriptionEn}
+                              </p>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 gap-2 pt-4 border-t border-white/10">
+                              <button onClick={() => { handleContactClick(); }} className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all flex items-center justify-center gap-2 text-sm">
+                                <Mail className="w-4 h-4" />
+                                {isAr ? "مراسلة الشركة لطلب المنتج" : "Message Supplier to Order"}
+                              </button>
+                              {company.whatsapp && (
+                                <a href={`https://wa.me/${company.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(isAr ? `مرحباً، أود الاستفسار عن المنتج: ${selectedProduct.nameAr}` : `Hello, I'd like to inquire about the product: ${selectedProduct.nameEn}`)}`} target="_blank" rel="noreferrer" className="w-full py-3 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#25D366] font-bold rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+                                  <Phone className="w-4 h-4" />
+                                  {isAr ? "تواصل عبر واتساب" : "Contact via WhatsApp"}
+                                </a>
+                              )}
+                            </div>
+                        </div>
+                      </div>
+                    )}
+
                     {company.products && company.products.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                      <div className={selectedProduct ? "hidden md:grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6" : "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"}>
                         {company.products.map((product: any, idx: number) => (
                           <motion.div 
                             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: idx * 0.05 }}
@@ -668,12 +728,12 @@ export default function ProfileClient({ company, locale }: { company: any, local
         )}
       </AnimatePresence>
 
-      {/* Product Details Modal */}
+      {/* Product Details Modal (Desktop Only) */}
       <AnimatePresence>
         {selectedProduct && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-pointer"
+            className="hidden md:flex fixed inset-0 z-[100] items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-pointer"
             onClick={() => setSelectedProduct(null)}
           >
             <motion.div 
