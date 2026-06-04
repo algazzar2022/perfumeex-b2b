@@ -230,7 +230,7 @@ export default function Home() {
           <div className="flex w-full overflow-hidden">
             <motion.div 
               animate={{ x: pathname.includes('/ar') ? ["0%", "50%"] : ["0%", "-50%"] }}
-              transition={{ repeat: Infinity, ease: "linear", duration: Math.max((dbSponsors.length || 1) * 15 * 5, 60) }}
+              transition={{ repeat: Infinity, ease: "linear", duration: Math.max((dbSponsors.length || 1) * 15 * 25, 200) }}
               className="flex items-center opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700 w-max"
             >
               {[...Array(2)].map((_, arrayIndex) => (
