@@ -21,10 +21,15 @@ export default async function CompanyNotificationsPage({ params }: { params: Pro
     redirect(`/${locale}/submit-company`);
   }
 
-  const notifications = await prisma.notification.findMany({
-    where: { companyId: user.company.id },
-    orderBy: { createdAt: 'desc' }
-  });
+  let notifications: any[] = [];
+  try {
+    notifications = await prisma.notification.findMany({
+      where: { companyId: user.company.id },
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+  }
 
   return (
     <div>

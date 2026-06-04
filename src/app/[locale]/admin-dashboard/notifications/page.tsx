@@ -13,15 +13,20 @@ export default async function AdminNotificationsPage({ params }: { params: Promi
   }
 
   // Get distinct notifications (group by to get history)
-  const history = await prisma.notification.groupBy({
-    by: ['titleAr', 'titleEn', 'messageAr', 'messageEn', 'createdAt'],
-    _count: {
-      id: true
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  });
+  let history: any[] = [];
+  try {
+    history = await prisma.notification.groupBy({
+      by: ['titleAr', 'titleEn', 'messageAr', 'messageEn', 'createdAt'],
+      _count: {
+        id: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching notifications history:', error);
+  }
 
   return (
     <div>

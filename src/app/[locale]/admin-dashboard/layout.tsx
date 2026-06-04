@@ -20,9 +20,14 @@ export default async function AdminLayout(props: {
     redirect(`/${locale}/admin-login`);
   }
 
-  const unreadSupportCount = await prisma.supportTicket.count({
-    where: { isRead: false }
-  });
+  let unreadSupportCount = 0;
+  try {
+    unreadSupportCount = await prisma.supportTicket.count({
+      where: { isRead: false }
+    });
+  } catch (error) {
+    console.error('Error fetching support count:', error);
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col md:flex-row">
