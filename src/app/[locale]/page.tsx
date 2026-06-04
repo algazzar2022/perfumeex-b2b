@@ -225,7 +225,18 @@ export default function Home() {
       <section className="py-16 border-b border-white/5 relative bg-black/50 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10 pointer-events-none" />
         <div className="w-full relative z-0">
-          <h2 className="text-center text-2xl md:text-3xl lg:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-zinc-300 to-zinc-700 mb-16 uppercase tracking-wide leading-tight px-4">{t('sponsorsTitle')}</h2>
+          <h2 className="text-center text-2xl md:text-3xl lg:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-zinc-300 to-zinc-700 mb-16 uppercase tracking-wide leading-tight px-4">
+            <span className="md:hidden">
+              {pathname.includes('/ar') ? (
+                <>الرعاه الرسميون<br />لدليل بورصة العطور</>
+              ) : (
+                <>Official Sponsors<br />of PerfumeEx</>
+              )}
+            </span>
+            <span className="hidden md:inline">
+              {t('sponsorsTitle')}
+            </span>
+          </h2>
           
           <div className="flex w-full overflow-hidden">
             <motion.div 

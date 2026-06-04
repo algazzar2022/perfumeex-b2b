@@ -679,16 +679,16 @@ export default function ProfileClient({ company, locale }: { company: any, local
             <motion.div 
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-zinc-900 border border-white/10 rounded-3xl overflow-hidden max-w-5xl w-full min-h-[90vh] md:min-h-[75vh] flex flex-col md:flex-row relative shadow-2xl cursor-default"
+              className="bg-zinc-900 border border-white/10 rounded-3xl max-w-5xl w-full max-h-[90vh] flex flex-col md:flex-row relative shadow-2xl cursor-default overflow-y-auto md:overflow-hidden"
             >
               <button 
                 onClick={(e) => { e.stopPropagation(); setSelectedProduct(null); }} 
-                className="absolute top-4 end-4 z-50 w-10 h-10 bg-black/20 hover:bg-black/50 border border-white/10 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-lg"
+                className="absolute top-4 end-4 z-50 w-10 h-10 bg-black/40 hover:bg-black/60 border border-white/20 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-lg"
               >
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-full md:w-1/2 relative bg-white shrink-0 min-h-[300px] md:min-h-0">
+              <div className="w-full md:w-1/2 relative bg-white shrink-0 h-[300px] sm:h-[400px] md:h-auto md:min-h-[500px]">
                 <Image 
                   src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
                   alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
@@ -697,7 +697,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 />
               </div>
 
-              <div className="w-full md:w-1/2 relative flex flex-col p-4 md:p-6 max-h-[90vh] md:max-h-[85vh]">
+              <div className="w-full md:w-1/2 flex flex-col p-5 md:p-8">
                   <div className="mb-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit shrink-0">
                     <Box className="w-3 h-3" />
                     {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
@@ -711,8 +711,8 @@ export default function ProfileClient({ company, locale }: { company: any, local
                     {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
                   </div>
                   
-                  <div className="mb-4 flex-1 min-h-[150px] overflow-y-auto custom-scrollbar ltr:pr-2 rtl:pl-2">
-                    <h4 className="text-emerald-400 uppercase tracking-wider text-xs font-bold mb-2 sticky top-0 bg-zinc-900 py-1 z-10">
+                  <div className="mb-6 flex-1 md:overflow-y-auto custom-scrollbar md:ltr:pr-4 md:rtl:pl-4">
+                    <h4 className="text-emerald-400 uppercase tracking-wider text-xs font-bold mb-3 md:sticky top-0 bg-zinc-900 py-2 z-10">
                       {isAr ? "وصف المنتج" : "Product Description"}
                     </h4>
                     <p className="text-white text-base md:text-lg leading-relaxed whitespace-pre-wrap font-medium">
