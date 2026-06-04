@@ -188,7 +188,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="h-[calc(100dvh-130px)] md:h-[85vh] md:min-h-[600px] max-w-7xl mx-auto flex flex-col relative">
+    <div className="h-[80vh] min-h-[500px] md:h-[85vh] md:min-h-[600px] max-w-7xl mx-auto flex flex-col relative">
       <AnimatePresence>
         {showToast && (
           <motion.div 
@@ -211,10 +211,10 @@ export default function MessagesPage() {
         </div>
       </div>
 
-      <div className="flex-1 bg-zinc-950 border border-white/5 rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
+      <div className="flex-1 min-h-0 bg-zinc-950 border border-white/5 rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
         
         {/* Messages List (Sidebar) */}
-        <div className={`w-full md:w-2/5 lg:w-1/3 border-b md:border-b-0 md:ltr:border-r md:rtl:border-l border-white/5 flex flex-col bg-zinc-950/50 ${showListOnMobile ? 'flex' : 'hidden md:flex'}`}>
+        <div className={`w-full md:w-2/5 lg:w-1/3 min-h-0 border-b md:border-b-0 md:ltr:border-r md:rtl:border-l border-white/5 flex flex-col bg-zinc-950/50 ${showListOnMobile ? 'flex' : 'hidden md:flex'}`}>
           
           <div className="p-4 border-b border-white/5">
             <div className="relative">
@@ -227,7 +227,7 @@ export default function MessagesPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto overscroll-contain">
+          <div className="flex-1 overflow-y-auto touch-pan-y">
             {sidebarMessages.map((msg) => (
               <button
                 key={msg.id}
@@ -262,7 +262,7 @@ export default function MessagesPage() {
         </div>
 
         {/* Message Content Area */}
-        <div className={`flex-1 flex flex-col bg-zinc-950 ${!showListOnMobile ? 'flex' : 'hidden md:flex'}`}>
+        <div className={`flex-1 min-h-0 flex flex-col bg-zinc-950 ${!showListOnMobile ? 'flex' : 'hidden md:flex'}`}>
           {activeMsgData ? (
             <>
               {/* Message Header */}
@@ -291,7 +291,7 @@ export default function MessagesPage() {
               </div>
 
               {/* Message Details / Body (Chat Style) */}
-              <div className="flex-1 overflow-y-auto overscroll-contain p-6 flex flex-col gap-6">
+              <div className="flex-1 overflow-y-auto touch-pan-y p-6 flex flex-col gap-6">
                 
                 {/* Contact Info Card */}
                 <div className="bg-zinc-900/40 rounded-2xl p-4 border border-white/5 flex flex-col sm:flex-row gap-6 justify-between items-center text-sm">
