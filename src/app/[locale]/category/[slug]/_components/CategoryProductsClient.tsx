@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import { Box, ChevronRight, X, Mail, Phone, ShieldCheck, MapPin, Star } from "lucide-react";
+import { Box, ChevronRight, X, Mail, Phone, ShieldCheck, MapPin, Star, ArrowLeft } from "lucide-react";
 
 export default function CategoryProductsClient({ 
   initialProducts, 
@@ -29,12 +29,22 @@ export default function CategoryProductsClient({
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
 
   useEffect(() => {
-    if (selectedProduct) {
-      document.body.style.overflow = 'hidden';
-    } else {
+    const checkScrollLock = () => {
+      const isDesktop = window.innerWidth >= 768;
+      if (selectedProduct && isDesktop) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    };
+
+    checkScrollLock();
+    window.addEventListener('resize', checkScrollLock);
+
+    return () => {
+      window.removeEventListener('resize', checkScrollLock);
       document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
+    };
   }, [selectedProduct]);
 
   const featuredProducts = initialProducts.filter(p => p.isFeatured);
@@ -63,6 +73,65 @@ export default function CategoryProductsClient({
           </motion.p>
         </div>
 
+        {/* Mobile Inline Product Details */}
+        {selectedProduct && (
+          <div className="md:hidden block mb-8 bg-zinc-900/50 rounded-3xl overflow-hidden border border-white/5">
+            <button 
+              onClick={() => setSelectedProduct(null)} 
+              className="w-full p-4 flex items-center justify-center gap-2 text-emerald-400 bg-emerald-500/10 border-b border-emerald-500/20 font-bold hover:bg-emerald-500/20 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+              {isAr ? "العودة لقائمة المنتجات" : "Back to Products"}
+            </button>
+            
+            <div className="w-full relative bg-white h-[300px]">
+              <Image 
+                src={selectedProduct.image || "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=600&h=800"} 
+                alt={isAr ? selectedProduct.nameAr : selectedProduct.nameEn} 
+                fill 
+                className="object-contain" 
+              />
+            </div>
+
+            <div className="flex flex-col p-5">
+                <div className="mb-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-emerald-400 w-fit">
+                  <Box className="w-3 h-3" />
+                  {selectedProduct.stockStatus === 'IN_STOCK' ? (isAr ? "متوفر بالمخزون" : "In Stock") : (isAr ? "كمية محدودة" : "Low Stock")}
+                </div>
+                
+                <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
+                  {isAr ? selectedProduct.nameAr : selectedProduct.nameEn}
+                </h3>
+                
+                <div className="text-emerald-500 font-extrabold text-lg mb-4 border-b border-white/10 pb-4">
+                  {selectedProduct.price ? `${selectedProduct.price} ${isAr ? 'ج.م' : 'EGP'}` : (isAr ? "تواصل لمعرفة السعر" : "Contact for Price")}
+                </div>
+                
+                <div className="mb-6">
+                  <h4 className="text-emerald-400 uppercase tracking-wider text-xs font-bold mb-3">
+                    {isAr ? "وصف المنتج" : "Product Description"}
+                  </h4>
+                  <p className="text-white text-base leading-relaxed whitespace-pre-wrap font-medium">
+                    {isAr ? selectedProduct.descriptionAr : selectedProduct.descriptionEn}
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-2 pt-4 border-t border-white/10">
+                  <Link href={`/${locale}/${selectedProduct.company.slug}`} className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-all flex items-center justify-center gap-2 text-sm">
+                    <Mail className="w-4 h-4" />
+                    {isAr ? "مراسلة الشركة لطلب المنتج" : "Message Supplier to Order"}
+                  </Link>
+                  {selectedProduct.company.whatsapp && (
+                    <a href={`https://wa.me/${selectedProduct.company.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(isAr ? `مرحباً، أود الاستفسار عن المنتج: ${selectedProduct.nameAr}` : `Hello, I'd like to inquire about the product: ${selectedProduct.nameEn}`)}`} target="_blank" rel="noreferrer" className="w-full py-3 bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-[#25D366] font-bold rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+                      <Phone className="w-4 h-4" />
+                      {isAr ? "تواصل عبر واتساب" : "Contact via WhatsApp"}
+                    </a>
+                  )}
+                </div>
+            </div>
+          </div>
+        )}
+
         {initialProducts.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-16 bg-zinc-900/30 border border-white/5 rounded-3xl backdrop-blur-md">
             <Box className="w-16 h-16 text-zinc-600 mb-4" />
@@ -70,7 +139,7 @@ export default function CategoryProductsClient({
             <p className="text-zinc-500">{isAr ? "لم يتم إضافة منتجات في هذا التصنيف بعد." : "No products have been added to this category yet."}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className={selectedProduct ? "hidden md:grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"}>
             {initialProducts.map((product, idx) => (
               <ProductCard key={product.id} product={product} idx={idx} isAr={isAr} locale={locale} setSelectedProduct={setSelectedProduct} />
             ))}
@@ -78,12 +147,12 @@ export default function CategoryProductsClient({
         )}
       </div>
 
-      {/* Product Details Modal */}
+      {/* Product Details Modal (Desktop Only) */}
       <AnimatePresence>
         {selectedProduct && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-pointer"
+            className="hidden md:flex fixed inset-0 z-[100] items-center justify-center bg-black/80 backdrop-blur-sm p-4 cursor-pointer"
             onClick={() => setSelectedProduct(null)}
           >
             <motion.div 

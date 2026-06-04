@@ -59,15 +59,24 @@ export default function ProfileClient({ company, locale }: { company: any, local
   ];
 
   useEffect(() => {
-    const navbar = document.querySelector('header');
-    if (isAuthModalOpen || isMessageModalOpen || selectedProduct || selectedImage) {
-      if (navbar) navbar.style.display = 'none';
-      document.body.style.overflow = 'hidden';
-    } else {
-      if (navbar) navbar.style.display = 'block';
-      document.body.style.overflow = '';
-    }
+    const navbar = document.querySelector('header') as HTMLElement;
+    
+    const checkScrollLock = () => {
+      const isDesktop = window.innerWidth >= 768;
+      if (isAuthModalOpen || isMessageModalOpen || selectedImage || (selectedProduct && isDesktop)) {
+        if (navbar) navbar.style.display = 'none';
+        document.body.style.overflow = 'hidden';
+      } else {
+        if (navbar) navbar.style.display = 'block';
+        document.body.style.overflow = '';
+      }
+    };
+
+    checkScrollLock();
+    window.addEventListener('resize', checkScrollLock);
+
     return () => {
+      window.removeEventListener('resize', checkScrollLock);
       if (navbar) navbar.style.display = 'block';
       document.body.style.overflow = '';
     };
