@@ -20,29 +20,44 @@ export default async function SearchPage({
     const andConditions: any[] = [{ status: 'APPROVED' }];
 
     if (query.trim() !== "") {
-      andConditions.push({
-        OR: [
-          { nameEn: { contains: query } },
-          { nameAr: { contains: query } },
-          { category: { contains: query } },
-          { cityEn: { contains: query } },
-          { cityAr: { contains: query } },
-          { governorateEn: { contains: query } },
-          { governorateAr: { contains: query } },
-          {
-            branches: {
-              some: {
-                OR: [
-                  { cityEn: { contains: query } },
-                  { cityAr: { contains: query } },
-                  { governorateEn: { contains: query } },
-                  { governorateAr: { contains: query } },
-                ]
+      const terms = query.trim().split(/\s+/).filter(t => t.length > 1);
+      
+      if (terms.length > 0) {
+        const termConditions = terms.map(term => ({
+          OR: [
+            { nameEn: { contains: term } },
+            { nameAr: { contains: term } },
+            { category: { contains: term } },
+            { cityEn: { contains: term } },
+            { cityAr: { contains: term } },
+            { governorateEn: { contains: term } },
+            { governorateAr: { contains: term } },
+            {
+              branches: {
+                some: {
+                  OR: [
+                    { cityEn: { contains: term } },
+                    { cityAr: { contains: term } },
+                    { governorateEn: { contains: term } },
+                    { governorateAr: { contains: term } },
+                  ]
+                }
               }
             }
-          }
-        ],
-      });
+          ]
+        }));
+
+        andConditions.push({
+          OR: termConditions
+        });
+      } else {
+        andConditions.push({
+          OR: [
+            { nameEn: { contains: query } },
+            { nameAr: { contains: query } }
+          ]
+        });
+      }
     }
 
     if (category.trim() !== "") {

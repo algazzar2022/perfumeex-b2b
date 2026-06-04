@@ -183,35 +183,62 @@ export default function SearchClient({
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="group relative bg-zinc-900/40 backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden hover:border-emerald-500/40 hover:bg-zinc-900/60 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-500 flex flex-col sm:flex-row"
+                      className="group relative bg-zinc-900/40 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-3xl overflow-hidden hover:border-emerald-500/40 hover:bg-zinc-900/60 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-500 flex flex-col sm:flex-row"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                       
-                      <div className="relative w-full sm:w-56 h-56 sm:h-auto bg-zinc-950 shrink-0 p-5 flex items-center justify-center border-b sm:border-b-0 sm:border-r border-white/10 rtl:sm:border-l rtl:sm:border-r-0 z-10">
-                        <div className="relative w-full h-full rounded-2xl overflow-hidden bg-white/5 border border-white/10 group-hover:border-emerald-500/30 transition-colors shadow-inner">
+                      <div className="relative w-full sm:w-56 h-auto sm:h-auto bg-zinc-950 shrink-0 p-4 sm:p-5 flex items-center justify-center border-b sm:border-b-0 sm:border-r border-white/10 rtl:sm:border-l rtl:sm:border-r-0 z-10">
+                        {/* Mobile: Row Layout for top part */}
+                        <div className="flex sm:hidden items-center gap-4 w-full">
+                          <div className="relative w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-white/5 border border-white/10 shadow-inner">
+                            <Image src={logoImage} alt={displayName} fill className="object-contain p-1.5" />
+                          </div>
+                          <div className="flex flex-col flex-1 min-w-0">
+                            <div className="text-emerald-400 text-[10px] font-bold tracking-widest uppercase mb-1 line-clamp-1">
+                              {translatedCategory || "\u00A0"}
+                            </div>
+                            <h3 className="text-base font-extrabold text-white mb-1 flex items-center gap-1.5 tracking-tight line-clamp-1">
+                              {displayName}
+                              {company.isVerified && <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />}
+                            </h3>
+                            {location && (
+                              <div className="flex items-center gap-1 text-zinc-400 text-xs font-medium line-clamp-1">
+                                <MapPin className="w-3 h-3 text-emerald-500 shrink-0" /> {location}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Desktop: Big Logo */}
+                        <div className="hidden sm:block relative w-full h-full rounded-2xl overflow-hidden bg-white/5 border border-white/10 group-hover:border-emerald-500/30 transition-colors shadow-inner min-h-[160px]">
                           <Image src={logoImage} alt={displayName} fill className="object-contain p-3 group-hover:scale-110 transition-transform duration-700 ease-out" />
                         </div>
                       </div>
                       
-                      <div className="p-8 flex-1 flex flex-col justify-center z-10">
-                        <div className="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-3 line-clamp-1">
-                          {translatedCategory || "\u00A0"}
+                      <div className="p-4 sm:p-8 flex-1 flex flex-col justify-center z-10">
+                        {/* Desktop: Text Content */}
+                        <div className="hidden sm:block">
+                          <div className="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-3 line-clamp-1">
+                            {translatedCategory || "\u00A0"}
+                          </div>
+                          <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3 group-hover:text-emerald-300 transition-colors flex items-center gap-3 tracking-tight">
+                            {displayName}
+                            {company.isVerified && <ShieldCheck className="w-6 h-6 text-emerald-500" />}
+                          </h3>
+                          {location && (
+                            <div className="flex items-center gap-2 text-zinc-400 text-sm mb-6 font-medium">
+                              <MapPin className="w-4 h-4 text-emerald-500" /> {location}
+                            </div>
+                          )}
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3 group-hover:text-emerald-300 transition-colors flex items-center gap-3 tracking-tight">
-                          {displayName}
-                          {company.isVerified && <ShieldCheck className="w-6 h-6 text-emerald-500" />}
-                        </h3>
-                        {location && (
-                          <div className="flex items-center gap-2 text-zinc-400 text-sm mb-6 font-medium">
-                            <MapPin className="w-4 h-4 text-emerald-500" /> {location}
+
+                        {/* Action Buttons (Shared) */}
+                        <div className="flex items-center justify-between gap-3 sm:gap-4 sm:mt-auto sm:pt-6 sm:border-t sm:border-white/10">
+                          <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-white bg-black/50 border border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl shadow-lg">
+                            <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 fill-amber-400" /> 5.0
                           </div>
-                        )}
-                        <div className="flex items-center gap-4 mt-auto pt-6 border-t border-white/10">
-                          <div className="flex items-center gap-1.5 text-sm font-bold text-white bg-black/50 border border-white/10 px-4 py-2 rounded-xl shadow-lg">
-                            <Star className="w-4 h-4 text-amber-400 fill-amber-400" /> 5.0
-                          </div>
-                          <Link href={`/${locale}/${company.slug}`} className="ml-auto rtl:ml-0 rtl:mr-auto text-sm font-bold text-black bg-white hover:bg-emerald-400 px-8 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] active:scale-[0.98]">
-                            {isAr ? "عرض الملف التعريفي" : "View Profile"}
+                          <Link href={`/${locale}/${company.slug}`} className="flex-1 sm:flex-none text-center sm:ml-auto rtl:sm:ml-0 rtl:sm:mr-auto text-sm font-bold text-black bg-white hover:bg-emerald-400 px-4 py-2.5 sm:px-8 sm:py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] active:scale-[0.98]">
+                            {isAr ? "عرض الملف" : "View Profile"}
                           </Link>
                         </div>
                       </div>
