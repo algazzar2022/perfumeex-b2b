@@ -285,7 +285,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                     </div>
                     <div className="flex-1 truncate">
                       <div className="text-xs text-zinc-500">{isAr ? "رقم الهاتف" : "Phone"}</div>
-                      <div className="text-sm text-zinc-300 font-medium dir-ltr text-left">{company.whatsapp}</div>
+                      <div className="text-sm text-zinc-300 font-medium truncate"><span dir="ltr">{company.whatsapp}</span></div>
                     </div>
                   </a>
                 )}
@@ -468,7 +468,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                               </p>
                               <p className="text-zinc-400 text-sm flex items-center gap-2">
                                 <Phone className="w-4 h-4 shrink-0 text-emerald-500" />
-                                <span className="dir-ltr">{branch.phone}</span>
+                                <span dir="ltr">{branch.phone}</span>
                               </p>
                             </div>
                           </motion.div>
