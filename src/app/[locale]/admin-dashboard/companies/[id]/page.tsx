@@ -7,7 +7,7 @@ export default async function AdminCompanyEditPage({ params }: { params: { id: s
     where: { id: params.id },
     include: {
       branches: true,
-      Gallery: true,
+      galleries: true,
       user: {
         select: { email: true, name: true }
       }

@@ -149,7 +149,7 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
     startTransition(async () => {
       try {
         await deleteGalleryImage(id);
-        setCompany({ ...company, Gallery: company.Gallery.filter((g: any) => g.id !== id) });
+        setCompany({ ...company, galleries: company.galleries.filter((g: any) => g.id !== id) });
         showToast("تم حذف الصورة بنجاح");
       } catch (error) {
         showToast("حدث خطأ أثناء الحذف", 'error');
@@ -186,7 +186,7 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
           onClick={() => setActiveTab('gallery')}
           className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-colors ${activeTab === 'gallery' ? 'bg-emerald-500 text-black' : 'bg-[#111] border border-white/10 hover:bg-white/5'}`}
         >
-          <ImageIcon size={18} /> معرض الصور ({company.Gallery?.length || 0})
+          <ImageIcon size={18} /> معرض الصور ({company.galleries?.length || 0})
         </button>
       </div>
 
@@ -366,11 +366,11 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
               </label>
             </div>
 
-            {company.Gallery?.length === 0 ? (
+            {company.galleries?.length === 0 ? (
               <p className="text-gray-400 text-center py-8">لا يوجد صور في المعرض لهذه الشركة</p>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {company.Gallery?.map((image: any) => (
+                {company.galleries?.map((image: any) => (
                   <div key={image.id} className="relative group aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/10">
                     <img src={image.url} alt="Gallery" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
