@@ -135,8 +135,9 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
           <table className="w-full text-right border-collapse">
             <thead>
               <tr className="text-right text-gray-400 bg-[#1a1a1a]">
-                <th className="p-4 font-medium">الاسم</th>
-                <th className="p-4 font-medium">البراند</th>
+                <th className="p-4 font-medium w-16">#</th>
+                <th className="p-4 font-medium min-w-[16rem] whitespace-nowrap">الاسم</th>
+                <th className="p-4 font-medium min-w-[12rem]">البراند</th>
                 <th className="p-4 font-medium">المكان</th>
                 <th className="p-4 font-medium">رقم الهاتف</th>
                 <th className="p-4 font-medium">واتساب</th>
@@ -148,10 +149,8 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
             <tbody className="divide-y divide-white/5">
               {filteredRegistrations.map((reg, index) => (
                 <tr key={reg.id} className="hover:bg-white/5 transition-colors">
-                  <td className="p-4 font-medium text-emerald-400">
-                    <span className="text-zinc-500 ml-2 font-mono text-sm">{index + 1}-</span>
-                    {reg.name}
-                  </td>
+                  <td className="p-4 font-bold text-zinc-500">{index + 1}</td>
+                  <td className="p-4 font-medium text-emerald-400 whitespace-nowrap">{reg.name}</td>
                   <td className="p-4 text-blue-300">{reg.brandName}</td>
                   <td className="p-4">{reg.location}</td>
                   <td className="p-4" dir="ltr">{reg.phone}</td>
