@@ -278,6 +278,18 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
               <input type="text" value={editingCompany.website || ''} onChange={e => setEditingCompany({...editingCompany, website: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" />
             </div>
             <div>
+              <label className="block text-sm text-gray-400 mb-1">فيسبوك (Facebook)</label>
+              <input type="url" value={editingCompany.facebook || ''} onChange={e => setEditingCompany({...editingCompany, facebook: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" placeholder="https://facebook.com/..." />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">إنستجرام (Instagram)</label>
+              <input type="url" value={editingCompany.instagram || ''} onChange={e => setEditingCompany({...editingCompany, instagram: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" placeholder="https://instagram.com/..." />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">تويتر (X)</label>
+              <input type="url" value={editingCompany.twitter || ''} onChange={e => setEditingCompany({...editingCompany, twitter: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" placeholder="https://x.com/..." />
+            </div>
+            <div className="md:col-span-2">
               <label className="block text-sm text-gray-400 mb-1">العنوان بالعربية</label>
               <input type="text" value={editingCompany.addressAr || ''} onChange={e => setEditingCompany({...editingCompany, addressAr: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
             </div>

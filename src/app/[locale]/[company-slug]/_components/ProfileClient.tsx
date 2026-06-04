@@ -300,6 +300,39 @@ export default function ProfileClient({ company, locale }: { company: any, local
                     </div>
                   </a>
                 )}
+                {company.facebook && (
+                  <a href={company.facebook} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#1877F2]/20 group-hover:text-[#1877F2] transition-colors">
+                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="css-i6dzq1"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                    </div>
+                    <div className="flex-1 truncate">
+                      <div className="text-xs text-zinc-500">{isAr ? "فيسبوك" : "Facebook"}</div>
+                      <div className="text-sm text-zinc-300 font-medium truncate">{company.facebook.replace(/^https?:\/\/(www\.)?facebook\.com\//, '')}</div>
+                    </div>
+                  </a>
+                )}
+                {company.instagram && (
+                  <a href={company.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#E4405F]/20 group-hover:text-[#E4405F] transition-colors">
+                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="css-i6dzq1"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </div>
+                    <div className="flex-1 truncate">
+                      <div className="text-xs text-zinc-500">{isAr ? "إنستجرام" : "Instagram"}</div>
+                      <div className="text-sm text-zinc-300 font-medium truncate">{company.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//, '')}</div>
+                    </div>
+                  </a>
+                )}
+                {company.twitter && (
+                  <a href={company.twitter} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/20 group-hover:text-white transition-colors">
+                      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="css-i6dzq1"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                    </div>
+                    <div className="flex-1 truncate">
+                      <div className="text-xs text-zinc-500">{isAr ? "إكس (تويتر)" : "X (Twitter)"}</div>
+                      <div className="text-sm text-zinc-300 font-medium truncate">{company.twitter.replace(/^https?:\/\/(www\.)?(twitter|x)\.com\//, '')}</div>
+                    </div>
+                  </a>
+                )}
               </div>
             </motion.div>
 
