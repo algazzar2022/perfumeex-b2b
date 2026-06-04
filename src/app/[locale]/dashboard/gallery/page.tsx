@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UploadCloud, Trash2, Loader2, CheckCircle2, Image as ImageIcon } from "lucide-react";
+import { UploadCloud, Trash2, Loader2, CheckCircle2, Image as ImageIcon, Info } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
@@ -41,6 +41,11 @@ export default function DashboardGallery() {
 
     if (file.size > 5 * 1024 * 1024) {
       alert("Image must be smaller than 5MB");
+      return;
+    }
+
+    if (media.length >= 10) {
+      alert(locale === 'ar' ? "الحد الأقصى 10 صور. يرجى حذف بعض الصور أولاً." : "Maximum 10 images allowed. Please delete some first.");
       return;
     }
 
@@ -111,13 +116,19 @@ export default function DashboardGallery() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">{t("title")}</h1>
-          <p className="text-zinc-400">{t("subtitle")}</p>
+          <p className="text-zinc-400">{t("subtitle")} <span className="font-bold text-white bg-white/10 px-2 py-0.5 rounded-md ml-2 rtl:mr-2">{media.length}/10</span></p>
+          {media.length >= 10 && (
+            <p className="text-amber-500 text-sm mt-3 font-bold flex items-center gap-2 bg-amber-500/10 w-fit px-3 py-1.5 rounded-lg border border-amber-500/20">
+              <Info className="w-4 h-4" />
+              {locale === 'ar' ? "وصلت للحد الأقصى (10 صور). احذف بعض الصور للإضافة." : "Maximum limit reached (10 images). Delete to add new."}
+            </p>
+          )}
         </div>
         <div>
-          <label className={`px-6 py-2.5 ${isUploading ? 'bg-zinc-800 text-zinc-400' : 'bg-emerald-500 text-black hover:bg-emerald-400'} font-bold rounded-xl transition-colors flex items-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.2)]`}>
+          <label className={`px-6 py-2.5 ${(isUploading || media.length >= 10) ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' : 'bg-emerald-500 text-black hover:bg-emerald-400 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.2)]'} font-bold rounded-xl transition-all flex items-center gap-2`}>
             {isUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <UploadCloud className="w-5 h-5" />} 
             {isUploading ? (locale === 'ar' ? 'جاري الرفع...' : 'Uploading...') : t("add")}
-            <input type="file" accept="image/*" className="hidden" disabled={isUploading} onChange={handleFileUpload} />
+            <input type="file" accept="image/*" className="hidden" disabled={isUploading || media.length >= 10} onChange={handleFileUpload} />
           </label>
         </div>
       </div>

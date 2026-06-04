@@ -258,6 +258,35 @@ export default function ProfileClient({ company, locale }: { company: any, local
               </div>
             </motion.div>
 
+            {/* Mobile Branches Card (Sidebar) */}
+            {company.branches && company.branches.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
+                className="md:hidden bg-zinc-900/50 backdrop-blur-xl border border-white/5 rounded-3xl p-6"
+              >
+                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                  <Store className="w-5 h-5 text-emerald-500" /> {isAr ? "الفروع" : "Branches"}
+                </h3>
+                <div className="space-y-4">
+                  {company.branches.map((branch: any) => (
+                    <div key={branch.id} className="border-b border-white/5 last:border-0 pb-4 last:pb-0">
+                      <h4 className="text-white font-bold mb-1">{isAr ? branch.nameAr : branch.nameEn}</h4>
+                      <p className="text-zinc-400 text-sm flex items-start gap-2 mb-1">
+                        <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-emerald-500" />
+                        {isAr ? branch.addressAr : branch.addressEn}, {isAr ? branch.cityAr : branch.cityEn}
+                      </p>
+                      {branch.phone && (
+                        <p className="text-zinc-400 text-sm flex items-center gap-2">
+                          <Phone className="w-4 h-4 shrink-0 text-emerald-500" />
+                          <span dir="ltr">{branch.phone}</span>
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
             {/* Contact Info Card */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
@@ -357,7 +386,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                       isActive 
                       ? "bg-emerald-500 text-black shadow-lg" 
                       : "text-zinc-400 hover:text-white hover:bg-white/5"
-                    }`}
+                    } ${tab.id === 'branches' ? 'hidden md:flex' : ''}`}
                   >
                     <Icon className="w-4 h-4" />
                     {tab.label}
