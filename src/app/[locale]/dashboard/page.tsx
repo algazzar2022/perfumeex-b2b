@@ -17,12 +17,22 @@ export default function DashboardOverview() {
   const locale = pathname.split('/')[1] || 'en';
 
   const [company, setCompany] = useState<any>(null);
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
 
   useEffect(() => {
     fetch('/api/company/profile')
       .then(res => res.json())
       .then(data => {
         setCompany(data);
+      })
+      .catch(console.error);
+
+    fetch('/api/company/notifications')
+      .then(res => res.json())
+      .then(data => {
+        if (data?.notifications) {
+          setRecentActivity(data.notifications);
+        }
       })
       .catch(console.error);
   }, []);
@@ -61,7 +71,7 @@ export default function DashboardOverview() {
     { title: locale === 'ar' ? 'الفروع' : 'Branches', value: branches.toString(), change: formatChange(branchesPercent), isPositive: true, icon: <MapPin className="w-5 h-5 text-amber-500" /> },
   ];
 
-  const recentActivity: any[] = [];
+
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -172,28 +182,45 @@ export default function DashboardOverview() {
         >
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Bell className="w-5 h-5 text-emerald-500" /> {t("activity.title")}
+              <Bell className="w-5 h-5 text-emerald-500" /> {locale === 'ar' ? 'الإشعارات' : 'Notifications'}
             </h2>
-            <button className="text-zinc-500 hover:text-white text-sm">{t("activity.viewAll")}</button>
+            <button 
+              onClick={() => router.push(`/${locale}/dashboard/notifications`)}
+              className="text-emerald-500 hover:text-emerald-400 text-sm font-bold bg-emerald-500/10 px-3 py-1 rounded-lg transition-colors"
+            >
+              {locale === 'ar' ? 'عرض الكل' : 'View All'}
+            </button>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {recentActivity.length === 0 ? (
               <div className="text-center py-8 text-zinc-500 border border-white/5 rounded-2xl bg-white/5">
-                {t("activity.noNotifications")}
+                {locale === 'ar' ? 'لا توجد إشعارات حديثة' : 'No recent notifications'}
               </div>
             ) : (
               recentActivity.map((activity) => (
-                <div key={activity.id} className="flex gap-4">
+                <div 
+                  key={activity.id} 
+                  onClick={() => router.push(`/${locale}/dashboard/notifications`)}
+                  className={`flex gap-4 p-4 rounded-xl cursor-pointer transition-all border hover:-translate-y-0.5 ${
+                    activity.isRead 
+                      ? 'bg-[#111] border-white/5 opacity-70 hover:border-white/10' 
+                      : 'bg-[#151515] border-emerald-500/30 hover:border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.05)]'
+                  }`}
+                >
                   <div className="mt-1">
-                    {activity.type === 'insight' && <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />}
-                    {activity.type === 'action' && <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]" />}
-                    {activity.type === 'success' && <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />}
+                    {!activity.isRead ? (
+                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse" />
+                    ) : (
+                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-600" />
+                    )}
                   </div>
                   <div>
-                    <p className="text-sm text-zinc-300 mb-1 leading-relaxed">{activity.text}</p>
+                    <p className={`text-sm mb-1 leading-relaxed ${activity.isRead ? 'text-zinc-400' : 'text-white font-bold'}`}>
+                      {locale === 'ar' ? activity.titleAr : activity.titleEn}
+                    </p>
                     <p className="text-xs text-zinc-500 flex items-center gap-1 font-medium">
-                      <Clock className="w-3 h-3" /> {activity.time}
+                      <Clock className="w-3 h-3" /> {new Date(activity.createdAt).toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US')}
                     </p>
                   </div>
                 </div>
