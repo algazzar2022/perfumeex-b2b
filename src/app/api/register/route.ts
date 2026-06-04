@@ -5,7 +5,11 @@ import bcrypt from "bcryptjs";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, nameAr, nameEn } = body;
+    const { 
+      email, password, nameAr, nameEn,
+      whatsapp, category, governorateAr, governorateEn, 
+      cityAr, cityEn, logo, coverImage, descriptionAr, descriptionEn 
+    } = body;
 
     if (!email || !password || !nameAr || !nameEn) {
       return new NextResponse("Missing Info", { status: 400 });
@@ -22,12 +26,21 @@ export async function POST(request: Request) {
       }
     });
 
-    // Create an initial empty company profile for this user
     await prisma.company.create({
       data: {
         userId: user.id,
         nameAr,
         nameEn,
+        whatsapp: whatsapp || null,
+        category: category || "readyPerfumes",
+        governorateAr: governorateAr || null,
+        governorateEn: governorateEn || null,
+        cityAr: cityAr || null,
+        cityEn: cityEn || null,
+        logo: logo || null,
+        coverImage: coverImage || null,
+        descriptionAr: descriptionAr || null,
+        descriptionEn: descriptionEn || null,
         slug: nameEn.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Date.now().toString().slice(-4),
         status: "PENDING",
       }
