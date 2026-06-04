@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { EventRegistration } from '@prisma/client';
 import { FileText, Search, Download, Trash2, Edit, X, Loader2 } from 'lucide-react';
 import { deleteRegistration, updateRegistration } from '../../actions';
@@ -11,6 +11,9 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
   const [registrations, setRegistrations] = useState(initialRegistrations);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+  const [dateFilter, setDateFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   
   const [editingReg, setEditingReg] = useState<EventRegistration | null>(null);
   const [formData, setFormData] = useState({
@@ -22,12 +25,27 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
   const filteredRegistrations = useMemo(() => {
     return registrations
       .filter(reg => reg.name.toLowerCase().includes(searchTerm.toLowerCase()) || reg.brandName.toLowerCase().includes(searchTerm.toLowerCase()) || reg.phone.includes(searchTerm))
+      .filter(reg => {
+        if (!dateFilter) return true;
+        const regDate = new Date(reg.createdAt).toISOString().split('T')[0];
+        return regDate === dateFilter;
+      })
       .sort((a, b) => {
         const timeA = new Date(a.createdAt).getTime();
         const timeB = new Date(b.createdAt).getTime();
         return sortOrder === 'desc' ? timeB - timeA : timeA - timeB;
       });
-  }, [registrations, searchTerm, sortOrder]);
+  }, [registrations, searchTerm, sortOrder, dateFilter]);
+
+  const totalPages = Math.ceil(filteredRegistrations.length / itemsPerPage) || 1;
+  const paginatedRegistrations = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredRegistrations.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredRegistrations, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortOrder, dateFilter, itemsPerPage]);
 
   const handleExportExcel = () => {
     const dataToExport = filteredRegistrations.map(reg => ({
@@ -100,9 +118,9 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
 
   return (
     <>
-      <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
+      <div className="mb-6 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
             <input 
               type="text" 
@@ -112,13 +130,32 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
               className="w-full bg-[#111] border border-white/10 rounded-lg py-2 pr-10 pl-4 focus:border-emerald-500 outline-none"
             />
           </div>
+          <input 
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="bg-[#111] border border-white/10 rounded-lg px-3 py-2 focus:border-emerald-500 outline-none text-gray-300"
+            title="تصفية حسب تاريخ التسجيل"
+          />
           <select 
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value as 'desc' | 'asc')}
-            className="bg-[#111] border border-white/10 rounded-lg px-4 py-2 focus:border-emerald-500 outline-none"
+            className="bg-[#111] border border-white/10 rounded-lg px-3 py-2 focus:border-emerald-500 outline-none"
           >
-            <option value="desc">الأحدث أولاً</option>
-            <option value="asc">الأقدم أولاً</option>
+            <option value="desc">الأحدث</option>
+            <option value="asc">الأقدم</option>
+          </select>
+          <select 
+            value={itemsPerPage}
+            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+            className="bg-[#111] border border-white/10 rounded-lg px-3 py-2 focus:border-emerald-500 outline-none"
+            title="عدد النتائج في الصفحة"
+          >
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value={500}>500</option>
           </select>
         </div>
         
@@ -147,9 +184,11 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {filteredRegistrations.map((reg, index) => (
+              {paginatedRegistrations.map((reg, index) => {
+                const globalIndex = (currentPage - 1) * itemsPerPage + index;
+                return (
                 <tr key={reg.id} className="hover:bg-white/5 transition-colors">
-                  <td className="p-4 font-bold text-zinc-500">{index + 1}</td>
+                  <td className="p-4 font-bold text-zinc-500">{globalIndex + 1}</td>
                   <td className="p-4 font-medium text-emerald-400 whitespace-nowrap">{reg.name}</td>
                   <td className="p-4 text-blue-300">{reg.brandName}</td>
                   <td className="p-4">{reg.location}</td>
@@ -164,7 +203,7 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
                     </div>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>
@@ -173,6 +212,30 @@ export default function RegistrationsClient({ initialRegistrations }: { initialR
           <div className="p-12 text-center text-gray-500">
             <FileText size={48} className="mx-auto mb-4 opacity-50" />
             <p className="text-lg">لا يوجد أي مسجلين يطابقون بحثك</p>
+          </div>
+        )}
+        
+        {filteredRegistrations.length > 0 && (
+          <div className="p-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#1a1a1a]">
+            <div className="text-gray-400 text-sm">
+              إجمالي: {filteredRegistrations.length} | صفحة {currentPage} من {totalPages}
+            </div>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 bg-[#111] border border-white/10 rounded-lg text-sm text-gray-300 hover:text-white disabled:opacity-50 transition-colors"
+              >
+                السابق
+              </button>
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 bg-[#111] border border-white/10 rounded-lg text-sm text-gray-300 hover:text-white disabled:opacity-50 transition-colors"
+              >
+                التالي
+              </button>
+            </div>
           </div>
         )}
       </div>
