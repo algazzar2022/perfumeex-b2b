@@ -170,12 +170,12 @@ export default function ProfileClient({ company, locale }: { company: any, local
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-20 -mt-40 md:-mt-56 mb-20">
         
         {/* 🏢 Profile Header */}
-        <div className="flex flex-col md:flex-row gap-8 items-end mb-12">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-end mb-8 md:mb-12 text-center md:text-start rtl:md:text-right">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="w-40 h-40 md:w-56 md:h-56 shrink-0 rounded-3xl overflow-hidden border-4 border-[#0a0a0a] bg-zinc-900 shadow-2xl relative group"
+            className="w-32 h-32 md:w-56 md:h-56 shrink-0 rounded-3xl overflow-hidden border-4 border-[#0a0a0a] bg-zinc-900 shadow-2xl relative group"
           >
             <Image 
               src={logoImage} 
@@ -189,12 +189,12 @@ export default function ProfileClient({ company, locale }: { company: any, local
             initial={{ opacity: 0, x: isAr ? 30 : -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex-1 pb-4"
+            className="flex-1 pb-4 flex flex-col items-center md:items-start rtl:md:items-end"
           >
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
               {displayName}
             </h1>
-            <div className="flex flex-wrap items-center gap-4 text-zinc-300">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-zinc-300">
               <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-full border border-white/10">
                 <MapPin className="w-4 h-4 text-emerald-400" />
                 <span className="text-sm font-medium">{location}</span>
@@ -221,10 +221,10 @@ export default function ProfileClient({ company, locale }: { company: any, local
         </div>
 
         {/* 📋 Bento Grid & Navigation */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8">
           
           {/* Sidebar Info (Bento Style) */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="order-2 lg:order-1 lg:col-span-4 space-y-6">
             
             {/* Quick Stats Card */}
             <motion.div 
@@ -339,7 +339,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
           </div>
 
           {/* Main Content Area */}
-          <div className="lg:col-span-8">
+          <div className="order-1 lg:order-2 lg:col-span-8">
             
             {/* Interactive Tabs */}
             <motion.div 
