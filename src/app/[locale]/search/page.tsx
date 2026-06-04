@@ -17,77 +17,86 @@ export default async function SearchPage({
   let companies: any[] = [];
 
   if (query.trim() !== "" || category.trim() !== "" || location.trim() !== "") {
-    const andConditions: any[] = [{ status: 'APPROVED' }];
+    const buildConditions = (useFallback: boolean) => {
+      const andConds: any[] = [{ status: 'APPROVED' }];
 
-    if (query.trim() !== "") {
-      const terms = query.trim().split(/\s+/).filter(t => t.length > 1);
-      
-      if (terms.length > 0) {
-        const termConditions = terms.map(term => ({
+      if (query.trim() !== "") {
+        const terms = query.trim().split(/\s+/).filter(t => t.length > 1);
+        
+        if (terms.length > 0) {
+          const termConditions = terms.map(term => {
+            const searchStr = (useFallback && term.length >= 4) ? term.substring(0, 3) : term;
+            return {
+              OR: [
+                { nameEn: { contains: searchStr } },
+                { nameAr: { contains: searchStr } },
+                { category: { contains: searchStr } },
+                { cityEn: { contains: searchStr } },
+                { cityAr: { contains: searchStr } },
+                { governorateEn: { contains: searchStr } },
+                { governorateAr: { contains: searchStr } },
+                {
+                  branches: {
+                    some: {
+                      OR: [
+                        { cityEn: { contains: searchStr } },
+                        { cityAr: { contains: searchStr } },
+                        { governorateEn: { contains: searchStr } },
+                        { governorateAr: { contains: searchStr } },
+                      ]
+                    }
+                  }
+                }
+              ]
+            };
+          });
+
+          andConds.push({
+            OR: termConditions
+          });
+        } else {
+          andConds.push({
+            OR: [
+              { nameEn: { contains: query } },
+              { nameAr: { contains: query } }
+            ]
+          });
+        }
+      }
+
+      if (category.trim() !== "") {
+        andConds.push({
+          category: { contains: category },
+        });
+      }
+
+      if (location.trim() !== "") {
+        andConds.push({
           OR: [
-            { nameEn: { contains: term } },
-            { nameAr: { contains: term } },
-            { category: { contains: term } },
-            { cityEn: { contains: term } },
-            { cityAr: { contains: term } },
-            { governorateEn: { contains: term } },
-            { governorateAr: { contains: term } },
+            { governorateEn: { contains: location } },
+            { governorateAr: { contains: location } },
+            { cityEn: { contains: location } },
+            { cityAr: { contains: location } },
             {
               branches: {
                 some: {
                   OR: [
-                    { cityEn: { contains: term } },
-                    { cityAr: { contains: term } },
-                    { governorateEn: { contains: term } },
-                    { governorateAr: { contains: term } },
+                    { governorateEn: { contains: location } },
+                    { governorateAr: { contains: location } },
+                    { cityEn: { contains: location } },
+                    { cityAr: { contains: location } },
                   ]
                 }
               }
             }
-          ]
-        }));
-
-        andConditions.push({
-          OR: termConditions
-        });
-      } else {
-        andConditions.push({
-          OR: [
-            { nameEn: { contains: query } },
-            { nameAr: { contains: query } }
-          ]
+          ],
         });
       }
-    }
+      
+      return andConds;
+    };
 
-    if (category.trim() !== "") {
-      andConditions.push({
-        category: { contains: category },
-      });
-    }
-
-    if (location.trim() !== "") {
-      andConditions.push({
-        OR: [
-          { governorateEn: { contains: location } },
-          { governorateAr: { contains: location } },
-          { cityEn: { contains: location } },
-          { cityAr: { contains: location } },
-          {
-            branches: {
-              some: {
-                OR: [
-                  { governorateEn: { contains: location } },
-                  { governorateAr: { contains: location } },
-                  { cityEn: { contains: location } },
-                  { cityAr: { contains: location } },
-                ]
-              }
-            }
-          }
-        ],
-      });
-    }
+    let andConditions = buildConditions(false);
 
     companies = await prisma.company.findMany({
       where: {
@@ -100,6 +109,21 @@ export default async function SearchPage({
       },
       take: 20, // Limit results
     });
+
+    if (companies.length === 0 && query.trim() !== "") {
+      const fallbackConditions = buildConditions(true);
+      companies = await prisma.company.findMany({
+        where: {
+          AND: fallbackConditions,
+        },
+        include: {
+          products: {
+            take: 1,
+          },
+        },
+        take: 20,
+      });
+    }
 
     // Sort: 1 first, 2 second. If 0, push to bottom.
     companies.sort((a, b) => {
