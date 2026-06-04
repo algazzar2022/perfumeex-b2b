@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search as SearchIcon, Filter, SlidersHorizontal, MapPin, Building2, Star, ShieldCheck, Loader2 } from "lucide-react";
+import { Search as SearchIcon, Filter, SlidersHorizontal, MapPin, Building2, Star, ShieldCheck, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -25,6 +25,7 @@ export default function SearchClient({
   const isAr = locale === 'ar';
 
   const [searchQuery, setSearchQuery] = useState(initialQuery || searchParams.get("q") || "");
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   
   const hasSearched = initialQuery.trim() !== "" || !!searchParams.get("category") || !!searchParams.get("location") || !!searchParams.get("q");
 
@@ -77,18 +78,18 @@ export default function SearchClient({
 
         <div className="flex flex-col lg:flex-row gap-8">
           
-          {/* Sidebar Filters */}
-          <div className="w-full lg:w-1/4">
-            <div className="bg-zinc-950/40 lg:bg-zinc-950 border border-white/5 rounded-3xl p-4 lg:p-6 lg:sticky lg:top-28">
-              <div className="flex items-center gap-2 mb-4 lg:mb-6 text-white font-bold text-base lg:text-lg">
-                <SlidersHorizontal className="w-4 h-4 lg:w-5 lg:h-5 text-emerald-500" />
+          {/* Sidebar Filters (Desktop Only) */}
+          <div className="hidden lg:block w-1/4 shrink-0">
+            <div className="bg-zinc-950 border border-white/5 rounded-3xl p-6 sticky top-28">
+              <div className="flex items-center gap-2 mb-6 text-white font-bold text-lg">
+                <SlidersHorizontal className="w-5 h-5 text-emerald-500" />
                 {isAr ? "الفلاتر" : "Filters"}
               </div>
 
               {/* Category Filter */}
-              <div className="mb-6 lg:mb-8">
-                <h3 className="text-zinc-400 text-xs lg:text-sm font-bold uppercase tracking-wider mb-3 lg:mb-4">{isAr ? "التصنيف" : "Category"}</h3>
-                <div className="flex flex-row overflow-x-auto lg:flex-col gap-2 lg:gap-3 pb-2 lg:pb-0 [&::-webkit-scrollbar]:hidden">
+              <div className="mb-8">
+                <h3 className="text-zinc-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "التصنيف" : "Category"}</h3>
+                <div className="space-y-3">
                   {[
                     "perfumeClones", 
                     "readyPerfumes", 
@@ -101,11 +102,11 @@ export default function SearchClient({
                   ].map((catId) => {
                     const isActive = searchParams.get("category") === catId;
                     return (
-                      <label key={catId} onClick={() => applyFilter("category", catId)} className={`flex items-center gap-2 lg:gap-3 group cursor-pointer shrink-0 border lg:border-transparent px-4 py-2 lg:px-0 lg:py-0 rounded-full lg:rounded-none transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/30 lg:bg-transparent' : 'bg-white/5 border-white/10 hover:border-emerald-500/30 lg:bg-transparent'}`}>
-                        <div className={`hidden lg:flex w-5 h-5 rounded border items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
+                      <label key={catId} onClick={() => applyFilter("category", catId)} className="flex items-center gap-3 group cursor-pointer">
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
                           {isActive && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
                         </div>
-                        <span className={`text-xs lg:text-sm transition-colors whitespace-nowrap ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>
+                        <span className={`text-sm transition-colors ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>
                           {t(catId as any)}
                         </span>
                       </label>
@@ -115,20 +116,20 @@ export default function SearchClient({
               </div>
 
               {/* Location Filter */}
-              <div className="mb-2 lg:mb-8">
-                <h3 className="text-zinc-400 text-xs lg:text-sm font-bold uppercase tracking-wider mb-3 lg:mb-4">{isAr ? "المحافظة" : "Governorate"}</h3>
-                <div className="flex flex-row overflow-x-auto lg:flex-col gap-2 lg:gap-3 lg:h-64 lg:overflow-y-auto pb-2 lg:pb-0 lg:pr-2 scrollbar-thin scrollbar-thumb-zinc-800 [&::-webkit-scrollbar]:hidden lg:[&::-webkit-scrollbar]:block">
+              <div className="mb-8">
+                <h3 className="text-zinc-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "المحافظة" : "Governorate"}</h3>
+                <div className="space-y-3 h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-zinc-800">
                   {(isAr 
                     ? ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الشرقية", "المنوفية", "القليوبية", "البحيرة", "الغربية", "بور سعيد", "دمياط", "الإسماعيلية", "السويس", "كفر الشيخ", "الفيوم", "بني سويف", "مطروح", "شمال سيناء", "جنوب سيناء", "المنيا", "أسيوط", "سوهاج", "قنا", "البحر الأحمر", "الأقصر", "أسوان", "الوادي الجديد"]
                     : ["Cairo", "Giza", "Alexandria", "Dakahlia", "Red Sea", "Beheira", "Fayoum", "Gharbia", "Ismailia", "Monufia", "Minya", "Qalyubia", "New Valley", "Suez", "Aswan", "Assiut", "Beni Suef", "Port Said", "Damietta", "Sharqia", "South Sinai", "Kafr El Sheikh", "Matrouh", "Luxor", "Qena", "North Sinai", "Sohag"]
                   ).map((loc) => {
                     const isActive = searchParams.get("location") === loc;
                     return (
-                      <label key={loc} onClick={() => applyFilter("location", loc)} className={`flex items-center gap-2 lg:gap-3 group cursor-pointer shrink-0 border lg:border-transparent px-4 py-2 lg:px-0 lg:py-0 rounded-full lg:rounded-none transition-colors ${isActive ? 'bg-emerald-500/10 border-emerald-500/30 lg:bg-transparent' : 'bg-white/5 border-white/10 hover:border-emerald-500/30 lg:bg-transparent'}`}>
-                        <div className={`hidden lg:flex w-5 h-5 rounded border items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
+                      <label key={loc} onClick={() => applyFilter("location", loc)} className="flex items-center gap-3 group cursor-pointer">
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
                           {isActive && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
                         </div>
-                        <span className={`text-xs lg:text-sm transition-colors whitespace-nowrap ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>{loc}</span>
+                        <span className={`text-sm transition-colors ${isActive ? 'text-emerald-400 font-bold' : 'text-zinc-300 group-hover:text-white'}`}>{loc}</span>
                       </label>
                     );
                   })}
@@ -145,6 +146,13 @@ export default function SearchClient({
                 <span className="text-emerald-500">{initialResults.length}</span> {isAr ? "نتيجة بحث" : "Results Found"}
                 {isPending && <Loader2 className="w-5 h-5 text-emerald-500 animate-spin" />}
               </h2>
+              <button 
+                onClick={() => setIsMobileFiltersOpen(true)}
+                className="lg:hidden flex items-center gap-2 bg-zinc-900 border border-white/10 px-4 py-2 rounded-xl text-white font-bold hover:bg-zinc-800 transition-colors shadow-lg"
+              >
+                <Filter className="w-4 h-4 text-emerald-500" />
+                {isAr ? "الفلاتر" : "Filters"}
+              </button>
             </div>
 
             <div className={`flex flex-col gap-4 transition-opacity duration-300 ${isPending ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
@@ -233,6 +241,87 @@ export default function SearchClient({
 
         </div>
       </div>
+
+      {/* Mobile Filters Modal */}
+      <AnimatePresence>
+        {isMobileFiltersOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: "100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="lg:hidden fixed inset-0 z-[100] bg-zinc-950 flex flex-col overflow-hidden"
+          >
+            <div className="p-4 border-b border-white/10 flex items-center justify-between bg-zinc-900/50 backdrop-blur-md">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Filter className="w-5 h-5 text-emerald-500" />
+                {isAr ? "تصفية النتائج" : "Filter Results"}
+              </h2>
+              <button onClick={() => setIsMobileFiltersOpen(false)} className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 text-white transition-colors border border-white/10">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+              {/* Category Filter */}
+              <div className="mb-8">
+                <h3 className="text-emerald-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "التصنيف" : "Category"}</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    "perfumeClones", 
+                    "readyPerfumes", 
+                    "glass", 
+                    "bakhoor", 
+                    "airFresheners", 
+                    "packaging", 
+                    "bottlesAndEmpties", 
+                    "others"
+                  ].map((catId) => {
+                    const isActive = searchParams.get("category") === catId;
+                    return (
+                      <label key={catId} onClick={() => applyFilter("category", catId)} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${isActive ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-white/5 border-white/10'}`}>
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
+                          {isActive && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
+                        </div>
+                        <span className={`text-sm font-bold transition-colors ${isActive ? 'text-emerald-400' : 'text-zinc-300'}`}>
+                          {t(catId as any)}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Location Filter */}
+              <div className="mb-8">
+                <h3 className="text-emerald-400 text-sm font-bold uppercase tracking-wider mb-4">{isAr ? "المحافظة" : "Governorate"}</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {(isAr 
+                    ? ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الشرقية", "المنوفية", "القليوبية", "البحيرة", "الغربية", "بور سعيد", "دمياط", "الإسماعيلية", "السويس", "كفر الشيخ", "الفيوم", "بني سويف", "مطروح", "شمال سيناء", "جنوب سيناء", "المنيا", "أسيوط", "سوهاج", "قنا", "البحر الأحمر", "الأقصر", "أسوان", "الوادي الجديد"]
+                    : ["Cairo", "Giza", "Alexandria", "Dakahlia", "Red Sea", "Beheira", "Fayoum", "Gharbia", "Ismailia", "Monufia", "Minya", "Qalyubia", "New Valley", "Suez", "Aswan", "Assiut", "Beni Suef", "Port Said", "Damietta", "Sharqia", "South Sinai", "Kafr El Sheikh", "Matrouh", "Luxor", "Qena", "North Sinai", "Sohag"]
+                  ).map((loc) => {
+                    const isActive = searchParams.get("location") === loc;
+                    return (
+                      <label key={loc} onClick={() => applyFilter("location", loc)} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${isActive ? 'bg-emerald-500/20 border-emerald-500/50' : 'bg-white/5 border-white/10'}`}>
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0 ${isActive ? 'border-emerald-500 bg-emerald-500/20' : 'border-zinc-700 bg-black group-hover:border-emerald-500'}`}>
+                          {isActive && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
+                        </div>
+                        <span className={`text-sm font-bold transition-colors line-clamp-1 ${isActive ? 'text-emerald-400' : 'text-zinc-300'}`}>{loc}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-white/10 bg-zinc-900/80 backdrop-blur-md">
+              <button onClick={() => setIsMobileFiltersOpen(false)} className="w-full py-4 bg-emerald-500 text-black font-extrabold rounded-2xl text-lg hover:bg-emerald-400 transition-colors shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                {isAr ? "عرض النتائج" : "Show Results"}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

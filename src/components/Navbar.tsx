@@ -85,7 +85,8 @@ export default function Navbar() {
   }
 
   return (
-    <header
+    <>
+      <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
         isScrolled
           ? "bg-black/80 backdrop-blur-xl border-white/10 py-4 shadow-2xl"
@@ -247,6 +248,7 @@ export default function Navbar() {
           </button>
         </div>
       </div>
+    </header>
 
       {/* Mobile Navigation Menu */}
       <AnimatePresence>
@@ -347,6 +349,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }
