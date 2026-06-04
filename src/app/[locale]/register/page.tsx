@@ -23,7 +23,7 @@ export default function RegisterPage() {
     email: "",
     password: "",
     whatsapp: "",
-    category: "readyPerfumes",
+    categories: [] as string[],
     countryId: "EG",
     countryAr: "مصر",
     countryEn: "Egypt",
@@ -122,7 +122,10 @@ export default function RegisterPage() {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          category: formData.categories.join(',')
+        }),
       });
 
       if (!res.ok) {
@@ -247,25 +250,42 @@ export default function RegisterPage() {
                   className="space-y-5"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "التصنيف" : "Category"}</label>
-                      <select 
-                        value={formData.category}
-                        onChange={e => setFormData({...formData, category: e.target.value})}
-                        className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-emerald-500 outline-none"
-                      >
-                        <option value="perfumeClones">{isAr ? "بدائل عطور" : "Perfume Clones"}</option>
-                        <option value="readyPerfumes">{isAr ? "عطور جاهزة" : "Ready Perfumes"}</option>
-                        <option value="glass">{isAr ? "زجاج" : "Glass"}</option>
-                        <option value="bakhoor">{isAr ? "بخور" : "Bakhoor"}</option>
-                        <option value="airFresheners">{isAr ? "معطرات جو" : "Air Fresheners"}</option>
-                        <option value="packaging">{isAr ? "تعبئة وتغليف" : "Packaging"}</option>
-                        <option value="bottlesAndEmpties">{isAr ? "فوارغ" : "Bottles & Empties"}</option>
-                        <option value="others">{isAr ? "أخرى" : "Others"}</option>
-                      </select>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "التصنيف (يمكنك اختيار أكثر من واحد)" : "Category (Multiple allowed)"}</label>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          { id: "perfumeClones", ar: "عطور محاكاه", en: "Perfume Clones" },
+                          { id: "readyPerfumes", ar: "عطور جاهزة", en: "Ready Perfumes" },
+                          { id: "glass", ar: "زجاج", en: "Glass" },
+                          { id: "bakhoor", ar: "بخور", en: "Bakhoor" },
+                          { id: "airFresheners", ar: "معطرات", en: "Air Fresheners" },
+                          { id: "packaging", ar: "تعبئة وتغليف", en: "Packaging" },
+                          { id: "bottlesAndEmpties", ar: "فوارغ", en: "Bottles & Empties" },
+                          { id: "others", ar: "أخرى", en: "Others" }
+                        ].map(cat => {
+                          const isSelected = formData.categories.includes(cat.id);
+                          return (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  categories: isSelected 
+                                    ? prev.categories.filter(id => id !== cat.id)
+                                    : [...prev.categories, cat.id]
+                                }))
+                              }}
+                              className={`px-4 py-2 rounded-xl text-sm font-bold border transition-colors ${isSelected ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'bg-zinc-900 border-white/10 text-zinc-400 hover:border-white/20 hover:text-white'}`}
+                            >
+                              {isAr ? cat.ar : cat.en}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
-                    <div>
+                    <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "رقم الواتساب" : "WhatsApp Number"}</label>
                       <div className="relative">
                         <Phone className="w-5 h-5 text-emerald-500 absolute top-3 ltr:left-3 rtl:right-3" />
