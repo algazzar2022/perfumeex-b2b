@@ -11,6 +11,9 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
   const [search, setSearch] = useState('');
   const [navigatingId, setNavigatingId] = useState<string | null>(null);
   
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
   // Modals state
   const [editingCompany, setEditingCompany] = useState<any | null>(null);
   const [passwordModal, setPasswordModal] = useState<any | null>(null);
@@ -40,6 +43,13 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
     c.nameEn.includes(search) || 
     c.user.email.includes(search)
   );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage) || 1;
+  const paginatedCompanies = filteredCompanies.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleStatusChange = (id: string, status: any) => {
     startTransition(async () => {
@@ -162,6 +172,17 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
             className="w-full bg-black/50 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:border-purple-500"
           />
         </div>
+        <select 
+          value={itemsPerPage}
+          onChange={(e) => setItemsPerPage(Number(e.target.value))}
+          className="bg-black/50 border border-white/10 rounded-xl px-3 py-3 focus:border-purple-500 outline-none text-white h-full shrink-0"
+          title="عدد النتائج في الصفحة"
+        >
+          <option value={10}>10</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+          <option value={500}>500</option>
+        </select>
         <button 
           onClick={() => setEditingCompany({ id: '', nameAr: '', nameEn: '', slug: '', email: '', password: '', order: 0, status: 'APPROVED' })}
           className="hidden md:flex bg-emerald-500 text-black px-6 py-3 rounded-xl font-bold items-center gap-2 hover:bg-emerald-400 transition-colors shrink-0"
@@ -175,6 +196,7 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
         <table className="w-full text-right whitespace-nowrap">
           <thead className="bg-white/5 text-gray-400 text-sm border-b border-white/10">
             <tr>
+              <th className="px-6 py-4 font-medium w-16">#</th>
               <th className="px-6 py-4 font-medium">الشركة</th>
               <th className="px-6 py-4 font-medium">الحساب (البريد)</th>
               <th className="px-6 py-4 font-medium text-center">الحالة</th>
@@ -183,8 +205,11 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {filteredCompanies.map((company) => (
+            {paginatedCompanies.map((company, index) => {
+              const globalIndex = (currentPage - 1) * itemsPerPage + index;
+              return (
               <tr key={company.id} className="hover:bg-white/5 transition-colors">
+                <td className="px-6 py-4 font-bold text-zinc-500">{globalIndex + 1}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     {company.logo ? (
@@ -246,15 +271,39 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
                   </div>
                 </td>
               </tr>
-            ))}
+            )})}
             {filteredCompanies.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-6 py-12 text-center text-gray-400">لا توجد شركات مطابقة</td>
+                <td colSpan={6} className="px-6 py-12 text-center text-gray-400">لا توجد شركات مطابقة</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      {filteredCompanies.length > 0 && (
+        <div className="p-4 border border-white/10 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#111]">
+          <div className="text-gray-400 text-sm">
+            إجمالي: {filteredCompanies.length} | صفحة {currentPage} من {totalPages}
+          </div>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-gray-300 hover:text-white disabled:opacity-50 transition-colors"
+            >
+              السابق
+            </button>
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-gray-300 hover:text-white disabled:opacity-50 transition-colors"
+            >
+              التالي
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Edit Company Modal */}
       {editingCompany && (
