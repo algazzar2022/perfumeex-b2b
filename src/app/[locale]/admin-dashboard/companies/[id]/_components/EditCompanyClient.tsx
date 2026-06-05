@@ -307,7 +307,7 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
             <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
               <h2 className="text-xl font-bold">فروع الشركة</h2>
               <button 
-                onClick={() => setEditingBranch({ id: '', nameAr: '', nameEn: '', addressAr: '', phone: '' })}
+                onClick={() => setEditingBranch({ id: '', nameAr: '', nameEn: '', countryAr: '', governorateAr: '', cityAr: '', addressAr: '', phone: '' })}
                 className="bg-emerald-500 text-black px-4 py-2 rounded-xl font-bold flex items-center gap-2 text-sm"
               >
                 <Plus size={16} /> إضافة فرع جديد
@@ -325,7 +325,19 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
                   <input type="text" value={editingBranch.nameEn} onChange={e => setEditingBranch({...editingBranch, nameEn: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" required />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">العنوان</label>
+                  <label className="block text-sm text-gray-400 mb-1">الدولة</label>
+                  <input type="text" value={editingBranch.countryAr || ''} onChange={e => setEditingBranch({...editingBranch, countryAr: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">المحافظة</label>
+                  <input type="text" value={editingBranch.governorateAr || ''} onChange={e => setEditingBranch({...editingBranch, governorateAr: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">المدينة</label>
+                  <input type="text" value={editingBranch.cityAr || ''} onChange={e => setEditingBranch({...editingBranch, cityAr: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1">العنوان بالتفصيل</label>
                   <input type="text" value={editingBranch.addressAr || ''} onChange={e => setEditingBranch({...editingBranch, addressAr: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
                 </div>
                 <div>
@@ -351,7 +363,10 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
                   <div key={branch.id} className="bg-[#1a1a1a] p-4 rounded-xl flex items-center justify-between border border-white/5">
                     <div>
                       <h4 className="font-bold">{branch.nameAr} <span className="text-sm font-normal text-gray-400 mx-2">{branch.nameEn}</span></h4>
-                      <p className="text-sm text-gray-400 mt-1">{branch.addressAr || 'لا يوجد عنوان محدد'} - {branch.phone || 'لا يوجد هاتف'}</p>
+                      <p className="text-sm text-gray-400 mt-1">
+                        {[branch.countryAr, branch.governorateAr, branch.cityAr, branch.addressAr].filter(Boolean).join(' - ') || 'لا يوجد عنوان محدد'} 
+                        <br/><span className="text-emerald-400 mt-1 inline-block" dir="ltr">{branch.phone}</span>
+                      </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button onClick={() => setEditingBranch(branch)} className="p-2 text-blue-400 hover:bg-blue-400/20 rounded-lg">
