@@ -143,12 +143,12 @@ function CompanyCard({ company, idx, isAr, locale, t, catT, isSmall = false }: a
       <div className={`relative flex-1 flex flex-col z-10 ${isSmall ? 'p-5' : 'p-8'}`}>
         {/* Logo (Floating) */}
         {company.logo && (
-          <div className={`absolute border-zinc-950 bg-white shadow-2xl z-20 group-hover:-translate-y-2 transition-transform duration-500 rounded-2xl overflow-hidden border-4 ${
+          <div className={`absolute z-20 group-hover:-translate-y-2 transition-transform duration-500 rounded-2xl overflow-hidden ${
             isSmall 
               ? '-top-10 ltr:left-5 rtl:right-5 w-16 h-16' 
               : '-top-14 ltr:left-8 rtl:right-8 w-24 h-24'
           }`}>
-            <Image src={company.logo} alt="Logo" fill className="object-contain p-2" />
+            <Image src={company.logo} alt="Logo" fill className="object-contain drop-shadow-xl" />
           </div>
         )}
 
