@@ -47,9 +47,7 @@ export default async function AdminCompanyEditPage({ params }: { params: Promise
     notFound();
   }
 
-  const categories = await prisma.category.findMany({
-    orderBy: { order: 'asc' }
-  });
+
 
   return (
     <div>
