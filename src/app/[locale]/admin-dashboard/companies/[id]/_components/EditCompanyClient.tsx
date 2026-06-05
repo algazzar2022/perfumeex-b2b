@@ -5,6 +5,7 @@ import { updateCompany, createBranch, updateBranch, deleteBranch, addGalleryImag
 import { CheckCircle, XCircle, Loader2, UploadCloud, Plus, Trash2, Edit2, Image as ImageIcon, Building2, FileText, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { ARAB_COUNTRIES, GOVERNORATES, CITIES } from "@/lib/locations";
 
 export default function EditCompanyClient({ initialCompany, dbCategories }: { initialCompany: any, dbCategories: any[] }) {
   const [activeTab, setActiveTab] = useState<'basic' | 'branches' | 'gallery'>('basic');
@@ -326,15 +327,90 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">الدولة</label>
-                  <input type="text" value={editingBranch.countryAr || ''} onChange={e => setEditingBranch({...editingBranch, countryAr: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+                  <select 
+                    value={ARAB_COUNTRIES.find(c => c.nameAr === editingBranch.countryAr)?.id || ''} 
+                    onChange={e => {
+                      const cId = e.target.value;
+                      const cObj = ARAB_COUNTRIES.find(c => c.id === cId);
+                      setEditingBranch({
+                        ...editingBranch, 
+                        countryAr: cObj ? cObj.nameAr : '',
+                        governorateAr: '',
+                        cityAr: ''
+                      });
+                    }} 
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
+                  >
+                    <option value="">اختر الدولة</option>
+                    {ARAB_COUNTRIES.map(c => (
+                      <option key={c.id} value={c.id}>{c.nameAr}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">المحافظة</label>
-                  <input type="text" value={editingBranch.governorateAr || ''} onChange={e => setEditingBranch({...editingBranch, governorateAr: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+                  <select 
+                    value={(() => {
+                      const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingBranch.countryAr)?.id;
+                      const govs = cId ? GOVERNORATES[cId] || [] : [];
+                      return govs.find(g => g.nameAr === editingBranch.governorateAr)?.id || '';
+                    })()} 
+                    onChange={e => {
+                      const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingBranch.countryAr)?.id;
+                      const govs = cId ? GOVERNORATES[cId] || [] : [];
+                      const govId = e.target.value;
+                      const govObj = govs.find(g => g.id === govId);
+                      setEditingBranch({
+                        ...editingBranch,
+                        governorateAr: govObj ? govObj.nameAr : '',
+                        cityAr: ''
+                      });
+                    }} 
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
+                  >
+                    <option value="">اختر المحافظة</option>
+                    {(() => {
+                      const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingBranch.countryAr)?.id;
+                      return cId ? (GOVERNORATES[cId] || []).map(g => (
+                        <option key={g.id} value={g.id}>{g.nameAr}</option>
+                      )) : null;
+                    })()}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">المدينة</label>
-                  <input type="text" value={editingBranch.cityAr || ''} onChange={e => setEditingBranch({...editingBranch, cityAr: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+                  <select 
+                    value={(() => {
+                      const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingBranch.countryAr)?.id;
+                      const govs = cId ? GOVERNORATES[cId] || [] : [];
+                      const govId = govs.find(g => g.nameAr === editingBranch.governorateAr)?.id;
+                      const cities = govId ? CITIES[govId] || [] : [];
+                      return cities.find(c => c.nameAr === editingBranch.cityAr)?.id || '';
+                    })()} 
+                    onChange={e => {
+                      const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingBranch.countryAr)?.id;
+                      const govs = cId ? GOVERNORATES[cId] || [] : [];
+                      const govId = govs.find(g => g.nameAr === editingBranch.governorateAr)?.id;
+                      const cities = govId ? CITIES[govId] || [] : [];
+                      const cityId = e.target.value;
+                      const cityObj = cities.find(c => c.id === cityId);
+                      setEditingBranch({
+                        ...editingBranch,
+                        cityAr: cityObj ? cityObj.nameAr : ''
+                      });
+                    }} 
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
+                  >
+                    <option value="">اختر المدينة</option>
+                    {(() => {
+                      const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingBranch.countryAr)?.id;
+                      const govs = cId ? GOVERNORATES[cId] || [] : [];
+                      const govId = govs.find(g => g.nameAr === editingBranch.governorateAr)?.id;
+                      return govId ? (CITIES[govId] || []).map(c => (
+                        <option key={c.id} value={c.id}>{c.nameAr}</option>
+                      )) : null;
+                    })()}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">العنوان بالتفصيل</label>
