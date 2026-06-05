@@ -13,6 +13,7 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
   
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [filterStatus, setFilterStatus] = useState('ALL');
   
   // Modals state
   const [editingCompany, setEditingCompany] = useState<any | null>(null);
@@ -38,15 +39,15 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
       .catch(console.error);
   }, []);
 
-  const filteredCompanies = companies.filter(c => 
-    c.nameAr.includes(search) || 
-    c.nameEn.includes(search) || 
-    c.user.email.includes(search)
-  );
+  const filteredCompanies = companies.filter(c => {
+    const matchesSearch = c.nameAr.includes(search) || c.nameEn.includes(search) || c.user.email.includes(search);
+    const matchesStatus = filterStatus === 'ALL' || c.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, itemsPerPage]);
+  }, [search, itemsPerPage, filterStatus]);
 
   const totalPages = Math.ceil(filteredCompanies.length / itemsPerPage) || 1;
   const paginatedCompanies = filteredCompanies.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -161,8 +162,8 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
             <Plus size={20} /> إضافة
           </button>
         </div>
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          <div className="relative flex-1 md:w-80">
+        <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
+          <div className="relative flex-1 min-w-[200px] md:w-80">
           <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
           <input 
             type="text" 
@@ -172,6 +173,16 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
             className="w-full bg-black/50 border border-white/10 rounded-xl px-12 py-3 focus:outline-none focus:border-purple-500"
           />
         </div>
+        <select 
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="bg-black/50 border border-white/10 rounded-xl px-3 py-3 focus:border-purple-500 outline-none text-white h-full shrink-0"
+          title="تصفية حسب الحالة"
+        >
+          <option value="ALL">الجميع</option>
+          <option value="APPROVED">المقبولة فقط</option>
+          <option value="PENDING">المعلقة فقط</option>
+        </select>
         <select 
           value={itemsPerPage}
           onChange={(e) => setItemsPerPage(Number(e.target.value))}
