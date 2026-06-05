@@ -90,17 +90,24 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
 
     startTransition(async () => {
       try {
-        if (editingBranch.id) {
-          await updateBranch(editingBranch.id, editingBranch);
+        const { id, customCity, ...branchData } = editingBranch;
+        
+        if (customCity !== undefined && customCity.trim() !== '') {
+          branchData.cityAr = customCity;
+        } else if (branchData.cityAr === 'أخرى') {
+          showToast("يرجى إدخال اسم المدينة", 'error');
+          return;
+        }
+
+        if (id) {
+          await updateBranch(id, branchData);
           setCompany({
             ...company,
-            branches: company.branches.map((b: any) => b.id === editingBranch.id ? editingBranch : b)
+            branches: company.branches.map((b: any) => b.id === id ? { id, ...branchData } : b)
           });
           showToast("تم تحديث الفرع بنجاح");
         } else {
-          await createBranch(company.id, editingBranch);
-          // Optimistically reload page or add it. Since createBranch revalidates path, a refresh will get the exact data.
-          // For now just tell user it's saved.
+          await createBranch(company.id, branchData);
           showToast("تم إضافة الفرع بنجاح. قم بتحديث الصفحة لرؤيته.");
         }
         setEditingBranch(null);
@@ -385,7 +392,10 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
                       const govs = cId ? GOVERNORATES[cId] || [] : [];
                       const govId = govs.find(g => g.nameAr === editingBranch.governorateAr)?.id;
                       const cities = govId ? CITIES[govId] || [] : [];
-                      return cities.find(c => c.nameAr === editingBranch.cityAr)?.id || '';
+                      const cityObj = cities.find(c => c.nameAr === editingBranch.cityAr);
+                      if (cityObj) return cityObj.id;
+                      if (editingBranch.cityAr) return "OTHER";
+                      return '';
                     })()} 
                     onChange={e => {
                       const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingBranch.countryAr)?.id;
@@ -396,7 +406,8 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
                       const cityObj = cities.find(c => c.id === cityId);
                       setEditingBranch({
                         ...editingBranch,
-                        cityAr: cityObj ? cityObj.nameAr : ''
+                        cityAr: cityObj ? cityObj.nameAr : '',
+                        customCity: ''
                       });
                     }} 
                     className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
@@ -412,6 +423,30 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
                     })()}
                   </select>
                 </div>
+                {(() => {
+                  const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingBranch.countryAr)?.id;
+                  const govs = cId ? GOVERNORATES[cId] || [] : [];
+                  const govId = govs.find(g => g.nameAr === editingBranch.governorateAr)?.id;
+                  const cities = govId ? CITIES[govId] || [] : [];
+                  const isOther = editingBranch.cityAr === 'أخرى' || (editingBranch.cityAr && !cities.find(c => c.nameAr === editingBranch.cityAr));
+                  
+                  if (isOther) {
+                    return (
+                      <div>
+                        <label className="block text-sm text-gray-400 mb-1">اسم المدينة (أخرى)</label>
+                        <input 
+                          type="text" 
+                          value={editingBranch.customCity !== undefined ? editingBranch.customCity : (editingBranch.cityAr === 'أخرى' ? '' : editingBranch.cityAr)} 
+                          onChange={e => setEditingBranch({...editingBranch, customCity: e.target.value})} 
+                          className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" 
+                          placeholder="اكتب اسم المدينة"
+                          required
+                        />
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">العنوان بالتفصيل</label>
                   <input type="text" value={editingBranch.addressAr || ''} onChange={e => setEditingBranch({...editingBranch, addressAr: e.target.value})} className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
