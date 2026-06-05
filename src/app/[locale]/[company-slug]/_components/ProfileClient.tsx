@@ -179,7 +179,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-20 -mt-40 md:-mt-56 mb-20">
         
         {/* 🏢 Profile Header */}
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-end mb-8 md:mb-12 text-center md:text-start rtl:md:text-right">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-end mb-8 md:mb-12 text-center md:text-start">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -198,7 +198,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
             initial={{ opacity: 0, x: isAr ? 30 : -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex-1 pb-4 flex flex-col items-center md:items-start rtl:md:items-end"
+            className="flex-1 pb-4 flex flex-col items-center md:items-start"
           >
             <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
               {displayName}
