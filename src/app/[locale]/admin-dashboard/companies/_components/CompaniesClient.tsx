@@ -16,7 +16,6 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
   const [filterStatus, setFilterStatus] = useState('ALL');
   
   // Modals state
-  const [editingCompany, setEditingCompany] = useState<any | null>(null);
   const [passwordModal, setPasswordModal] = useState<any | null>(null);
   const [newPassword, setNewPassword] = useState('');
   
@@ -155,12 +154,12 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
             <h2 className="text-2xl font-bold mb-1">إدارة الشركات</h2>
             <p className="text-gray-400 text-sm">عرض وتعديل والتحكم في ظهور الشركات المسجلة</p>
           </div>
-          <button 
-            onClick={() => setEditingCompany({ id: '', nameAr: '', nameEn: '', slug: '', email: '', password: '', order: 0, status: 'APPROVED' })}
+          <Link 
+            href="/ar/admin-dashboard/companies/new"
             className="md:hidden bg-emerald-500 text-black px-4 py-2 rounded-xl font-bold flex items-center gap-2"
           >
             <Plus size={20} /> إضافة
-          </button>
+          </Link>
         </div>
         <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
           <div className="relative flex-1 min-w-[200px] md:w-80">
@@ -194,12 +193,12 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
           <option value={100}>100</option>
           <option value={500}>500</option>
         </select>
-        <button 
-          onClick={() => setEditingCompany({ id: '', nameAr: '', nameEn: '', slug: '', email: '', password: '', order: 0, status: 'APPROVED' })}
+        <Link 
+          href="/ar/admin-dashboard/companies/new"
           className="hidden md:flex bg-emerald-500 text-black px-6 py-3 rounded-xl font-bold items-center gap-2 hover:bg-emerald-400 transition-colors shrink-0"
         >
           <Plus size={20} /> إضافة شركة جديدة
-        </button>
+        </Link>
         </div>
       </div>
 
@@ -298,217 +297,18 @@ export default function CompaniesClient({ initialCompanies }: { initialCompanies
             إجمالي: {filteredCompanies.length} | صفحة {currentPage} من {totalPages}
           </div>
           <div className="flex items-center gap-2">
-            <button 
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
+            <Link 
+              href={`?page=${Math.max(1, currentPage - 1)}`}
               className="px-4 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-gray-300 hover:text-white disabled:opacity-50 transition-colors"
             >
               السابق
-            </button>
-            <button 
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
+            </Link>
+            <Link 
+              href={`?page=${Math.min(totalPages, currentPage + 1)}`}
               className="px-4 py-2 bg-black/50 border border-white/10 rounded-lg text-sm text-gray-300 hover:text-white disabled:opacity-50 transition-colors"
             >
               التالي
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Company Modal */}
-      {editingCompany && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
-          onClick={() => setEditingCompany(null)}
-        >
-          <div 
-            className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-xl font-bold mb-6">{editingCompany.id ? `تعديل بيانات: ${editingCompany.nameAr}` : 'إضافة شركة جديدة'}</h3>
-            <form onSubmit={handleSaveCompany} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Basic Info */}
-              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">البيانات الأساسية</h4></div>
-              
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">الاسم بالعربية</label>
-                <input type="text" value={editingCompany.nameAr} onChange={e => setEditingCompany({...editingCompany, nameAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">الاسم بالإنجليزية</label>
-                <input type="text" value={editingCompany.nameEn} onChange={e => setEditingCompany({...editingCompany, nameEn: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
-              </div>
-              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">رابط الشركة (Slug - إنجليزي فقط)</label>
-                  <input type="text" value={editingCompany.slug} onChange={e => setEditingCompany({...editingCompany, slug: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">ترتيب الظهور (رقم 1 يظهر أولاً، والافتراضي 0 يظهر في النهاية)</label>
-                  <input type="number" value={editingCompany.order || 0} onChange={e => setEditingCompany({...editingCompany, order: parseInt(e.target.value) || 0})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
-                </div>
-              </div>
-
-              {/* Descriptions */}
-              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">الوصف والروابط</h4></div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">وصف الشركة (عربي)</label>
-                <textarea rows={3} value={editingCompany.descriptionAr || ''} onChange={e => setEditingCompany({...editingCompany, descriptionAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">وصف الشركة (إنجليزي)</label>
-                <textarea rows={3} value={editingCompany.descriptionEn || ''} onChange={e => setEditingCompany({...editingCompany, descriptionEn: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
-              </div>
-
-              {/* Media Uploads */}
-              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">شعار وغلاف الشركة</h4></div>
-              
-              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Logo Upload */}
-                <div>
-                  <label className="block text-sm text-gray-400 mb-2">لوجو الشركة</label>
-                  <div className="flex items-center gap-4">
-                    {editingCompany.logo ? (
-                      <img src={editingCompany.logo} alt="Logo" className="w-16 h-16 rounded-xl object-cover bg-white/10" />
-                    ) : (
-                      <div className="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-500">لا يوجد</div>
-                    )}
-                    <label className="flex-1 border border-dashed border-white/20 rounded-xl p-4 flex flex-col items-center justify-center bg-black/50 hover:bg-white/5 cursor-pointer transition-colors group">
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        onChange={(e) => handleImageUpload(e, 'logo')} 
-                      />
-                      <UploadCloud className="w-5 h-5 text-gray-400 group-hover:text-emerald-400 mb-1 transition-colors" />
-                      <span className="text-xs text-gray-400">تغيير اللوجو</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Cover Upload */}
-                <div>
-                  <label className="block text-sm text-gray-400 mb-2">غلاف الشركة (Cover)</label>
-                  <div className="flex items-center gap-4">
-                    {editingCompany.coverImage ? (
-                      <img src={editingCompany.coverImage} alt="Cover" className="w-24 h-16 rounded-xl object-cover bg-white/10" />
-                    ) : (
-                      <div className="w-24 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xs text-gray-500">لا يوجد</div>
-                    )}
-                    <label className="flex-1 border border-dashed border-white/20 rounded-xl p-4 flex flex-col items-center justify-center bg-black/50 hover:bg-white/5 cursor-pointer transition-colors group">
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        onChange={(e) => handleImageUpload(e, 'coverImage')} 
-                      />
-                      <UploadCloud className="w-5 h-5 text-gray-400 group-hover:text-emerald-400 mb-1 transition-colors" />
-                      <span className="text-xs text-gray-400">تغيير الغلاف</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Contact */}
-              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">بيانات التواصل والحساب</h4></div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">البريد الإلكتروني للشركة</label>
-                <input type="email" value={editingCompany.email || ''} onChange={e => setEditingCompany({...editingCompany, email: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" disabled={!!editingCompany.id} />
-              </div>
-              {!editingCompany.id && (
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">كلمة المرور (للدخول للوحة التحكم)</label>
-                  <input type="text" value={editingCompany.password || ''} onChange={e => setEditingCompany({...editingCompany, password: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" placeholder="******" />
-                </div>
-              )}
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">رقم الواتساب</label>
-                <input type="text" value={editingCompany.whatsapp || ''} onChange={e => setEditingCompany({...editingCompany, whatsapp: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">الموقع الإلكتروني</label>
-                <input type="text" value={editingCompany.website || ''} onChange={e => setEditingCompany({...editingCompany, website: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm text-gray-400 mb-2">أقسام الشركة (التصنيفات)</label>
-                <div className="flex flex-wrap gap-3">
-                  {dbCategories.map(cat => {
-                    const selectedCategories = editingCompany.category ? editingCompany.category.split(',') : [];
-                    const isSelected = selectedCategories.includes(cat.slug);
-                    return (
-                      <label 
-                        key={cat.slug} 
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-full border cursor-pointer transition-all ${
-                          isSelected 
-                          ? 'bg-purple-500/10 border-purple-500/50 text-purple-400' 
-                          : 'bg-[#111] border-white/10 text-gray-400 hover:border-white/20 hover:text-white'
-                        }`}
-                      >
-                        <input 
-                          type="checkbox" 
-                          className="hidden" 
-                          checked={isSelected} 
-                          onChange={() => {
-                            let newCats = [...selectedCategories];
-                            if (isSelected) {
-                              newCats = newCats.filter((c: string) => c !== cat.slug);
-                            } else {
-                              newCats.push(cat.slug);
-                            }
-                            setEditingCompany({...editingCompany, category: newCats.join(',')});
-                          }} 
-                        />
-                        <span className="text-sm font-bold">{cat.nameAr}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Location */}
-              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">الموقع الجغرافي</h4></div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">الدولة (عربي)</label>
-                <input type="text" value={editingCompany.countryAr || ''} onChange={e => setEditingCompany({...editingCompany, countryAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">المحافظة (عربي)</label>
-                <input type="text" value={editingCompany.governorateAr || ''} onChange={e => setEditingCompany({...editingCompany, governorateAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">المدينة (عربي)</label>
-                <input type="text" value={editingCompany.cityAr || ''} onChange={e => setEditingCompany({...editingCompany, cityAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">العنوان (عربي)</label>
-                <input type="text" value={editingCompany.addressAr || ''} onChange={e => setEditingCompany({...editingCompany, addressAr: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" />
-              </div>
-
-              {/* Socials */}
-              <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-2 border-b border-white/10 pb-2">منصات التواصل</h4></div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">فيسبوك</label>
-                <input type="text" value={editingCompany.facebook || ''} onChange={e => setEditingCompany({...editingCompany, facebook: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">انستجرام</label>
-                <input type="text" value={editingCompany.instagram || ''} onChange={e => setEditingCompany({...editingCompany, instagram: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">تويتر (X)</label>
-                <input type="text" value={editingCompany.twitter || ''} onChange={e => setEditingCompany({...editingCompany, twitter: e.target.value})} className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:border-purple-500 text-white" dir="ltr" />
-              </div>
-              
-              <div className="md:col-span-2 flex items-center gap-3 mt-6">
-                <button type="submit" disabled={isPending} className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 rounded-xl hover:opacity-90 flex items-center justify-center disabled:opacity-50">
-                  {isPending ? <Loader2 className="animate-spin" /> : 'حفظ التعديلات'}
-                </button>
-                <button type="button" onClick={() => setEditingCompany(null)} className="flex-1 bg-white/10 text-white font-bold py-3 rounded-xl hover:bg-white/20 transition-colors">
-                  إلغاء
-                </button>
-              </div>
-            </form>
+            </Link>
           </div>
         </div>
       )}

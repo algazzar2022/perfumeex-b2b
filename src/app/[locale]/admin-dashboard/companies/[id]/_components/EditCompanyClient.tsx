@@ -5,10 +5,12 @@ import { updateCompany, createBranch, updateBranch, deleteBranch, addGalleryImag
 import { CheckCircle, XCircle, Loader2, UploadCloud, Plus, Trash2, Edit2, Image as ImageIcon, Building2, FileText, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ARAB_COUNTRIES, GOVERNORATES, CITIES } from "@/lib/locations";
 
-export default function EditCompanyClient({ initialCompany, dbCategories }: { initialCompany: any, dbCategories: any[] }) {
+export default function EditCompanyClient({ initialCompany, dbCategories, isNew = false }: { initialCompany: any, dbCategories: any[], isNew?: boolean }) {
   const [activeTab, setActiveTab] = useState<'basic' | 'branches' | 'gallery'>('basic');
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [toastMessage, setToastMessage] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
@@ -46,7 +48,7 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
     e.preventDefault();
     startTransition(async () => {
       try {
-        await updateCompany(company.id, {
+        const payload = {
           nameAr: editingCompany.nameAr,
           nameEn: editingCompany.nameEn,
           slug: editingCompany.slug,
@@ -72,9 +74,20 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
           isFeatured: editingCompany.isFeatured,
           isSponsor: editingCompany.isSponsor,
           order: editingCompany.order
-        });
-        setCompany({ ...company, ...editingCompany });
-        showToast("تم حفظ البيانات الأساسية بنجاح");
+        };
+
+        if (isNew) {
+          const newCompany = await createCompany({
+            ...payload,
+            password: editingCompany.password
+          });
+          showToast("تم إضافة الشركة بنجاح");
+          router.push(`/ar/admin-dashboard/companies/${newCompany.id}`);
+        } else {
+          await updateCompany(company.id, payload);
+          setCompany({ ...company, ...editingCompany });
+          showToast("تم حفظ البيانات الأساسية بنجاح");
+        }
       } catch (error: any) {
         showToast(error.message || "حدث خطأ غير متوقع", 'error');
       }
@@ -172,7 +185,7 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
           <ArrowRight className="w-6 h-6" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold mb-1">تعديل شركة: {company.nameAr}</h1>
+          <h1 className="text-2xl font-bold mb-1">{isNew ? 'إضافة شركة جديدة' : `تعديل شركة: ${company.nameAr}`}</h1>
           <p className="text-gray-400 text-sm">تعديل البيانات الأساسية، الفروع، ومعرض الصور</p>
         </div>
       </div>
@@ -186,13 +199,15 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
         </button>
         <button 
           onClick={() => setActiveTab('branches')}
-          className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-colors ${activeTab === 'branches' ? 'bg-emerald-500 text-black' : 'bg-[#111] border border-white/10 hover:bg-white/5'}`}
+          disabled={isNew}
+          className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${activeTab === 'branches' ? 'bg-emerald-500 text-black' : 'bg-[#111] border border-white/10 hover:bg-white/5'}`}
         >
           <Building2 size={18} /> الفروع ({company.branches?.length || 0})
         </button>
         <button 
           onClick={() => setActiveTab('gallery')}
-          className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-colors ${activeTab === 'gallery' ? 'bg-emerald-500 text-black' : 'bg-[#111] border border-white/10 hover:bg-white/5'}`}
+          disabled={isNew}
+          className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${activeTab === 'gallery' ? 'bg-emerald-500 text-black' : 'bg-[#111] border border-white/10 hover:bg-white/5'}`}
         >
           <ImageIcon size={18} /> معرض الصور ({company.galleries?.length || 0})
         </button>
@@ -275,8 +290,14 @@ export default function EditCompanyClient({ initialCompany, dbCategories }: { in
             
             <div>
               <label className="block text-sm text-gray-400 mb-1">البريد الإلكتروني للشركة</label>
-              <input type="email" value={editingCompany.email || ''} onChange={e => setEditingCompany({...editingCompany, email: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white disabled:opacity-50" dir="ltr" disabled />
+              <input type="email" value={editingCompany.email || ''} onChange={e => setEditingCompany({...editingCompany, email: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white disabled:opacity-50" dir="ltr" disabled={!isNew} />
             </div>
+            {isNew && (
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">كلمة المرور</label>
+                <input type="password" value={editingCompany.password || ''} onChange={e => setEditingCompany({...editingCompany, password: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" required />
+              </div>
+            )}
             <div>
               <label className="block text-sm text-gray-400 mb-1">رقم الواتساب</label>
               <input type="text" value={editingCompany.whatsapp || ''} onChange={e => setEditingCompany({...editingCompany, whatsapp: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" />
