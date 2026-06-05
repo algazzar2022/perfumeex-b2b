@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateCompany, createBranch, updateBranch, deleteBranch, addGalleryImage, deleteGalleryImage } from "../../actions";
+import { updateCompany, createCompany, createBranch, updateBranch, deleteBranch, addGalleryImage, deleteGalleryImage } from "../../actions";
 import { CheckCircle, XCircle, Loader2, UploadCloud, Plus, Trash2, Edit2, Image as ImageIcon, Building2, FileText, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -48,7 +48,7 @@ export default function EditCompanyClient({ initialCompany, dbCategories, isNew 
     e.preventDefault();
     startTransition(async () => {
       try {
-        const payload = {
+        const payload: any = {
           nameAr: editingCompany.nameAr,
           nameEn: editingCompany.nameEn,
           slug: editingCompany.slug,
@@ -75,6 +75,12 @@ export default function EditCompanyClient({ initialCompany, dbCategories, isNew 
           isSponsor: editingCompany.isSponsor,
           order: editingCompany.order
         };
+
+        if (editingCompany.customCity !== undefined && editingCompany.customCity.trim() !== '') {
+          payload.cityAr = editingCompany.customCity;
+        } else if (payload.cityAr === 'أخرى') {
+          throw new Error("يرجى إدخال اسم المدينة");
+        }
 
         if (isNew) {
           const newCompany = await createCompany({
@@ -318,8 +324,127 @@ export default function EditCompanyClient({ initialCompany, dbCategories, isNew 
               <label className="block text-sm text-gray-400 mb-1">تويتر (X)</label>
               <input type="url" value={editingCompany.twitter || ''} onChange={e => setEditingCompany({...editingCompany, twitter: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" placeholder="https://x.com/..." />
             </div>
+
+            <div className="md:col-span-2"><h4 className="font-bold text-emerald-400 mt-4 border-b border-white/10 pb-2">العنوان والموقع الجغرافي</h4></div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">الدولة</label>
+              <select 
+                value={ARAB_COUNTRIES.find(c => c.nameAr === editingCompany.countryAr)?.id || ''} 
+                onChange={e => {
+                  const cId = e.target.value;
+                  const cObj = ARAB_COUNTRIES.find(c => c.id === cId);
+                  setEditingCompany({
+                    ...editingCompany, 
+                    countryAr: cObj ? cObj.nameAr : '',
+                    governorateAr: '',
+                    cityAr: ''
+                  });
+                }} 
+                className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
+              >
+                <option value="">اختر الدولة</option>
+                {ARAB_COUNTRIES.map(c => (
+                  <option key={c.id} value={c.id}>{c.nameAr}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">المحافظة</label>
+              <select 
+                value={(() => {
+                  const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingCompany.countryAr)?.id;
+                  const govs = cId ? GOVERNORATES[cId] || [] : [];
+                  return govs.find(g => g.nameAr === editingCompany.governorateAr)?.id || '';
+                })()} 
+                onChange={e => {
+                  const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingCompany.countryAr)?.id;
+                  const govs = cId ? GOVERNORATES[cId] || [] : [];
+                  const govId = e.target.value;
+                  const govObj = govs.find(g => g.id === govId);
+                  setEditingCompany({
+                    ...editingCompany,
+                    governorateAr: govObj ? govObj.nameAr : '',
+                    cityAr: ''
+                  });
+                }} 
+                className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
+              >
+                <option value="">اختر المحافظة</option>
+                {(() => {
+                  const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingCompany.countryAr)?.id;
+                  return cId ? (GOVERNORATES[cId] || []).map(g => (
+                    <option key={g.id} value={g.id}>{g.nameAr}</option>
+                  )) : null;
+                })()}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">المدينة</label>
+              <select 
+                value={(() => {
+                  const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingCompany.countryAr)?.id;
+                  const govs = cId ? GOVERNORATES[cId] || [] : [];
+                  const govId = govs.find(g => g.nameAr === editingCompany.governorateAr)?.id;
+                  const cities = govId ? CITIES[govId] || [] : [];
+                  const cityObj = cities.find(c => c.nameAr === editingCompany.cityAr);
+                  if (cityObj) return cityObj.id;
+                  if (editingCompany.cityAr) return "OTHER";
+                  return '';
+                })()} 
+                onChange={e => {
+                  const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingCompany.countryAr)?.id;
+                  const govs = cId ? GOVERNORATES[cId] || [] : [];
+                  const govId = govs.find(g => g.nameAr === editingCompany.governorateAr)?.id;
+                  const cities = govId ? CITIES[govId] || [] : [];
+                  const cityId = e.target.value;
+                  const cityObj = cities.find(c => c.id === cityId);
+                  setEditingCompany({
+                    ...editingCompany,
+                    cityAr: cityObj ? cityObj.nameAr : '',
+                    customCity: ''
+                  });
+                }} 
+                className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white"
+              >
+                <option value="">اختر المدينة</option>
+                {(() => {
+                  const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingCompany.countryAr)?.id;
+                  const govs = cId ? GOVERNORATES[cId] || [] : [];
+                  const govId = govs.find(g => g.nameAr === editingCompany.governorateAr)?.id;
+                  return govId ? (CITIES[govId] || []).map(c => (
+                    <option key={c.id} value={c.id}>{c.nameAr}</option>
+                  )) : null;
+                })()}
+              </select>
+            </div>
+            {(() => {
+              const cId = ARAB_COUNTRIES.find(c => c.nameAr === editingCompany.countryAr)?.id;
+              const govs = cId ? GOVERNORATES[cId] || [] : [];
+              const govId = govs.find(g => g.nameAr === editingCompany.governorateAr)?.id;
+              const cities = govId ? CITIES[govId] || [] : [];
+              const isOther = editingCompany.cityAr === 'أخرى' || (editingCompany.cityAr && !cities.find(c => c.nameAr === editingCompany.cityAr));
+              
+              if (isOther) {
+                return (
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">اسم المدينة (أخرى)</label>
+                    <input 
+                      type="text" 
+                      value={editingCompany.customCity !== undefined ? editingCompany.customCity : (editingCompany.cityAr === 'أخرى' ? '' : editingCompany.cityAr)} 
+                      onChange={e => setEditingCompany({...editingCompany, customCity: e.target.value})} 
+                      className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" 
+                      placeholder="اكتب اسم المدينة"
+                      required
+                    />
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
             <div className="md:col-span-2">
-              <label className="block text-sm text-gray-400 mb-1">العنوان بالعربية</label>
+              <label className="block text-sm text-gray-400 mb-1">العنوان بالعربية بالتفصيل</label>
               <input type="text" value={editingCompany.addressAr || ''} onChange={e => setEditingCompany({...editingCompany, addressAr: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
             </div>
 
