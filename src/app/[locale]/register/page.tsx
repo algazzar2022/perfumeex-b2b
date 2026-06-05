@@ -34,6 +34,8 @@ export default function RegisterPage() {
     cityId: "",
     cityAr: "",
     cityEn: "",
+    addressAr: "",
+    addressEn: "",
     logo: "",
     coverImage: "",
     descriptionAr: "",
@@ -391,6 +393,35 @@ export default function RegisterPage() {
                           <option key={c.id} value={c.id}>{isAr ? c.nameAr : c.nameEn}</option>
                         ))}
                       </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "عنوان الشركة / المحل بالتفصيل (بالعربية)" : "Detailed Address (Arabic)"}</label>
+                      <div className="relative">
+                        <MapPin className="w-5 h-5 text-emerald-500 absolute top-3 ltr:left-3 rtl:right-3" />
+                        <input 
+                          type="text" dir="rtl"
+                          value={formData.addressAr}
+                          onChange={(e) => setFormData({...formData, addressAr: e.target.value})}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl ltr:pl-10 rtl:pr-10 ltr:pr-4 rtl:pl-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors font-cairo" 
+                          placeholder={isAr ? "شارع الستين، المجاورة الثانية..." : "60th St, Second District..."}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-400 mb-2">{isAr ? "عنوان الشركة / المحل بالتفصيل (بالإنجليزية)" : "Detailed Address (English)"}</label>
+                      <div className="relative">
+                        <MapPin className="w-5 h-5 text-emerald-500 absolute top-3 ltr:left-3 rtl:right-3" />
+                        <input 
+                          type="text" dir="ltr"
+                          value={formData.addressEn}
+                          onChange={(e) => setFormData({...formData, addressEn: e.target.value})}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl ltr:pl-10 rtl:pr-10 ltr:pr-4 rtl:pl-4 py-3 text-white focus:border-emerald-500 outline-none transition-colors" 
+                          placeholder="60th St, Second District..."
+                        />
+                      </div>
                     </div>
                   </div>
 

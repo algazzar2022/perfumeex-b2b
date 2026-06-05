@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const { 
       email, password, nameAr, nameEn,
       whatsapp, category, governorateAr, governorateEn, 
-      cityAr, cityEn, logo, coverImage, descriptionAr, descriptionEn 
+      cityAr, cityEn, addressAr, addressEn, logo, coverImage, descriptionAr, descriptionEn 
     } = body;
 
     if (!email || !password || !nameAr || !nameEn) {
@@ -37,6 +37,8 @@ export async function POST(request: Request) {
         governorateEn: governorateEn || null,
         cityAr: cityAr || null,
         cityEn: cityEn || null,
+        addressAr: addressAr || null,
+        addressEn: addressEn || null,
         logo: logo || null,
         coverImage: coverImage || null,
         descriptionAr: descriptionAr || null,
