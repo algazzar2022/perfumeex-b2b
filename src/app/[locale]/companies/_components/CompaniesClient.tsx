@@ -148,7 +148,7 @@ function CompanyCard({ company, idx, isAr, locale, t, catT, isSmall = false }: a
               ? '-top-10 ltr:left-5 rtl:right-5 w-16 h-16' 
               : '-top-14 ltr:left-8 rtl:right-8 w-24 h-24'
           }`}>
-            <Image src={company.logo} alt="Logo" fill className="object-contain drop-shadow-xl" />
+            <Image src={company.logo} alt="Logo" fill className="object-cover drop-shadow-xl" />
           </div>
         )}
 
