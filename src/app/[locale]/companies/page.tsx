@@ -13,6 +13,30 @@ export default async function CompaniesPage({
     where: {
       status: 'APPROVED'
     },
+    select: {
+      id: true,
+      nameAr: true,
+      nameEn: true,
+      descriptionAr: true,
+      descriptionEn: true,
+      category: true,
+      isSponsor: true,
+      isFeatured: true,
+      coverImage: true,
+      logo: true,
+      addressAr: true,
+      addressEn: true,
+      cityAr: true,
+      cityEn: true,
+      governorateAr: true,
+      governorateEn: true,
+      countryAr: true,
+      countryEn: true,
+      isVerified: true,
+      slug: true,
+      order: true,
+      createdAt: true
+    },
     orderBy: { createdAt: 'desc' },
     take: 50
   });

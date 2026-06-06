@@ -7,7 +7,18 @@ import { CompanyStatus } from '@prisma/client';
 
 export async function getCompanies() {
   const companies = await prisma.company.findMany({
-    include: {
+    select: {
+      id: true,
+      userId: true,
+      nameAr: true,
+      nameEn: true,
+      slug: true,
+      logo: true,
+      email: true,
+      whatsapp: true,
+      status: true,
+      order: true,
+      createdAt: true,
       user: {
         select: {
           email: true,
