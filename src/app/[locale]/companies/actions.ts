@@ -1,18 +1,10 @@
-import { prisma } from "@/lib/prisma";
-import CompaniesClient from "./_components/CompaniesClient";
+'use server';
 
-export default async function CompaniesPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const resolvedParams = await params;
-  
-  // Fetch only the first 3 approved companies initially for extremely fast loading
+import { prisma } from '@/lib/prisma';
+
+export async function getCompaniesPaginated(page: number, limit: number) {
   const companies = await prisma.company.findMany({
-    where: {
-      status: 'APPROVED'
-    },
+    where: { status: 'APPROVED' },
     select: {
       id: true,
       nameAr: true,
@@ -38,30 +30,23 @@ export default async function CompaniesPage({
       createdAt: true
     },
     orderBy: { createdAt: 'desc' },
-    take: 3
+    skip: (page - 1) * limit,
+    take: limit
   });
 
   // Sort: 1 first, 2 second. If 0, push to bottom.
-  const sortedCompanies = companies.sort((a, b) => {
+  return companies.sort((a, b) => {
     const orderA = a.order && a.order > 0 ? a.order : 999999;
     const orderB = b.order && b.order > 0 ? b.order : 999999;
     if (orderA !== orderB) {
       return orderA - orderB;
     }
-    // If order is same (both 0 or same number), keep original date sorting
     return 0;
   });
+}
 
-  // Get total count so the client knows if there are more
-  const totalCount = await prisma.company.count({
+export async function getTotalCompaniesCount() {
+  return await prisma.company.count({
     where: { status: 'APPROVED' }
   });
-
-  return (
-    <CompaniesClient 
-      initialCompanies={sortedCompanies} 
-      totalCount={totalCount}
-      locale={resolvedParams.locale} 
-    />
-  );
 }

@@ -1,21 +1,70 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, MapPin, Building2, Filter, Star, ShieldCheck } from "lucide-react";
+import { Search, MapPin, Building2, Filter, Star, ShieldCheck, Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { getCompaniesPaginated } from "../actions";
 
-export default function CompaniesClient({ initialCompanies, locale }: { initialCompanies: any[], locale: string }) {
+export default function CompaniesClient({ initialCompanies, totalCount, locale }: { initialCompanies: any[], totalCount: number, locale: string }) {
+  const [companies, setCompanies] = useState(initialCompanies);
   const [searchQuery, setSearchQuery] = useState("");
-  const [gridLayout, setGridLayout] = useState<3 | 5>(3);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(totalCount > 27);
+
   const t = useTranslations("CompaniesDirectory");
   const catT = useTranslations("Dashboard.companyProfile.general.categoryOptions");
-
   const isAr = locale === 'ar';
 
-  const filteredCompanies = initialCompanies.filter((company) => {
+  // Fetch the full first page (27 items) in the background
+  useEffect(() => {
+    const fetchFirstPage = async () => {
+      try {
+        const fullFirstPage = await getCompaniesPaginated(1, 27);
+        setCompanies(fullFirstPage);
+        setHasMore(totalCount > 27);
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchFirstPage();
+  }, [totalCount]);
+
+  const loadMore = async () => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = page + 1;
+      const newCompanies = await getCompaniesPaginated(nextPage, 27);
+      
+      if (newCompanies.length > 0) {
+        setCompanies(prev => {
+          // Prevent duplicates
+          const existingIds = new Set(prev.map(c => c.id));
+          const uniqueNew = newCompanies.filter(c => !existingIds.has(c.id));
+          return [...prev, ...uniqueNew];
+        });
+        setPage(nextPage);
+        if (companies.length + newCompanies.length >= totalCount) {
+          setHasMore(false);
+        }
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching more companies:", error);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const filteredCompanies = companies.filter((company) => {
     const q = searchQuery.toLowerCase();
     const name = isAr ? company.nameAr : company.nameEn;
     const desc = isAr ? company.descriptionAr : company.descriptionEn;
@@ -25,10 +74,6 @@ export default function CompaniesClient({ initialCompanies, locale }: { initialC
       (company.category && company.category.toLowerCase().includes(q))
     );
   });
-
-  const sponsors = filteredCompanies.filter(c => c.isSponsor);
-  const featured = filteredCompanies.filter(c => c.isFeatured && !c.isSponsor);
-  const regular = filteredCompanies.filter(c => !c.isFeatured && !c.isSponsor);
 
   return (
     <main className="min-h-screen bg-black text-white pt-24 pb-20 font-cairo">
@@ -62,26 +107,50 @@ export default function CompaniesClient({ initialCompanies, locale }: { initialC
               />
             </div>
           </div>
-          
         </div>
 
-        {filteredCompanies.length === 0 ? (
+        {filteredCompanies.length === 0 && !isLoading ? (
           <div className="text-center py-20 bg-zinc-900/50 rounded-3xl border border-white/5">
             <Building2 className="w-16 h-16 text-zinc-600 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-white mb-2">{t("noCompanies")}</h3>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredCompanies.map((company, idx) => (
-              <CompanyCard key={company.id} company={company} idx={idx} isAr={isAr} locale={locale} t={t} catT={catT} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredCompanies.map((company, idx) => (
+                <CompanyCard key={company.id} company={company} idx={idx % 27} isAr={isAr} locale={locale} t={t} catT={catT} />
+              ))}
+            </div>
+            
+            {/* Loading / Load More Section */}
+            {searchQuery === "" && (
+              <div className="mt-16 flex justify-center">
+                {isLoading || loadingMore ? (
+                  <div className="flex items-center gap-3 text-emerald-400 font-bold bg-emerald-500/10 px-6 py-3 rounded-full">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    {isAr ? "جاري التحميل..." : "Loading..."}
+                  </div>
+                ) : hasMore ? (
+                  <button 
+                    onClick={loadMore}
+                    className="bg-zinc-900 hover:bg-emerald-600 border border-emerald-500/30 hover:border-emerald-500 text-white font-bold py-4 px-10 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.1)] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:-translate-y-1"
+                  >
+                    {isAr ? "عرض المزيد من الشركات" : "Load More Companies"}
+                  </button>
+                ) : (
+                  <div className="text-zinc-500 font-medium">
+                    {isAr ? "تم عرض جميع الشركات" : "All companies loaded"}
+                  </div>
+                )}
+              </div>
+            )}
+          </>
         )}
-
       </div>
     </main>
   );
 }
+
 
 function CompanyCard({ company, idx, isAr, locale, t, catT, isSmall = false }: any) {
   const name = isAr ? company.nameAr : company.nameEn;
