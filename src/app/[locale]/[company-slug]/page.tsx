@@ -23,7 +23,7 @@ export default async function CompanyProfilePage({
   });
 
   if (!company) {
-    const fallbackSlug = resolvedParams["company-slug"].replace(/\s+/g, '.');
+    const fallbackSlug = resolvedParams["company-slug"].replace(/[\s\.]+/g, '-');
     if (fallbackSlug !== resolvedParams["company-slug"]) {
       const fallbackCompany = await prisma.company.findUnique({
         where: { slug: fallbackSlug }

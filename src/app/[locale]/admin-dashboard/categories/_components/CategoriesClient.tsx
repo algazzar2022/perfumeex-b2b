@@ -171,7 +171,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
                   value={formData.nameEn}
                   onChange={e => {
                     const newName = e.target.value;
-                    const newSlug = newName.trim().replace(/\s+/g, '.').toLowerCase();
+                    const newSlug = newName.trim().replace(/\s+/g, '-').toLowerCase();
                     setFormData(prev => ({
                       ...prev, 
                       nameEn: newName,
@@ -187,7 +187,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
                 <input 
                   type="text" 
                   value={formData.slug}
-                  onChange={e => setFormData({...formData, slug: e.target.value.replace(/\s+/g, '.')})}
+                  onChange={e => setFormData({...formData, slug: e.target.value.replace(/\s+/g, '-')})}
                   className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:outline-none focus:border-purple-500 text-white"
                   dir="ltr"
                 />
