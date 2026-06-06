@@ -9,7 +9,7 @@ export default async function CompanyProfilePage({
 }) {
   const resolvedParams = await params;
   
-  const company = await prisma.company.findUnique({
+  let company = await prisma.company.findUnique({
     where: {
       slug: resolvedParams["company-slug"],
     },
@@ -23,6 +23,17 @@ export default async function CompanyProfilePage({
   });
 
   if (!company) {
+    const fallbackSlug = resolvedParams["company-slug"].replace(/\s+/g, '.');
+    if (fallbackSlug !== resolvedParams["company-slug"]) {
+      const fallbackCompany = await prisma.company.findUnique({
+        where: { slug: fallbackSlug }
+      });
+      if (fallbackCompany) {
+        // Redirect to the correct slug
+        const { redirect } = await import('next/navigation');
+        redirect(`/${resolvedParams.locale}/${fallbackSlug}`);
+      }
+    }
     return notFound();
   }
 
