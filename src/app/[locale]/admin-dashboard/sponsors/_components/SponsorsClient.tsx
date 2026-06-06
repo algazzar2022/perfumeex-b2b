@@ -25,7 +25,7 @@ export default function SponsorsClient({ initialSponsors }: { initialSponsors: S
     setIsModalOpen(true);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -34,12 +34,13 @@ export default function SponsorsClient({ initialSponsors }: { initialSponsors: S
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64Str = event.target?.result as string;
+    try {
+      const { resizeAndCompressImage } = await import('@/lib/imageUtils');
+      const base64Str = await resizeAndCompressImage(file, 400, 400, 0.7);
       setFormData(prev => ({ ...prev, logo: base64Str }));
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      alert("حدث خطأ أثناء معالجة الصورة");
+    }
   };
 
   const handleSave = () => {

@@ -62,19 +62,21 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
     });
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 4 * 1024 * 1024) {
       alert("حجم الصورة يجب أن يكون أقل من 4 ميجابايت");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64Str = event.target?.result as string;
+    
+    try {
+      const { resizeAndCompressImage } = await import('@/lib/imageUtils');
+      const base64Str = await resizeAndCompressImage(file, 800, 800, 0.7);
       setEditingProduct((prev: any) => ({ ...prev, image: base64Str }));
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      alert("حدث خطأ أثناء معالجة الصورة");
+    }
   };
 
   const handleSaveProduct = async (e: React.FormEvent) => {

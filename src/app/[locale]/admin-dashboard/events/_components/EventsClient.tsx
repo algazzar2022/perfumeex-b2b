@@ -68,18 +68,20 @@ export default function EventsClient({ initialEvents }: EventsClientProps) {
     setIsModalOpen(true);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
         showToast('حجم الصورة يجب أن لا يتجاوز 2 ميجابايت', 'error');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+      try {
+        const { resizeAndCompressImage } = await import('@/lib/imageUtils');
+        const base64Str = await resizeAndCompressImage(file, 800, 800, 0.7);
+        setFormData({ ...formData, image: base64Str });
+      } catch (error) {
+        showToast('حدث خطأ أثناء معالجة الصورة', 'error');
+      }
     }
   };
 

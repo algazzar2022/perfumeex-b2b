@@ -29,19 +29,23 @@ export default function EditCompanyClient({ initialCompany, dbCategories, isNew 
     }, 3000);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'logo' | 'coverImage') => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'logo' | 'coverImage') => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 4 * 1024 * 1024) {
       alert("حجم الصورة يجب أن يكون أقل من 4 ميجابايت");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64Str = event.target?.result as string;
+    
+    try {
+      const { resizeAndCompressImage } = await import('@/lib/imageUtils');
+      const maxWidth = field === 'logo' ? 400 : 1200;
+      const maxHeight = field === 'logo' ? 400 : 800;
+      const base64Str = await resizeAndCompressImage(file, maxWidth, maxHeight, 0.7);
       setEditingCompany((prev: any) => ({ ...prev, [field]: base64Str }));
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      alert("حدث خطأ أثناء معالجة الصورة");
+    }
   };
 
   const handleSaveBasicInfo = async (e: React.FormEvent) => {
@@ -149,16 +153,17 @@ export default function EditCompanyClient({ initialCompany, dbCategories, isNew 
     });
   };
 
-  const handleAddGalleryImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddGalleryImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 4 * 1024 * 1024) {
       alert("حجم الصورة يجب أن يكون أقل من 4 ميجابايت");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64Str = event.target?.result as string;
+    
+    try {
+      const { resizeAndCompressImage } = await import('@/lib/imageUtils');
+      const base64Str = await resizeAndCompressImage(file, 1200, 1200, 0.7);
       startTransition(async () => {
         try {
           await addGalleryImage(company.id, base64Str, 'IMAGE');
@@ -167,8 +172,9 @@ export default function EditCompanyClient({ initialCompany, dbCategories, isNew 
           showToast("حدث خطأ أثناء الرفع", 'error');
         }
       });
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      alert("حدث خطأ أثناء معالجة الصورة");
+    }
   };
 
   const handleDeleteGalleryImage = async (id: string) => {

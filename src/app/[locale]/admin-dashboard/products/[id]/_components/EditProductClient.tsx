@@ -22,19 +22,21 @@ export default function EditProductClient({ initialProduct, companies }: { initi
     }, 3000);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
       showToast("حجم الصورة يجب أن يكون أقل من 2 ميجابايت", "error");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64Str = event.target?.result as string;
+    
+    try {
+      const { resizeAndCompressImage } = await import('@/lib/imageUtils');
+      const base64Str = await resizeAndCompressImage(file, 800, 800, 0.7);
       setEditingProduct({ ...editingProduct, image: base64Str });
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      showToast("حدث خطأ أثناء معالجة الصورة", "error");
+    }
   };
 
   const handleSaveProduct = async (e: React.FormEvent) => {
