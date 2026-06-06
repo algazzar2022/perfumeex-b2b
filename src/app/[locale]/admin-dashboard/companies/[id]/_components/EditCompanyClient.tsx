@@ -263,11 +263,22 @@ export default function EditCompanyClient({ initialCompany, dbCategories, isNew 
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-1">الاسم بالإنجليزية</label>
-              <input type="text" value={editingCompany.nameEn || ''} onChange={e => setEditingCompany({...editingCompany, nameEn: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
+              <input type="text" value={editingCompany.nameEn || ''} onChange={e => {
+                const newName = e.target.value;
+                const newSlug = newName.trim().replace(/\s+/g, '.').toLowerCase();
+                setEditingCompany(prev => ({
+                  ...prev, 
+                  nameEn: newName,
+                  ...(isNew ? { slug: newSlug } : {})
+                }));
+              }} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" />
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-1">الرابط المخصص (Slug)</label>
-              <input type="text" value={editingCompany.slug || ''} onChange={e => setEditingCompany({...editingCompany, slug: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" />
+              <input type="text" value={editingCompany.slug || ''} onChange={e => {
+                const formattedSlug = e.target.value.replace(/\s+/g, '.');
+                setEditingCompany({...editingCompany, slug: formattedSlug});
+              }} className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-2 focus:border-emerald-500 text-white" dir="ltr" />
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-1">القسم</label>
