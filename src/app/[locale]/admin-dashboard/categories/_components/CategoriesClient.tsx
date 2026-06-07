@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Category } from '@prisma/client';
 import { addCategory, updateCategory, deleteCategory, updateCategoriesOrder } from '../actions';
-import { Plus, Edit2, Trash2, ArrowUp, ArrowDown, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowUp, ArrowDown, Loader2, Image as ImageIcon } from 'lucide-react';
 
 export default function CategoriesClient({ initialCategories }: { initialCategories: Category[] }) {
   const [categories, setCategories] = useState(initialCategories);
@@ -23,6 +23,24 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
       setFormData({ nameAr: '', nameEn: '', slug: '', image: '' });
     }
     setIsModalOpen(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("حجم الصورة يجب أن يكون أقل من 2 ميجابايت");
+      return;
+    }
+
+    try {
+      const { resizeAndCompressImage } = await import('@/lib/imageUtils');
+      const base64Str = await resizeAndCompressImage(file, 800, 800, 0.8);
+      setFormData(prev => ({ ...prev, image: base64Str }));
+    } catch (error) {
+      alert("حدث خطأ أثناء معالجة الصورة");
+    }
   };
 
   const handleSave = () => {
@@ -194,14 +212,20 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
               </div>
 
               <div>
-                <label className="block text-sm text-gray-400 mb-1">رابط الصورة (اختياري)</label>
-                <input 
-                  type="text" 
-                  value={formData.image}
-                  onChange={e => setFormData({...formData, image: e.target.value})}
-                  className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 focus:outline-none focus:border-purple-500 text-white"
-                  dir="ltr"
-                />
+                <label className="block text-sm text-gray-400 mb-2">صورة القسم (اختياري)</label>
+                <div className="flex items-center gap-4">
+                  {formData.image ? (
+                    <img src={formData.image} alt="Category" className="w-16 h-16 object-cover bg-white/10 rounded-lg" />
+                  ) : (
+                    <div className="w-16 h-16 bg-white/5 rounded-lg flex items-center justify-center text-gray-500">
+                      <ImageIcon size={24} />
+                    </div>
+                  )}
+                  <label className="flex-1 cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 border-dashed rounded-xl p-4 text-center transition-colors">
+                    <span className="text-sm text-purple-400 font-medium">اختر صورة (أقل من 2MB)</span>
+                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                  </label>
+                </div>
               </div>
             </div>
 
