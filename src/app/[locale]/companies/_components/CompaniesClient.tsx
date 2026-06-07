@@ -132,6 +132,9 @@ export default function CompaniesClient({ initialCompanies, totalCount, locale }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+              {(searchQuery !== debouncedQuery || isLoading) && (
+                <Loader2 className="w-5 h-5 animate-spin text-emerald-500 ltr:mr-4 rtl:ml-4 shrink-0" />
+              )}
             </div>
           </div>
         </div>
