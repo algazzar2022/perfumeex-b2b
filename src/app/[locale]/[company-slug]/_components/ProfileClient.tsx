@@ -82,13 +82,17 @@ export default function ProfileClient({ company, locale }: { company: any, local
     };
   }, [isAuthModalOpen, isMessageModalOpen, selectedProduct, selectedImage]);
 
-  const handleContactClick = async (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
+  const handleLinkClick = () => {
     fetch('/api/company/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ companyId: company.id, type: 'contact' })
     }).catch(() => {});
+  };
+
+  const handleContactClick = async (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    handleLinkClick();
 
     if (!session) {
       setIsAuthModalOpen(true);
@@ -305,19 +309,9 @@ export default function ProfileClient({ company, locale }: { company: any, local
                 <Phone className="w-5 h-5 text-emerald-500" /> {isAr ? "معلومات التواصل" : "Contact Info"}
               </h3>
               <div className="space-y-3">
-                {company.email && (
-                  <a href={`mailto:${company.email}`} onClick={handleContactClick} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
-                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
-                      <Mail className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1 truncate">
-                      <div className="text-xs text-zinc-500">{isAr ? "البريد الإلكتروني" : "Email"}</div>
-                      <div className="text-sm text-zinc-300 font-medium truncate">{company.email}</div>
-                    </div>
-                  </a>
-                )}
+                {/* Email hidden by user request */}
                 {company.whatsapp && (
-                  <a href={`tel:${company.whatsapp}`} onClick={handleContactClick} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                  <a href={`tel:${company.whatsapp}`} onClick={handleLinkClick} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
                     <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
                       <Phone className="w-4 h-4" />
                     </div>
@@ -328,7 +322,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
                   </a>
                 )}
                 {company.website && (
-                  <a href={company.website} onClick={handleContactClick} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                  <a href={company.website} onClick={handleLinkClick} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors group">
                     <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-colors">
                       <Globe className="w-4 h-4" />
                     </div>
