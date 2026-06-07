@@ -94,7 +94,7 @@ model Category {
   slug        String   @unique
   nameAr      String
   nameEn      String
-  image       String?
+  image       String?  @db.LongText
   companies   Company[] @relation("CompanyCategories")
   order       Int       @default(0)
 }
