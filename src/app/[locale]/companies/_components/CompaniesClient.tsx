@@ -11,37 +11,73 @@ import { getCompaniesPaginated } from "../actions";
 export default function CompaniesClient({ initialCompanies, totalCount, locale }: { initialCompanies: any[], totalCount: number, locale: string }) {
   const [companies, setCompanies] = useState(initialCompanies);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [currentTotal, setCurrentTotal] = useState(totalCount);
   const [hasMore, setHasMore] = useState(totalCount > 27);
+  const [isInitialMount, setIsInitialMount] = useState(true);
 
   const t = useTranslations("CompaniesDirectory");
   const catT = useTranslations("Dashboard.companyProfile.general.categoryOptions");
   const isAr = locale === 'ar';
 
-  // Fetch the full first page (27 items) in the background
+  // Debounce logic
   useEffect(() => {
-    const fetchFirstPage = async () => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  // Fetch when debounced query changes or on mount
+  useEffect(() => {
+    if (isInitialMount) {
+      setIsInitialMount(false);
+      // Fetch the first 27 immediately on mount (background)
+      const fetchFirstPage = async () => {
+        try {
+          const fullFirstPage = await getCompaniesPaginated(1, 27, "");
+          setCompanies(fullFirstPage);
+          setHasMore(totalCount > 27);
+        } catch (error) {
+          console.error("Error fetching companies:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchFirstPage();
+      return;
+    }
+
+    const fetchSearchResults = async () => {
+      setIsLoading(true);
       try {
-        const fullFirstPage = await getCompaniesPaginated(1, 27);
-        setCompanies(fullFirstPage);
-        setHasMore(totalCount > 27);
+        const { getTotalCompaniesCount } = await import('../actions');
+        const count = await getTotalCompaniesCount(debouncedQuery);
+        setCurrentTotal(count);
+        
+        const results = await getCompaniesPaginated(1, 27, debouncedQuery);
+        setCompanies(results);
+        setPage(1);
+        setHasMore(count > 27);
       } catch (error) {
-        console.error("Error fetching companies:", error);
+        console.error("Error fetching search results:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchFirstPage();
-  }, [totalCount]);
+    
+    fetchSearchResults();
+  }, [debouncedQuery]);
 
   const loadMore = async () => {
     if (loadingMore || !hasMore) return;
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const newCompanies = await getCompaniesPaginated(nextPage, 27);
+      const newCompanies = await getCompaniesPaginated(nextPage, 27, debouncedQuery);
       
       if (newCompanies.length > 0) {
         setCompanies(prev => {
@@ -51,7 +87,7 @@ export default function CompaniesClient({ initialCompanies, totalCount, locale }
           return [...prev, ...uniqueNew];
         });
         setPage(nextPage);
-        if (companies.length + newCompanies.length >= totalCount) {
+        if (companies.length + newCompanies.length >= currentTotal) {
           setHasMore(false);
         }
       } else {
@@ -64,16 +100,7 @@ export default function CompaniesClient({ initialCompanies, totalCount, locale }
     }
   };
 
-  const filteredCompanies = companies.filter((company) => {
-    const q = searchQuery.toLowerCase();
-    const name = isAr ? company.nameAr : company.nameEn;
-    const desc = isAr ? company.descriptionAr : company.descriptionEn;
-    return (
-      (name && name.toLowerCase().includes(q)) ||
-      (desc && desc.toLowerCase().includes(q)) ||
-      (company.category && company.category.toLowerCase().includes(q))
-    );
-  });
+  const filteredCompanies = companies;
 
   return (
     <main className="min-h-screen bg-black text-white pt-24 pb-20 font-cairo">

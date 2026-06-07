@@ -2,10 +2,25 @@
 
 import { prisma } from '@/lib/prisma';
 
-export async function getCompaniesPaginated(page: number, limit: number) {
+export async function getCompaniesPaginated(page: number, limit: number, query: string = "") {
+  let whereClause: any = { status: 'APPROVED' };
+
+  if (query && query.trim() !== "") {
+    whereClause = {
+      status: 'APPROVED',
+      OR: [
+        { nameAr: { contains: query } },
+        { nameEn: { contains: query } },
+        { descriptionAr: { contains: query } },
+        { descriptionEn: { contains: query } },
+        { category: { contains: query } }
+      ]
+    };
+  }
+
   // 1. Fetch lightweight data for sorting
   const allCompanies = await prisma.company.findMany({
-    where: { status: 'APPROVED' },
+    where: whereClause,
     select: { id: true, order: true, createdAt: true }
   });
 
@@ -57,8 +72,23 @@ export async function getCompaniesPaginated(page: number, limit: number) {
   return pageIds.map(id => companiesData.find(c => c.id === id)).filter(Boolean);
 }
 
-export async function getTotalCompaniesCount() {
+export async function getTotalCompaniesCount(query: string = "") {
+  let whereClause: any = { status: 'APPROVED' };
+
+  if (query && query.trim() !== "") {
+    whereClause = {
+      status: 'APPROVED',
+      OR: [
+        { nameAr: { contains: query } },
+        { nameEn: { contains: query } },
+        { descriptionAr: { contains: query } },
+        { descriptionEn: { contains: query } },
+        { category: { contains: query } }
+      ]
+    };
+  }
+
   return await prisma.company.count({
-    where: { status: 'APPROVED' }
+    where: whereClause
   });
 }
