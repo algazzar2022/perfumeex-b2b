@@ -403,7 +403,7 @@ export default function ProfileClient({ company, locale }: { company: any, local
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="min-h-[500px]"
+              className="w-full"
             >
               <AnimatePresence mode="wait">
                 
