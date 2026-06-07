@@ -50,19 +50,7 @@ export default function CategoriesPage() {
     image: cat.image
   }));
 
-  // Fallback while loading or if empty
-  if (categories.length === 0 && isLoading) {
-    categories.push(
-      { id: "perfumeClones", name: t('categories.items.perfumeClones'), icon: <Droplet strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
-      { id: "readyPerfumes", name: t('categories.items.readyPerfumes'), icon: <Star strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
-      { id: "glass", name: t('categories.items.glass'), icon: <MapPin strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
-      { id: "bakhoor", name: t('categories.items.bakhoor'), icon: <TrendingUp strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
-      { id: "airFresheners", name: t('categories.items.airFresheners'), icon: <Sparkles strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
-      { id: "packaging", name: t('categories.items.packaging'), icon: <Building2 strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
-      { id: "bottlesAndEmpties", name: t('categories.items.bottlesAndEmpties'), icon: <Package strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
-      { id: "others", name: t('categories.items.others'), icon: <MoreHorizontal strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null }
-    );
-  }
+
 
   return (
     <main className="min-h-screen bg-black text-white pt-32 pb-20 font-cairo selection:bg-emerald-500/30">
@@ -91,55 +79,72 @@ export default function CategoriesPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category, idx) => (
-            <Link key={category.id} href={`/${locale}/category/${category.id}`}>
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="group relative h-[350px] rounded-[2rem] overflow-hidden cursor-pointer shadow-2xl border border-white/10 hover:border-emerald-500/50 transition-all duration-500"
-              >
-                {/* Background Image */}
-                <div 
-                  className={`absolute inset-0 bg-cover bg-center transition-transform duration-700 ${isLoading ? '' : 'group-hover:scale-110'}`}
-                  style={{
-                    backgroundImage: isLoading 
-                      ? 'none' 
-                      : `url(${category.image || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600&h=800'})`
-                  }}
-                />
-                
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10 group-hover:from-black transition-colors duration-500" />
-                
-                {/* Content */}
-                <div className="absolute inset-0 p-8 flex flex-col justify-end z-10">
-                  <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white mb-6 group-hover:bg-emerald-500 group-hover:text-black group-hover:border-emerald-500 transition-all duration-500 shadow-lg">
-                    {category.icon}
-                  </div>
-                  
-                  <h3 className="text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-emerald-400 transition-colors">
-                    {category.name}
-                  </h3>
-                  
-                  <div className="flex items-center gap-2 text-zinc-300 font-medium text-sm">
-                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="rounded-3xl bg-zinc-900/40 border border-white/5 h-[340px] animate-pulse overflow-hidden">
+                 <div className="h-56 bg-zinc-800/50 w-full" />
+                 <div className="p-6">
+                   <div className="h-6 bg-zinc-800/80 rounded-md w-1/2 mb-5" />
+                   <div className="flex justify-between items-center">
+                     <div className="h-4 bg-zinc-800/80 rounded-md w-1/3" />
+                     <div className="h-8 w-8 bg-zinc-800/80 rounded-full" />
+                   </div>
+                 </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categories.map((category, idx) => (
+              <Link key={category.id} href={`/${locale}/category/${category.id}`}>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                  whileHover={{ y: -5 }}
+                  className="group relative rounded-3xl overflow-hidden bg-zinc-950 border border-white/5 hover:border-emerald-500/30 hover:shadow-[0_0_40px_rgba(16,185,129,0.1)] transition-all duration-500 flex flex-col"
+                >
+                  {/* Image Section (Top half) */}
+                  <div className="relative h-56 w-full overflow-hidden bg-zinc-900">
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                      style={{
+                        backgroundImage: `url(${category.image || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600&h=800'})`
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent opacity-90" />
+                    
+                    {/* Floating Icon */}
+                    <div className="absolute top-4 ltr:right-4 rtl:left-4 w-12 h-12 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-white group-hover:bg-emerald-500 group-hover:text-black group-hover:border-emerald-400 transition-all shadow-lg">
+                      {category.icon}
                     </div>
-                    <span>{category.count} {t('categories.verifiedSuppliers')}</span>
                   </div>
-                </div>
 
-                {/* Hover Arrow */}
-                <div className="absolute top-8 ltr:right-8 rtl:left-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center opacity-0 group-hover:opacity-100 ltr:translate-x-4 rtl:-translate-x-4 ltr:group-hover:translate-x-0 rtl:group-hover:translate-x-0 transition-all duration-500 text-white group-hover:bg-emerald-500 group-hover:text-black">
-                  <ArrowRight className="w-5 h-5 rtl:rotate-180" />
-                </div>
-              </motion.div>
-            </Link>
-          ))}
-        </div>
+                  {/* Content Section (Bottom half) */}
+                  <div className="p-6 relative bg-zinc-950 flex-1 flex flex-col justify-end">
+                    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-emerald-400 transition-colors">
+                      {category.name}
+                    </h3>
+                    
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center gap-2 text-zinc-400 font-medium text-sm">
+                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-500">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        </div>
+                        <span>{category.count} {t('categories.verifiedSuppliers')}</span>
+                      </div>
+                      
+                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-emerald-500 text-zinc-400 group-hover:text-black transition-all">
+                        <ArrowRight className="w-5 h-5 rtl:rotate-180" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
