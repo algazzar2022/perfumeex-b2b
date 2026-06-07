@@ -48,6 +48,11 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (status === "authenticated") {
+      if ((session?.user as any)?.role === "SUPER_ADMIN") {
+        router.push(`/${locale}/admin-dashboard`);
+        return;
+      }
+
       fetch('/api/company/profile')
         .then(res => {
           if (res.ok) return res.json();

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { signIn, getSession, useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -13,6 +13,17 @@ export default function LoginPage() {
   const params = useParams();
   const locale = params.locale as string || 'en';
   const t = useTranslations("Auth.login");
+  const { data: session, status } = useSession();
+  
+  useEffect(() => {
+    if (status === "authenticated") {
+      if ((session?.user as any)?.role === "SUPER_ADMIN") {
+        router.push(`/${locale}/admin-dashboard`);
+      } else {
+        router.push(`/${locale}/dashboard`);
+      }
+    }
+  }, [status, router, locale, session]);
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +45,12 @@ export default function LoginPage() {
       setError(t("error"));
       setIsLoading(false);
     } else if (callback?.ok) {
-      router.push(`/${locale}/dashboard`);
+      const sessionData = await getSession();
+      if ((sessionData?.user as any)?.role === "SUPER_ADMIN") {
+        router.push(`/${locale}/admin-dashboard`);
+      } else {
+        router.push(`/${locale}/dashboard`);
+      }
       router.refresh();
     }
   };

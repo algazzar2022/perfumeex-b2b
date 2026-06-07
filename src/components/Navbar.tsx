@@ -22,6 +22,8 @@ export default function Navbar() {
 
   const locale = pathname.split('/')[1] || 'en';
   const isAr = locale === 'ar';
+  
+  const isAdmin = (session?.user as any)?.role === "SUPER_ADMIN";
 
   useEffect(() => {
     const fetchUnread = () => {
@@ -126,7 +128,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           <LanguageSwitcher currentLocale={locale} />
           
-          {status === 'authenticated' ? (
+          {status === 'authenticated' && !isAdmin ? (
             <div className="flex items-center gap-3 ml-2 relative">
               
               {/* Notifications */}
@@ -284,7 +286,7 @@ export default function Navbar() {
 
               <div className="h-px bg-white/10 my-2" />
               
-              {status === 'authenticated' ? (
+              {status === 'authenticated' && !isAdmin ? (
                 <div className="grid grid-cols-1 gap-3">
                   <Link
                     href={`/${locale}/dashboard`}
