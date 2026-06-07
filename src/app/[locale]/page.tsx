@@ -68,20 +68,20 @@ export default function Home() {
     id: cat.slug,
     name: pathname.includes('/ar') ? cat.nameAr : cat.nameEn,
     icon: getIconForCategory(cat.slug),
-    count: cat.count || 0
+    count: cat.count || 0,
+    image: cat.image
   }));
 
-  // Fallback while loading
   if (categories.length === 0) {
     categories.push(
-      { id: "perfumeClones", name: t('categories.items.perfumeClones'), icon: <Droplet strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
-      { id: "readyPerfumes", name: t('categories.items.readyPerfumes'), icon: <Star strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
-      { id: "glass", name: t('categories.items.glass'), icon: <MapPin strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
-      { id: "bakhoor", name: t('categories.items.bakhoor'), icon: <TrendingUp strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
-      { id: "airFresheners", name: t('categories.items.airFresheners'), icon: <Sparkles strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
-      { id: "packaging", name: t('categories.items.packaging'), icon: <Building2 strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
-      { id: "bottlesAndEmpties", name: t('categories.items.bottlesAndEmpties'), icon: <Package strokeWidth={1.5} className="w-8 h-8" />, count: 0 },
-      { id: "others", name: t('categories.items.others'), icon: <MoreHorizontal strokeWidth={1.5} className="w-8 h-8" />, count: 0 }
+      { id: "perfumeClones", name: t('categories.items.perfumeClones'), icon: <Droplet strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
+      { id: "readyPerfumes", name: t('categories.items.readyPerfumes'), icon: <Star strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
+      { id: "glass", name: t('categories.items.glass'), icon: <MapPin strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
+      { id: "bakhoor", name: t('categories.items.bakhoor'), icon: <TrendingUp strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
+      { id: "airFresheners", name: t('categories.items.airFresheners'), icon: <Sparkles strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
+      { id: "packaging", name: t('categories.items.packaging'), icon: <Building2 strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
+      { id: "bottlesAndEmpties", name: t('categories.items.bottlesAndEmpties'), icon: <Package strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
+      { id: "others", name: t('categories.items.others'), icon: <MoreHorizontal strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null }
     );
   }
 
@@ -293,25 +293,43 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
-                  whileHover={{ y: -5 }}
-                  className="group relative p-10 rounded-[2rem] bg-zinc-950 border border-white/5 hover:bg-zinc-900 transition-colors duration-500 cursor-pointer overflow-hidden"
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  className="group relative h-[420px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/5 hover:border-emerald-500/30 transition-all duration-500"
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[50px] opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-700" />
+                  {/* Full Background Image */}
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                    style={{
+                      backgroundImage: `url(${category.image || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600&h=800'})`
+                    }}
+                  />
                   
-                  <div className="relative z-10">
-                    <div className="w-16 h-16 rounded-2xl bg-black border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition-all duration-500 mb-8">
-                      {category.icon}
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">{category.name}</h3>
-                    
-                    <div className="flex items-center gap-3 text-zinc-500 font-light text-sm">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500/70" />
-                      <span>{category.count} {t('categories.verifiedSuppliers')}</span>
-                    </div>
+                  {/* Deep Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10 opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Top Floating Icon (Glassmorphism) */}
+                  <div className="absolute top-6 ltr:right-6 rtl:left-6 w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white group-hover:bg-emerald-500 group-hover:text-black group-hover:border-emerald-400 transition-all shadow-lg z-10">
+                    {category.icon}
                   </div>
 
-                  <div className="absolute bottom-10 ltr:right-10 rtl:left-10 opacity-100 md:opacity-0 md:group-hover:opacity-100 ltr:md:group-hover:translate-x-2 rtl:md:group-hover:-translate-x-2 transition-all duration-500 text-emerald-500">
-                    <ArrowRight className="w-6 h-6 rtl:rotate-180" />
+                  {/* Content Section (Bottom Glass Panel) */}
+                  <div className="absolute bottom-6 left-6 right-6 p-6 rounded-3xl bg-black/30 backdrop-blur-xl border border-white/10 group-hover:border-emerald-500/30 transition-colors z-10 flex flex-col justify-end shadow-2xl">
+                    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-emerald-400 transition-colors">
+                      {category.name}
+                    </h3>
+                    
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center gap-2 text-zinc-300 font-medium text-sm">
+                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        </div>
+                        <span>{category.count} {t('categories.verifiedSuppliers')}</span>
+                      </div>
+                      
+                      <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center group-hover:bg-emerald-500 text-white group-hover:text-black transition-all">
+                        <ArrowRight className="w-5 h-5 rtl:rotate-180" />
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               </Link>
