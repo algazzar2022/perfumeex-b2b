@@ -29,8 +29,8 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      alert("حجم الصورة يجب أن يكون أقل من 2 ميجابايت");
+    if (file.size > 3 * 1024 * 1024) {
+      alert("حجم الصورة يجب أن يكون أقل من 3 ميجابايت");
       return;
     }
 
@@ -222,7 +222,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
                     </div>
                   )}
                   <label className="flex-1 cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 border-dashed rounded-xl p-4 text-center transition-colors">
-                    <span className="text-sm text-purple-400 font-medium">اختر صورة (أقل من 2MB)</span>
+                    <span className="text-sm text-purple-400 font-medium">اختر صورة (أقل من 3MB)</span>
                     <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                   </label>
                 </div>

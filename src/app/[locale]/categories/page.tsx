@@ -14,12 +14,19 @@ export default function CategoriesPage() {
   const isAr = locale === 'ar';
   
   const [dbCategories, setDbCategories] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/categories')
       .then(res => res.json())
-      .then(setDbCategories)
-      .catch(console.error);
+      .then(data => {
+        setDbCategories(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsLoading(false);
+      });
   }, []);
 
   const getIconForCategory = (slug: string) => {
@@ -43,8 +50,8 @@ export default function CategoriesPage() {
     image: cat.image
   }));
 
-  // Fallback while loading
-  if (categories.length === 0) {
+  // Fallback while loading or if empty
+  if (categories.length === 0 && isLoading) {
     categories.push(
       { id: "perfumeClones", name: t('categories.items.perfumeClones'), icon: <Droplet strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
       { id: "readyPerfumes", name: t('categories.items.readyPerfumes'), icon: <Star strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
@@ -96,9 +103,11 @@ export default function CategoriesPage() {
               >
                 {/* Background Image */}
                 <div 
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                  className={`absolute inset-0 bg-cover bg-center transition-transform duration-700 ${isLoading ? '' : 'group-hover:scale-110'}`}
                   style={{
-                    backgroundImage: `url(${category.image || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600&h=800'})`
+                    backgroundImage: isLoading 
+                      ? 'none' 
+                      : `url(${category.image || 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600&h=800'})`
                   }}
                 />
                 
