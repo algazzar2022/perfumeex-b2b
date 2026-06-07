@@ -38,12 +38,19 @@ export default function Home() {
   }, []);
 
   const [dbCategories, setDbCategories] = useState<any[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
 
   useEffect(() => {
     fetch('/api/categories')
       .then(res => res.json())
-      .then(data => setDbCategories(data))
-      .catch(console.error);
+      .then(data => {
+        setDbCategories(data);
+        setIsLoadingCategories(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setIsLoadingCategories(false);
+      });
       
     fetch('/api/sponsors')
       .then(res => res.json())
@@ -72,7 +79,7 @@ export default function Home() {
     image: cat.image
   }));
 
-  if (categories.length === 0) {
+  if (!isLoadingCategories && categories.length === 0) {
     categories.push(
       { id: "perfumeClones", name: t('categories.items.perfumeClones'), icon: <Droplet strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
       { id: "readyPerfumes", name: t('categories.items.readyPerfumes'), icon: <Star strokeWidth={1.5} className="w-8 h-8" />, count: 0, image: null },
@@ -285,8 +292,21 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {isLoadingCategories ? (
+              [1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="relative h-[420px] rounded-[2.5rem] bg-zinc-900/40 border border-white/5 animate-pulse overflow-hidden">
+                   <div className="absolute bottom-6 left-6 right-6 p-6 rounded-3xl bg-zinc-800/50">
+                     <div className="h-6 bg-zinc-700/80 rounded-md w-1/2 mb-5" />
+                     <div className="flex justify-between items-center">
+                       <div className="h-4 bg-zinc-700/80 rounded-md w-1/3" />
+                       <div className="h-10 w-10 bg-zinc-700/80 rounded-full" />
+                     </div>
+                   </div>
+                </div>
+              ))
+            ) : (
+              categories.map((category, idx) => (
               <Link key={category.id} href={`/${pathname.split('/')[1] || 'en'}/category/${category.id}`}>
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
