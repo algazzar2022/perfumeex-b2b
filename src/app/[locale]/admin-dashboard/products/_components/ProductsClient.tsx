@@ -3,8 +3,8 @@
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PackageSearch, Search, CheckCircle, XCircle, Trash2, Edit2, Loader2, Plus, UploadCloud } from "lucide-react";
-import { updateProductStatus, deleteProduct, updateProduct, createProduct } from "../actions";
+import { PackageSearch, Search, CheckCircle, XCircle, Trash2, Edit2, Loader2, Plus, UploadCloud, Filter } from "lucide-react";
+import { updateProductStatus, updateProductsStatus, deleteProduct, deleteProducts, updateProduct, createProduct } from "../actions";
 
 export default function ProductsClient({ initialProducts, companies = [] }: { initialProducts: any[], companies?: any[] }) {
   const [products, setProducts] = useState(initialProducts);
@@ -14,6 +14,8 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
   const [companySearchQuery, setCompanySearchQuery] = useState("");
   const [showCompanyDropdown, setShowCompanyDropdown] = useState(false);
   const [navigatingId, setNavigatingId] = useState<string | null>(null);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('ALL');
   
   // Custom Toast State
   const [toastMessage, setToastMessage] = useState<{message: string, type: 'success' | 'error'} | null>(null);
@@ -25,11 +27,15 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
     }, 3000);
   };
 
-  const filteredProducts = products.filter(p => 
-    p.nameAr.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.company.nameAr.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.nameAr.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          p.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          p.company.nameAr.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'ALL' || p.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const filteredDropdownCompanies = companies.filter(c => 
     c.nameAr.toLowerCase().includes(companySearchQuery.toLowerCase()) || 
@@ -55,11 +61,59 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
       try {
         await deleteProduct(id);
         setProducts(products.filter(p => p.id !== id));
+        setSelectedProducts(selectedProducts.filter(productId => productId !== id));
         showToast("تم حذف المنتج بنجاح", 'success');
       } catch (error) {
         showToast("حدث خطأ أثناء الحذف", 'error');
       }
     });
+  };
+
+  const handleBulkStatusChange = (status: 'APPROVED' | 'REJECTED') => {
+    if (selectedProducts.length === 0) return;
+    
+    startTransition(async () => {
+      try {
+        await updateProductsStatus(selectedProducts, status);
+        setProducts(products.map(p => selectedProducts.includes(p.id) ? { ...p, status } : p));
+        setSelectedProducts([]);
+        showToast(`تم ${status === 'APPROVED' ? 'قبول' : 'رفض'} المنتجات المحددة بنجاح`, 'success');
+      } catch (error) {
+        showToast("حدث خطأ أثناء تحديث المنتجات", 'error');
+      }
+    });
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedProducts.length === 0) return;
+    if (!confirm(`هل أنت متأكد من حذف ${selectedProducts.length} منتج نهائياً؟`)) return;
+    
+    startTransition(async () => {
+      try {
+        await deleteProducts(selectedProducts);
+        setProducts(products.filter(p => !selectedProducts.includes(p.id)));
+        setSelectedProducts([]);
+        showToast("تم حذف المنتجات المحددة بنجاح", 'success');
+      } catch (error) {
+        showToast("حدث خطأ أثناء الحذف", 'error');
+      }
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedProducts.length === filteredProducts.length && filteredProducts.length > 0) {
+      setSelectedProducts([]);
+    } else {
+      setSelectedProducts(filteredProducts.map(p => p.id));
+    }
+  };
+
+  const toggleSelectProduct = (id: string) => {
+    if (selectedProducts.includes(id)) {
+      setSelectedProducts(selectedProducts.filter(pId => pId !== id));
+    } else {
+      setSelectedProducts([...selectedProducts, id]);
+    }
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,13 +201,84 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
             className="w-full bg-[#111] border border-white/10 rounded-xl py-3 pr-11 pl-4 focus:border-emerald-500 text-white"
           />
         </div>
+        
+        {/* Status Filters */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 hide-scrollbar shrink-0">
+          <div className="flex bg-[#111] border border-white/10 rounded-xl p-1 shrink-0">
+            {[
+              { id: 'ALL', label: 'الكل' },
+              { id: 'PENDING', label: 'معلق' },
+              { id: 'APPROVED', label: 'مقبول' },
+              { id: 'REJECTED', label: 'مرفوض' }
+            ].map(filter => (
+              <button
+                key={filter.id}
+                onClick={() => setStatusFilter(filter.id as any)}
+                className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors shrink-0 ${
+                  statusFilter === filter.id 
+                    ? 'bg-emerald-500 text-black' 
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                {filter.label}
+                {filter.id !== 'ALL' && (
+                  <span className={`mr-2 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs ${
+                    statusFilter === filter.id ? 'bg-black/20 text-black' : 'bg-white/10 text-gray-400'
+                  }`}>
+                    {products.filter(p => p.status === filter.id).length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {selectedProducts.length > 0 && (
+        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-emerald-400 font-bold">
+            تم تحديد {selectedProducts.length} منتج
+          </div>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => handleBulkStatusChange('APPROVED')}
+              disabled={isPending}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-colors disabled:opacity-50"
+            >
+              <CheckCircle size={18} /> قبول المحدد
+            </button>
+            <button 
+              onClick={() => handleBulkStatusChange('REJECTED')}
+              disabled={isPending}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-colors disabled:opacity-50"
+            >
+              <XCircle size={18} /> رفض المحدد
+            </button>
+            <div className="w-px h-8 bg-emerald-500/30 mx-1 hidden sm:block"></div>
+            <button 
+              onClick={handleBulkDelete}
+              disabled={isPending}
+              className="bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/30 px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-colors disabled:opacity-50"
+            >
+              <Trash2 size={18} /> حذف
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-right">
             <thead className="bg-white/5 border-b border-white/10">
               <tr>
+                <th className="px-6 py-4">
+                  <input 
+                    type="checkbox" 
+                    checked={filteredProducts.length > 0 && selectedProducts.length === filteredProducts.length}
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 rounded border-gray-600 bg-black/50 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+                  />
+                </th>
                 <th className="px-6 py-4 font-bold text-gray-400">المنتج</th>
                 <th className="px-6 py-4 font-bold text-gray-400">الشركة</th>
                 <th className="px-6 py-4 font-bold text-gray-400 text-center">الحالة</th>
@@ -163,7 +288,15 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
             </thead>
             <tbody className="divide-y divide-white/5">
               {filteredProducts.map(product => (
-                <tr key={product.id} className="hover:bg-white/5 transition-colors">
+                <tr key={product.id} className={`hover:bg-white/5 transition-colors ${selectedProducts.includes(product.id) ? 'bg-white/5' : ''}`}>
+                  <td className="px-6 py-4">
+                    <input 
+                      type="checkbox" 
+                      checked={selectedProducts.includes(product.id)}
+                      onChange={() => toggleSelectProduct(product.id)}
+                      className="w-4 h-4 rounded border-gray-600 bg-black/50 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-gray-900"
+                    />
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       {product.image ? (
@@ -227,7 +360,7 @@ export default function ProductsClient({ initialProducts, companies = [] }: { in
               ))}
               {filteredProducts.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
                     لا توجد منتجات مطابقة للبحث
                   </td>
                 </tr>

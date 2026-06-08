@@ -35,6 +35,14 @@ export async function updateProductStatus(id: string, status: ProductStatus) {
   revalidatePath('/[locale]/admin-dashboard/products', 'page');
 }
 
+export async function updateProductsStatus(ids: string[], status: ProductStatus) {
+  await prisma.product.updateMany({
+    where: { id: { in: ids } },
+    data: { status }
+  });
+  revalidatePath('/[locale]/admin-dashboard/products', 'page');
+}
+
 export async function updateProduct(
   id: string, 
   data: { 
@@ -95,6 +103,13 @@ export async function createProduct(data: {
 export async function deleteProduct(id: string) {
   await prisma.product.delete({
     where: { id }
+  });
+  revalidatePath('/[locale]/admin-dashboard/products', 'page');
+}
+
+export async function deleteProducts(ids: string[]) {
+  await prisma.product.deleteMany({
+    where: { id: { in: ids } }
   });
   revalidatePath('/[locale]/admin-dashboard/products', 'page');
 }
